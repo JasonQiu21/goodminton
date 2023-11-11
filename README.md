@@ -1,2 +1,2 @@
 # goodminton
-CS 546 final project
+CS 546 Final Project
