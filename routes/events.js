@@ -94,22 +94,4 @@ Example of Tournament Generation:
         },
     ]
 }
-
-TODO:
-    - [GET /] - Get all events from database, render a layout with handlebars
-
-    - [GET /:id] - Get event from database, render a layout with handlebars 
-    - [PUT /:id] - Update event in database
-
-    - [GET /create] - Render a layout with handlebars (create event page)
-    - [POST /create] - Create event in database
-
-    - [GET /:id/edit] - Render a layout with handlebars (edit event page)
-    - [POST /:id/edit] - Update event in database
-
-    - [GET /:id/delete] - Render a layout with handlebars (delete event page)
-    - [DELETE /:id/delete] - Delete event in database
-
-    - [GET /:id/start] - Render a layout with handlebars (start event confirmation page)
-    - [POST /:id/start] - Start event in database (match generation, etc.)
 */
