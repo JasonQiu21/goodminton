@@ -4,11 +4,7 @@ import { ObjectId } from "mongodb";
 
 const eventTypes = ["tournament", "leaguenight", "practice"];
 
-const createEvent = async (
-  eventName,
-  eventDate,
-  eventType
-) => {
+export const createEvent = async (eventName, eventDate, eventType) => {
   const eventsCol = await events();
   //input validation
   eventName = typecheck.isValidString(eventName, "Event Name");
@@ -19,17 +15,53 @@ const createEvent = async (
   eventType = typecheck.isValidString(eventType, "Event Type").toLowerCase();
   if (!eventTypes.includes(eventType))
     throw { status: 400, error: "Invalid event type." };
-    //in this case, reservations need to be made
+  //in this case, reservations need to be made
   try {
     var { acknowledged, insertedId } = await eventsCol.insertOne({
       name: eventName,
       date: eventDate,
       type: eventType,
-      matches: (eventType === "practice") ? null : {},
+      matches: eventType === "practice" ? null : {},
       reservations: [],
     });
   } catch (e) {
     console.log(e);
     throw { status: 500, error: "An error occurred while creating event" };
   }
+  if(!acknowledged || !insertedId) throw {status: 500, error: "Error while creating event"};
+  return await getEvent(insertedId.toString());
+};
+
+export const getAllEvents = async () => {
+  const eventsCol = await events();
+  let res;
+  try{
+    res = await eventsCol.find({}).toArray();
+  } catch (e) {
+    console.log(e);
+    throw {errorCode: 500, message: "Error getting data"};
+  }
+
+  return res.map(x => {
+    return {_id: x._id, eventName: x.eventName};
+  });
+};
+
+export const getEvent = async (eventId) => {
+  eventId = typecheck.stringToOid(eventId);
+  const eventsCol = await events();
+  let res;
+  try {
+    res = await eventsCol.findOne({ _id: eventId });
+  } catch (e) {
+    console.log(e);
+    throw { status: 500, error: `Error while getting event ${eventId}` };
+  }
+  try {
+    res = typecheck.isNonEmptyObject(res);
+  } catch (e) {
+    throw { status: 404, message: `Event not found` };
+  }
+  res._id = res._id.toString();
+  return res;
 };

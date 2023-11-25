@@ -71,7 +71,7 @@ export const isValidDate = (date, name = "Date input") => {
 };
 
 export const stringToOid = (id) => {
-  id = isValidString(id, "ObjectId", false)
+  id = isValidString(id, "ObjectId", false);
   if (!ObjectId.isValid(id)) throw { status: 400, error: "Invalid ObjectId" };
   return new ObjectId(id);
 };
