@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import * as playerFunctions from '../data/players.js';
+import * as helperFunctions from '../data/typecheck.js';
 
 router
     .route('/')
@@ -13,9 +14,29 @@ router
             res.status(500).json({error: e});
         }
     })
-    // .post(async (req, res) => {
-    //     //code here for POST
-    // });
+    .post(async (req, res) => {
+        //code here for POST
+        const body = req.body;
+        try {
+            if (!body.playerName) throw { status: 400, error: "Missing playerName" };
+            if (!body.email) throw { status: 400, error: "Missing email" };
+            if (!body.password) throw { status: 400, error: "Missing password" };
+        } catch(e) {
+            return res
+            .status(400)
+            .json({error: e});
+        }
+        try {
+            await playerFunctions.createNewPlayer(
+                body.playerName, body.email, body.password
+            );
+            res.json({"status": "ok"});
+        } catch(e) {
+            return res
+            .status(500)
+            .json({error: e});
+        }
+    });
 
 export default router;
 

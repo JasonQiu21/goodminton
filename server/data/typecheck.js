@@ -76,6 +76,22 @@ export const stringToOid = (id) => {
   return new ObjectId(id);
 };
 
-export const checkStevensEmail = (email) => {
-  if (!email) throw ""
-};
+export const checkEmail = (str) => {
+  let [prefix, domain] = str.split('@');
+
+  const prefixRegex = /^[a-zA-Z0-9_.-]+$/;
+  const prefixRegex2 = /^[_.-]+$/;
+  const domainRegex = /^[a-zA-Z0-9-]+$/;
+
+  if (!prefixRegex.test(prefix)) throw { status: 400, error: "Email prefix bad" };
+  if (prefixRegex2.test(prefix.charAt(prefix.length-1))) throw { status: 400, error: "Email prefix bad" };
+
+  if (!domain) throw { status: 400, error: "bad email" };
+  let end;
+  [domain, end] = domain.split('.')
+  if (!end) throw { status: 400, error: "bad email" };
+  if (!domainRegex.test(domain)) throw { status: 400, error: "Bad email domain" };
+
+  if (!(/^[a-zA-Z]+$/.test(end)) || end.length < 2) throw { status: 400, error: "Bad email domain" };
+  return;
+}
