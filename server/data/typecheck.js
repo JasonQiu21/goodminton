@@ -1,11 +1,78 @@
-export const isNonEmptyArray = (arr) => !!arr && Array.isArray(arr) && arr.length !== 0;
+import moment from "moment";
+import { ObjectId } from "mongodb";
 
-export const isNonEmptyObject = (obj) => !!obj && !Array.isArray(obj) && typeof obj === 'object' && Object.keys(obj).length !== 0;
+export const isNonEmptyArray = (arr, name = "Array input") => {
+  if (!arr) throw { status: 400, error: `${name} is not provided.` };
+  if (!Array.isArray(arr))
+    throw { status: 400, error: `${name} is not an array.` };
+  if (arr.length === 0) throw { status: 400, error: `${name} is empty.` };
 
-export const isNonEmptyString = (str) => typeof str === 'string' && !!(str.trim());
+  return arr;
+};
 
-export const isValidNumber = (num) => (!!num || num === 0) && typeof num === 'number';
+export const isNonEmptyObject = (obj, name = "Object input") => {
+  if (!obj) throw { status: 400, error: `${name} is not provided.` };
+  if (Array.isArray(obj)) throw { status: 400, error: `${name} is an array.` };
+  if (typeof obj !== "object")
+    throw { status: 400, error: `${name} is not an object.` };
+  if (Object.keys(obj).length === 0)
+    throw { status: 400, error: `${name} is an empty object.` };
 
-export const isFiniteNumber = (num) => isValidNumber(num) && isFinite(num);
+  return obj;
+};
 
-export const isBool = (bool) => typeof(bool) === "boolean";
+export const isValidString = (
+  input,
+  name = "String input",
+  allow_empty = false
+) => {
+  if (!input) throw { status: 400, error: `${name} must be provided.` };
+  if (typeof input !== "string")
+    throw { status: 400, error: `${name} is not a string.` };
+  if (!allow_empty && input.trim().length === 0)
+    throw { status: 400, error: `${name} is blank.` };
+
+  return input.trim();
+};
+
+export const isValidNumber = (num, name = "Number input") => {
+  if (typeof num !== "number")
+    throw { status: 400, error: `${name} is not a number.` };
+  if (!!num || num === 0)
+    throw { status: 400, error: `${name} is not a valid number.` };
+
+  return num;
+};
+
+export const isFiniteNumber = (num, name = "Numer input") => {
+  num = isValidNumber(num, name);
+  if (!isFinite(num))
+    throw { status: 400, error: `${name} is not a finite number` };
+
+  return num;
+};
+
+export const isBool = (bool, name = "Boolean input") => {
+  if (typeof bool !== "boolean")
+    throw { status: 400, error: `${name} is not a boolean.` };
+  return bool;
+};
+
+export const isValidDate = (date, name = "Date input") => {
+  if (!date) throw { status: 400, error: `${name} is not provided.` };
+  date = moment(date, "DD-MM-YYYY");
+  if (!date.isValid())
+    throw {
+      status: 400,
+      error: `${name} is not a valid date (DD-MM-YYYY format).`,
+    };
+
+  return date;
+};
+
+export const stringToOid = (id) => {
+  if (!isNonEmptyString(id)) throw "id must be a non-empty string";
+  id = id.trim();
+  if (!ObjectId.isValid(id)) throw "Invalid ObjectId";
+  return new ObjectId(id);
+};
