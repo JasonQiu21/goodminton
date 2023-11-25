@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 const eventTypes = ["tournament", "leaguenight", "practice"];
 
-const createEvent = async (
+export const createEvent = async (
   eventName,
   eventDate,
   eventType
