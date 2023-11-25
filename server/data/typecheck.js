@@ -1,4 +1,5 @@
 import moment from "moment";
+import { ObjectId } from "mongodb";
 
 export const isNonEmptyArray = (arr, name = "Array input") => {
   if (!arr) throw { status: 400, error: `${name} is not provided.` };
@@ -67,4 +68,11 @@ export const isValidDate = (date, name = "Date input") => {
     };
 
   return date;
+};
+
+export const stringToOid = (id) => {
+  if (!isNonEmptyString(id)) throw "id must be a non-empty string";
+  id = id.trim();
+  if (!ObjectId.isValid(id)) throw "Invalid ObjectId";
+  return new ObjectId(id);
 };
