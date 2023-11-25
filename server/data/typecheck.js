@@ -76,3 +76,7 @@ export const stringToOid = (id) => {
   if (!ObjectId.isValid(id)) throw "Invalid ObjectId";
   return new ObjectId(id);
 };
+
+export const checkStevensEmail = (email) => {
+  if (!email) throw ""
+};

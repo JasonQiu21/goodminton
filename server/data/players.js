@@ -1,5 +1,6 @@
 import { players } from '../config/mongoCollections.js';
 import {ObjectId} from 'mongodb';
+import * as helperFunctions from './typecheck.js';
 
 const getAllPlayers = async () => {
     const playerCollection = await players();
@@ -14,8 +15,7 @@ const createNewPlayer = async(
     email, 
     phone = None
     ) => {
-    if (!playerName || !email) throw 'Bad inputs';
-    if (typeof(playerName) !== "string") throw 'Bad playerName';
+    
     //TODO
 };
 
