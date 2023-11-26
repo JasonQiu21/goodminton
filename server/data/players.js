@@ -64,15 +64,39 @@ const remove = async (id) => {
     return answer;
 };
 
-const update = async (
-    playerName, 
-    email, 
-    password,
-    phone,
-    singlesRating,
-    doublesRating
-) => {
+const update = async (id, body) => {
     //TODO
+    if (!id) throw { status: 400, error: "No body" };
+    if (!body) throw { status: 400, error: "No body" };
+    let playerName, email, password, phone, singlesRating, doublesRating
+    if (body.playerName) playerName = helperFunctions.isValidString(body.playerName);
+    if (body.email) {
+        email = helperFunctions.isValidString(body.email);
+        helperFunctions.checkEmail(email);
+    }
+    if (body.password) password = helperFunctions.isValidString(body.password);
+    if (body.phone) {
+        phone = helperFunctions.isValidString(body.phone);
+        if (!(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone))) throw { status: 400, error: "Bad phone number"};
+    }
+    if(body.singlesRating) singlesRating = helperFunctions.isValidNumber(body.singlesRating);
+    if(body.doublesRating) doublesRating = helperFunctions.isValidNumber(body.doublesRating);
+    let newInfo = {
+        ...body.playerName && {playerName: playerName},
+        ...body.email && {email: email},
+        ...body.password && {password: password},
+        ...body.phone && {phone: phone},
+        ...body.singlesRating && {singlesRating: singlesRating},
+        ...body.doublesRating && {doublesRating: doublesRating}
+    };
+    // console.log(JSON.stringify(newInfo));
+    const playerCollection = await players();
+    const info = await playerCollection.findOneAndUpdate(
+        {_id: new ObjectId(id)}, 
+        {$set: newInfo}
+    );
+    if (!info) throw { status: 404, error: "No player with id" };
+    return info;
 };
 
 export {getAllPlayers, createNewPlayer, get, update, remove};

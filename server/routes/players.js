@@ -60,7 +60,24 @@ router
         res.json(answer);
     })
     .patch(async (req, res) => {
-        res.json();
+        const body = req.body;
+        const id  = req.params.playerId;
+        let answer;
+        // try {
+
+        // }catch(e){
+        //     return res
+        //     .status(400)
+        //     .json({error: e});
+        // }
+        try {
+            answer = await playerFunctions.update(id, body);
+        }catch(e){
+            return res
+            .status(404)
+            .json({error: e});
+        }
+        res.json(answer);
     })
     .delete(async (req, res) => {
         let id, answer;
