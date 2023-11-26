@@ -65,3 +65,21 @@ export const getEvent = async (eventId) => {
   res._id = res._id.toString();
   return res;
 };
+
+export const updateEvent = async (eventId, updatedEvent) => {
+  /*
+  updatedEvent is the fields of the event to updeate; so, if we had an event with 
+  { id: 1, name: asdf, ... } and changed it to { id: 1, name: jkl;, .... }
+  we'd supply
+  eventId: 1, updatedEvent: { name: jkl; } 
+  */
+  eventId = typecheck.stringToOid(eventId);
+  const eventsCol = await events();
+  let res;
+  let event = await getEvent(eventId);
+  updatedEvent = typecheck.isNonEmptyObject(updatedEvent, "Event Updates");
+  Object.keys(updatedEvent).forEach(key => {
+    event[key] = updatedEvent[key]
+  });
+
+}

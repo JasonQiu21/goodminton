@@ -75,3 +75,41 @@ export const stringToOid = (id) => {
   if (!ObjectId.isValid(id)) throw { status: 400, error: "Invalid ObjectId" };
   return new ObjectId(id);
 };
+
+export const isValidEvent = (event) => {
+  /*
+    Checks if an object is a valid event.
+    event schema: # python type syntax bc jason is dumb
+      name: str
+      type: str
+      date: int >= 0 # unix timestamp
+      matches: Optional(Dict[match])
+      reservations: List[match]
+
+    if partial is true, then accept partial schema
+  */
+  let keys = ["name", "type", "date", "matches", "reservation"];
+  Object.keys(event).forEach((key) => {
+    if (!keys.includes(key))
+      throw { status: 400, error: `Extraneous key '${key}'` };
+  });
+  event.name = isValidString(event.name, "Event Name", false);
+  event.type = isValidDate(event.type, "Event Type", false);
+
+  const eventTypes = ["tournament", "leaguenight", "practice"];
+  if (!eventTypes.includes(event.type))
+    throw { status: 400, error: "Invalid event type." };
+
+  event.date = isFiniteNumber(event.date, "Event Date");
+  if (eventDate < 0)
+    throw { status: 400, error: "Event Date must be a nonnegative number" };
+  if (event.matches === null)
+    event.matches = isNonEmptyObject(event.matches, "Event Matches");
+  event.reservations = isNonEmptyArray(
+    event.reservations,
+    "Event Reservations"
+  );
+  // TODO: typecheck reservations and matches when implementing those features
+
+  return event;
+};
