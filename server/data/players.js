@@ -35,10 +35,44 @@ const createNewPlayer = async(
 
     const info = await playerCollection.insertOne(answer);
     if (!info.acknowledged || !info.insertedId) throw { status: 500, error: "Could not add event" };
-    // const newId = info.insertedId.toString();
-    // const event = await get(newId);
-    // return event;
-    return;
+    const newId = info.insertedId.toString();
+    const player = await get(newId);
+    return player;
 };
 
-export {getAllPlayers, createNewPlayer};
+const get = async (id) => {
+    id = helperFunctions.isValidId(id);
+    const playerCollection = await players();
+    const player = await playerCollection.findOne({_id: new ObjectId(id)}, {projection: {password:0}});
+    if (player === null) throw { status: 404, error: "No player with id" };
+    player._id = player._id.toString();
+    return player;
+};
+
+const remove = async (id) => {
+    //TODO
+    id = helperFunctions.isValidId(id);
+    const playerCollection = await players();
+    const info = await playerCollection.findOneAndDelete({
+        _id: new ObjectId(id)
+    });
+    if (!info) throw { status: 404, error: "No player with id" };
+    const answer = {
+        "playerName": info.playerName,
+        "deleted": true
+    };
+    return answer;
+};
+
+const update = async (
+    playerName, 
+    email, 
+    password,
+    phone,
+    singlesRating,
+    doublesRating
+) => {
+    //TODO
+};
+
+export {getAllPlayers, createNewPlayer, get, update, remove};

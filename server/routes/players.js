@@ -38,6 +38,49 @@ router
         }
     });
 
+router
+    .route('/:playerId')
+    .get(async (req, res) => {
+        //GET
+        let id, answer;
+        try {
+            id = helperFunctions.isValidId(req.params.playerId);
+        } catch(e) {
+            return res
+            .status(400)
+            .json({error: e});
+        }
+        try {
+            answer = await playerFunctions.get(id);
+        } catch(e) {
+            return res
+            .status(404)
+            .json({error: e});
+        }
+        res.json(answer);
+    })
+    .patch(async (req, res) => {
+        res.json();
+    })
+    .delete(async (req, res) => {
+        let id, answer;
+        try {
+            id = helperFunctions.isValidId(req.params.playerId);
+        } catch(e) {
+            return res
+            .status(400)
+            .json({error: e});
+        }
+        try {
+            answer = await playerFunctions.remove(id);
+        } catch(e) {
+            return res
+            .status(404)
+            .json({error: e});
+        }
+        res.json(answer);
+    });
+
 export default router;
 
 /*
@@ -45,9 +88,9 @@ Schema for Player:
 
 {
     "id": new ObjectId(),
-    "name": string,
-    "picture" string (filepath),
-    "email": string (can be null),
+    "playerName": string,
+    "email": string,
+    "password" string,
     "phone": string (can be null),
     "rating1": float -- singles rating,
     "rating2": float -- doubles rating,

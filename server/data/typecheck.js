@@ -94,4 +94,13 @@ export const checkEmail = (str) => {
 
   if (!(/^[a-zA-Z]+$/.test(end)) || end.length < 2) throw { status: 400, error: "Bad email domain" };
   return;
-}
+};
+
+export const isValidId = (id) => {
+  if (!id) throw { status: 400, error: "No id" };
+  if (typeof(id) !== "string") throw { status: 400, error: "Id not a string" };
+  id = id.trim();
+  if (id.length === 0) throw { status: 400, error: "Id empty string" };
+  if (!ObjectId.isValid(id)) throw { status: 400, error: "Invalid object Id" };
+  return id;
+};
