@@ -75,7 +75,6 @@ export const updateEvent = async (eventId, updatedEvent) => {
   */
   eventId = typecheck.stringToOid(eventId);
   const eventsCol = await events();
-  let res;
   let event = await getEvent(eventId);
   updatedEvent = typecheck.isNonEmptyObject(updatedEvent, "Event Updates");
   Object.keys(updatedEvent).forEach(key => {
@@ -94,6 +93,6 @@ export const updateEvent = async (eventId, updatedEvent) => {
     throw {status: 500, error: `Error while updating ${eventId}`};
   }
   if(modifiedCount !== 1) throw {status: 500, error: `Error while updating ${eventId}`};
-  
+
   return await getEvent(eventId);
 }
