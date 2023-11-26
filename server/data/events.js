@@ -81,5 +81,19 @@ export const updateEvent = async (eventId, updatedEvent) => {
   Object.keys(updatedEvent).forEach(key => {
     event[key] = updatedEvent[key]
   });
-
+  // Now we know that (event - updatedEvent) union (updatedEvent) is a valid event; that is, updatedEvent is a valid partial event
+  event = typecheck.isValidEvent(event);
+  try{
+    var {matchedCount, modifiedCount} = eventsCol.updateOne({_id: eventId}, {$set: updatedEvent});
+  } catch (e) {
+    throw {status: 500, error: `Error while updating ${eventId}`};
+  }
+  if(matchedCount === 0) throw {status: 404, error: "Event not found"};
+  else if(matchedCount !== 1) {
+    console.log(`<ERROR> found ${matchedCount} documents with same ObjectID. eventId: ${eventId}`);
+    throw {status: 500, error: `Error while updating ${eventId}`};
+  }
+  if(modifiedCount !== 1) throw {status: 500, error: `Error while updating ${eventId}`};
+  
+  return await getEvent(eventId);
 }

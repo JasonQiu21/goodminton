@@ -88,7 +88,9 @@ export const isValidEvent = (event) => {
 
     if partial is true, then accept partial schema
   */
-  let keys = ["name", "type", "date", "matches", "reservation"];
+
+  // Allow _id, but do not check for it
+  let keys = ["_id", "name", "type", "date", "matches", "reservation"];
   Object.keys(event).forEach((key) => {
     if (!keys.includes(key))
       throw { status: 400, error: `Extraneous key '${key}'` };
