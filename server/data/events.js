@@ -28,22 +28,23 @@ export const createEvent = async (eventName, eventDate, eventType) => {
     console.log(e);
     throw { status: 500, error: "An error occurred while creating event" };
   }
-  if(!acknowledged || !insertedId) throw {status: 500, error: "Error while creating event"};
+  if (!acknowledged || !insertedId)
+    throw { status: 500, error: "Error while creating event" };
   return await getEvent(insertedId.toString());
 };
 
 export const getAllEvents = async () => {
   const eventsCol = await events();
   let res;
-  try{
+  try {
     res = await eventsCol.find({}).toArray();
   } catch (e) {
     console.log(e);
-    throw {errorCode: 500, message: "Error getting data"};
+    throw { errorCode: 500, message: "Error getting data" };
   }
 
-  return res.map(x => {
-    return {_id: x._id, eventName: x.eventName};
+  return res.map((x) => {
+    return { _id: x._id, eventName: x.eventName };
   });
 };
 
@@ -77,22 +78,28 @@ export const updateEvent = async (eventId, updatedEvent) => {
   const eventsCol = await events();
   let event = await getEvent(eventId);
   updatedEvent = typecheck.isNonEmptyObject(updatedEvent, "Event Updates");
-  Object.keys(updatedEvent).forEach(key => {
-    event[key] = updatedEvent[key]
+  Object.keys(updatedEvent).forEach((key) => {
+    event[key] = updatedEvent[key];
   });
   // Now we know that (event - updatedEvent) union (updatedEvent) is a valid event; that is, updatedEvent is a valid partial event
   event = typecheck.isValidEvent(event);
-  try{
-    var {matchedCount, modifiedCount} = eventsCol.updateOne({_id: eventId}, {$set: updatedEvent});
+  try {
+    var { matchedCount, modifiedCount } = eventsCol.updateOne(
+      { _id: eventId },
+      { $set: updatedEvent }
+    );
   } catch (e) {
-    throw {status: 500, error: `Error while updating ${eventId}`};
+    throw { status: 500, error: `Error while updating ${eventId}` };
   }
-  if(matchedCount === 0) throw {status: 404, error: "Event not found"};
-  else if(matchedCount !== 1) {
-    console.log(`<ERROR> found ${matchedCount} documents with same ObjectID. eventId: ${eventId}`);
-    throw {status: 500, error: `Error while updating ${eventId}`};
+  if (matchedCount === 0) throw { status: 404, error: "Event not found" };
+  else if (matchedCount !== 1) {
+    console.log(
+      `<ERROR> found ${matchedCount} documents with same ObjectID. eventId: ${eventId}`
+    );
+    throw { status: 500, error: `Error while updating ${eventId}` };
   }
-  if(modifiedCount !== 1) throw {status: 500, error: `Error while updating ${eventId}`};
+  if (modifiedCount !== 1)
+    throw { status: 500, error: `Error while updating ${eventId}` };
 
   return await getEvent(eventId);
-}
+};
