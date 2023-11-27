@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { stringToOid } from "../data/typecheck.js";
-import { createEvent, getEvent } from "../data/events.js";
+import { createEvent, getEvent, updateEvent } from "../data/events.js";
 const router = Router();
 
 router
@@ -9,7 +9,7 @@ router
     try {
       return res.json(await getAll());
     } catch (e) {
-      if(!e.errorCode){
+      if (!e.errorCode) {
         console.log(e);
         return res
           .status(500)
@@ -40,17 +40,32 @@ router
     }
   });
 
-router.route("/:id").get(async (req, res) => {
-  try {
-    let event = await getEvent(req.params.id);
-    return res.json(event);
-  } catch (e) {
-    if (!e.status) {
-      console.log(e);
-      return res
-        .status(500)
-        .json({ status: 500, error: "Internal Server Error" });
+router
+  .route("/:id")
+  .get(async (req, res) => {
+    try {
+      let event = await getEvent(req.params.id);
+      return res.json(event);
+    } catch (e) {
+      if (!e.status) {
+        console.log(e);
+        return res
+          .status(500)
+          .json({ status: 500, error: "Internal Server Error" });
+      }
+      return res.status(e.status).json(e);
     }
-    return res.status(e.status).json(e);
-  }
-});
+  })
+  .patch(async (req, res) => {
+    try {
+      let event = await updateEvent(req.params.id, req.body);
+    } catch (e) {
+      if (!e.status) {
+        console.log(e);
+        return res
+          .status(500)
+          .json({ status: 500, error: "Internal Server Error" });
+      }
+      return res.status(e.status).json(e);
+    }
+  });
