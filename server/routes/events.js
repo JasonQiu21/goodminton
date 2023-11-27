@@ -59,6 +59,7 @@ router
   .patch(async (req, res) => {
     try {
       let event = await updateEvent(req.params.id, req.body);
+      return res.json(event);
     } catch (e) {
       if (!e.status) {
         console.log(e);
