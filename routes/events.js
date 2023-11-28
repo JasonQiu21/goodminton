@@ -1,6 +1,11 @@
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
 
+router.get("/", async (req, res) => {
+  res.render("home", { title: "Marvel Characters" });
+});
+
+export default router;
 /*
 Schema for Event:
 
