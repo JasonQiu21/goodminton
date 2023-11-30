@@ -13,7 +13,7 @@ router
         console.log(e);
         return res
           .status(500)
-          .json({ status: 500, error: "Internal Server Error" });
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
       return res.status(e.status).json(e);
     }
@@ -35,7 +35,7 @@ router
         console.log(e);
         return res
           .status(500)
-          .json({ status: 500, error: "Internal Server Error" });
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
     }
   });
@@ -51,7 +51,7 @@ router
         console.log(e);
         return res
           .status(500)
-          .json({ status: 500, error: "Internal Server Error" });
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
       return res.status(e.status).json(e);
     }
@@ -65,7 +65,7 @@ router
         console.log(e);
         return res
           .status(500)
-          .json({ status: 500, error: "Internal Server Error" });
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
       return res.status(e.status).json(e);
     }
