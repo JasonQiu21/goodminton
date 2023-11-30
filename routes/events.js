@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { stringToOid } from "../data/typecheck.js";
-import { createEvent, getAllEvents, getEvent, updateEvent } from "../data/events.js";
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
 const router = Router();
 
 router
@@ -10,7 +10,7 @@ router
       return res.json(await getAllEvents());
     } catch (e) {
       if (!e.status) {
-        console.log(e);
+        console.log(`[Error on GET events/]: ${e}`);
         return res
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
@@ -32,7 +32,7 @@ router
       return res.json(createdEvent);
     } catch (e) {
       if (!e.status) {
-        console.log(e);
+        console.log(`[Error on POST events/]: ${e}`);
         return res
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
@@ -48,7 +48,7 @@ router
       return res.json(event);
     } catch (e) {
       if (!e.status) {
-        console.log(e);
+        console.log(`[Error on GET events/:id]: ${e}`);
         return res
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
@@ -62,7 +62,21 @@ router
       return res.json(event);
     } catch (e) {
       if (!e.status) {
-        console.log(e);
+        console.log(`[Error on PATCH events/:id]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+  .delete(async(req, res) => {
+    try{
+      let deletedEvent = await deleteEvent(req.params.id);
+      return res.json(deletedEvent);
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on DELETE events/:id]: ${e}`);
         return res
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
