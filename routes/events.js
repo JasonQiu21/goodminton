@@ -9,13 +9,13 @@ router
     try {
       return res.json(await getAll());
     } catch (e) {
-      if (!e.errorCode) {
+      if (!e.status) {
         console.log(e);
         return res
           .status(500)
           .json({ status: 500, error: "Internal Server Error" });
       }
-      return res.status(e.errorCode).json(e);
+      return res.status(e.status).json(e);
     }
   })
   .post(async (req, res) => {
@@ -24,7 +24,7 @@ router
       const params = [];
       expectedKeys.forEach((key) => {
         if (!Object.keys(req.body).includes(key))
-          throw { status: 400, message: `Field '${key}' missing` };
+          throw { status: 400, error: `Field '${key}' missing` };
         params.push(req.body[key]);
       });
 

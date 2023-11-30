@@ -45,7 +45,7 @@ export const getAllEvents = async () => {
     res = await eventsCol.find({}).toArray();
   } catch (e) {
     console.log(e);
-    throw { errorCode: 500, message: "Error getting data" };
+    throw { status: 500, error: "Error getting data" };
   }
 
   return res.map((x) => {
@@ -66,7 +66,7 @@ export const getEvent = async (eventId) => {
   try {
     res = typecheck.isNonEmptyObject(res);
   } catch (e) {
-    throw { status: 404, message: `Event not found` };
+    throw { status: 404, error: `Event not found` };
   }
   res._id = res._id.toString();
   return res;
