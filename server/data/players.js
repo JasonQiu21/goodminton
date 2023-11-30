@@ -1,6 +1,8 @@
 import { players } from '../config/mongoCollections.js';
 import {ObjectId} from 'mongodb';
 import * as helperFunctions from './typecheck.js';
+import bcrypt from "bcrypt";
+const saltRounds = 16;
 
 const getAllPlayers = async () => {
     const playerCollection = await players();
@@ -24,10 +26,13 @@ const createNewPlayer = async(
         phone = helperFunctions.isValidString(phone);
         if (!(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone))) throw { status: 400, error: "Bad phone number"};
     }
+
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
     let answer = {
         "playerName": playerName,
         "email": email,
-        "password": password,
+        "password": passwordHash,
         "phone": phone,
         "singlesRating": 800,
         "doublesRating": 800
