@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { stringToOid } from "../data/typecheck.js";
-import { createEvent, getEvent, updateEvent } from "../data/events.js";
+import { createEvent, getAllEvents, getEvent, updateEvent } from "../data/events.js";
 const router = Router();
 
 router
   .route("/")
   .get(async (req, res) => {
     try {
-      return res.json(await getAll());
+      return res.json(await getAllEvents());
     } catch (e) {
       if (!e.status) {
         console.log(e);
