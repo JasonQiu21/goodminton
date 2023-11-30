@@ -4,7 +4,11 @@ import { ObjectId } from "mongodb";
 
 const eventTypes = ["tournament", "leaguenight", "practice"];
 
-export const createEvent = async (eventName, eventDate, eventType) => {
+export const createEvent = async (
+  eventName,
+  eventDate,
+  eventType
+) => {
   const eventsCol = await events();
   //input validation
   eventName = typecheck.isValidString(eventName, "Event Name");
@@ -24,6 +28,7 @@ export const createEvent = async (eventName, eventDate, eventType) => {
       matches: eventType === "practice" ? null : {},
       reservations: [],
     });
+    if(!insertInfo.acknowledged) throw { status: 500, error: "An error occurred while creating event" };
   } catch (e) {
     console.log(e);
     throw { status: 500, error: "An error occurred while creating event" };
