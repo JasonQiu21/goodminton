@@ -1,0 +1,102 @@
+body {
+    font-family: 'Quicksand';
+}
+
+.navbar {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #dddddd;
+    align-items: center;
+    overflow: hidden;
+}
+
+.navitem {
+    float: left;
+    justify-content: center;
+    font-size: 25px;
+    border-right: 1px solid #bbb;
+}
+
+.navitem a {
+  color: black;
+  text-align: center;
+  padding: 20px;
+  text-decoration: none;
+}
+
+.navitem a:hover{
+    color:white;
+    background-color: #111111;
+}
+
+.navitem:last-child{
+    margin-left: auto;
+    float:right;
+    justify-content: center;
+    font-size: 25px;
+    border-right: none;
+}
+
+.navlogo{
+    float: left;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-right: 1px solid #bbb;
+
+  text-decoration: none;
+}
+.navlogo a {
+  color: black;
+  text-align: center;
+  padding: 20px;
+  text-decoration: none;
+}
+
+.profilePage {
+    display: flex;
+    column-gap: 20px;
+}
+
+.profileRating{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin-right: 20px;
+}
+
+.formItem {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+}
+
+.formTitle {
+    font-size: 20px;
+    font-weight: bold;
+    padding-right: 10px;
+    margin-bottom: 20px;
+}
+
+.formInput {
+    display:block;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.ratingBox h3 {
+    font-size: 20px;
+    font-weight: bold;
+    padding-right: 10px;
+    margin-bottom: 20px;
+}
+
+.ratingBox p {
+    font-size: 20px;
+    padding: 5px;
+    align-content: center;
+}

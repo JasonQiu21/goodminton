@@ -1,5 +1,15 @@
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
+
+router.get("/", async (req, res) => {
+  res.render("home", { title: "Goodminton Home Page" });
+});
+
+router.get("/profile", async (req, res) => {
+  res.render("profile", { title: "Profile" });
+});
+
+export default router;
 
 /*
 Schema for Event:
