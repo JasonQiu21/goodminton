@@ -54,7 +54,7 @@ router
         let id, answer;
         try {
             id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.get(id);
+            answer = await playerFunctions.getPlayer(id);
         } catch(e) {
             if(e.status){
                 return res.status(e.status).json(e);
@@ -87,7 +87,7 @@ router
         let id, answer;
         try {
             id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.remove(id);
+            answer = await playerFunctions.removePlayer(id);
         } catch(e) {
             if(e.status){
                 return res.status(e.status).json(e);
