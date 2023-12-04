@@ -75,3 +75,32 @@ export const stringToOid = (id) => {
   if (!ObjectId.isValid(id)) throw { status: 400, error: "Invalid ObjectId" };
   return new ObjectId(id);
 };
+
+export const checkEmail = (str) => {
+  let [prefix, domain] = str.split('@');
+
+  const prefixRegex = /^[a-zA-Z0-9_.-]+$/;
+  const prefixRegex2 = /^[_.-]+$/;
+  const domainRegex = /^[a-zA-Z0-9-]+$/;
+
+  if (!prefixRegex.test(prefix)) throw { status: 400, error: "Email prefix bad" };
+  if (prefixRegex2.test(prefix.charAt(prefix.length-1))) throw { status: 400, error: "Email prefix bad" };
+
+  if (!domain) throw { status: 400, error: "bad email" };
+  let end;
+  [domain, end] = domain.split('.')
+  if (!end) throw { status: 400, error: "bad email" };
+  if (!domainRegex.test(domain)) throw { status: 400, error: "Bad email domain" };
+
+  if (!(/^[a-zA-Z]+$/.test(end)) || end.length < 2) throw { status: 400, error: "Bad email domain" };
+  return;
+};
+
+export const isValidId = (id) => {
+  if (!id) throw { status: 400, error: "No id" };
+  if (typeof(id) !== "string") throw { status: 400, error: "Id not a string" };
+  id = id.trim();
+  if (id.length === 0) throw { status: 400, error: "Id empty string" };
+  if (!ObjectId.isValid(id)) throw { status: 400, error: "Invalid object Id" };
+  return id;
+};
