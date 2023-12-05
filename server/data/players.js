@@ -55,7 +55,7 @@ const createNewPlayer = async(
     }
     if (!info.acknowledged || !info.insertedId) throw { status: 500, error: "Could not add event" };
     const newId = info.insertedId.toString();
-    const player = await get(newId);
+    const player = await getPlayer(newId);
     return player;
 };
 
@@ -79,7 +79,7 @@ const getPlayerByEmail = async(email) => {
     const playerCollection = await players();
     let player;
     try{
-        player = await playerCollection.findOne({emailAddress: email}, {projection: {password:0}});
+        player = await playerCollection.findOne({email: email}, {projection: {password:0}});
     } catch (e) {
         console.log(`Error on getPlayer: ${e}`);
         throw {status: 500, error: `Error while getting player ${id}`};
@@ -148,7 +148,8 @@ const updatePlayer = async (id, body) => {
         throw {status: 500, error: `Error while updating player ${id}`};
     }
     if (!info) throw { status: 404, error: "No player with id" };
-    return info;
+    const updatedInfo = await playerCollection.find({_id: new ObjectId(id)}).toArray();
+    return updatedInfo;
 };
 
 export {getAllPlayers, createNewPlayer, getPlayer, updatePlayer, removePlayer};

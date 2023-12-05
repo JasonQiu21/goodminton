@@ -71,7 +71,7 @@ router
         const id  = req.params.playerId;
         let answer;
         try {
-            answer = await playerFunctions.update(id, body);
+            answer = await playerFunctions.updatePlayer(id, body);
         }catch(e){
             if(e.status){
                 return res.status(e.status).json(e);

@@ -1,6 +1,6 @@
 import {dbConnection, closeConnection} from '../config/mongoConnection.js';
 import {createEvent} from '../data/events.js'; //TODO in ../data/events.js
-import {createPlayer} from '../data/attendees.js'; //TODO in ../data/players.js
+import {createPlayer} from '../data/players.js'; //TODO in ../data/players.js
 
 const db = await dbConnection();
 await db.dropDatabase();
