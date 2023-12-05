@@ -115,7 +115,6 @@ export const isValidEvent = (event) => {
 
   return event;
 };
-
 export const isValidUnix = (eventDate) => {
   if (!eventDate) throw {status: 400, error: "No eventDate"};
   if (typeof(eventDate) !== "number") throw {status: 400, error: "eventDate not a int"};

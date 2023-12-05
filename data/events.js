@@ -12,10 +12,7 @@ export const createEvent = async (
   const eventsCol = await events();
   //input validation
   eventName = typecheck.isValidString(eventName, "Event Name");
-  eventDate = typecheck.isFiniteNumber(eventDate, "Event Date");
-  if (eventDate < 0)
-    throw { status: 400, error: "Event Date must be a nonnegative number" };
-
+  eventDate = typecheck.isValidUnix(eventDate);
   eventType = typecheck.isValidString(eventType, "Event Type").toLowerCase();
   if (!eventTypes.includes(eventType))
     throw { status: 400, error: "Invalid event type." };
@@ -28,7 +25,7 @@ export const createEvent = async (
       matches: eventType === "practice" ? null : {},
       reservations: [],
     });
-    if(!insertInfo.acknowledged) throw { status: 500, error: "An error occurred while creating event" };
+    if(!acknowledged) throw { status: 500, error: "An error occurred while creating event" };
   } catch (e) {
     console.log(e);
     throw { status: 500, error: "An error occurred while creating event" };
@@ -42,15 +39,12 @@ export const getAllEvents = async () => {
   const eventsCol = await events();
   let res;
   try {
-    res = await eventsCol.find({}).toArray();
+    res = await eventsCol.find({}).project({_id: 1, name: 1}).toArray();
+    return res;
   } catch (e) {
     console.log(e);
     throw { status: 500, error: "Error getting data" };
   }
-
-  return res.map((x) => {
-    return { _id: x._id, eventName: x.eventName };
-  });
 };
 
 export const getEvent = async (eventId) => {
@@ -110,11 +104,12 @@ export const updateEvent = async (eventId, updatedEvent) => {
 };
 
 export const deleteEvent = async (eventId) => {
-  eventId = typecheck.stringToOid(eventId);
-  const evensCol = await events();
+  const objectId = typecheck.stringToOid(eventId);
+  const eventsCol = await events();
   let event = await getEvent(eventId);
+  let res;
   try{
-    var res = await eventsCol.findOneAndDelete({_id: id});
+    res = await eventsCol.findOneAndDelete({_id: objectId});
   } catch (e) {
     console.log(e);
     throw {status: 500, error: `Error while removing ${eventId}`};
@@ -123,7 +118,7 @@ export const deleteEvent = async (eventId) => {
   try{
     res = typecheck.isNonEmptyObject(res)
   } catch (e) {
-    throw {errorCode: 404, message: `Could not delete event with id '${id.toString()}'`};
+    throw {errorCode: 404, message: `Could not delete event with id '${objectId.toString()}'`};
   }
 
   return {event: res, deleted: true};

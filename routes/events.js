@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { stringToOid } from "../data/typecheck.js";
 import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
+import * as typecheck from './typecheck.js';
 const router = Router();
 
 router
@@ -20,7 +21,7 @@ router
   })
   .post(async (req, res) => {
     try {
-      const expectedKeys = ["eventName", "eventName", "eventType"];
+      const expectedKeys = ["eventName", "eventDate", "eventType"];
       const params = [];
       expectedKeys.forEach((key) => {
         if (!Object.keys(req.body).includes(key))
@@ -28,6 +29,13 @@ router
         params.push(req.body[key]);
       });
 
+      typecheck.isValidString(req.body.eventName, "Event Name");
+      typecheck.isValidUnix(req.body.eventDate);
+      const eventTypes = ["tournament", "leaguenight", "practice"];
+  
+      typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
+      if (!eventTypes.includes(req.body.eventType))throw { status: 400, error: "Invalid event type." };
+      
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
     } catch (e) {
@@ -37,6 +45,7 @@ router
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
+      return res.status(e.status).json(e);
     }
   });
 
@@ -58,6 +67,8 @@ router
   })
   .patch(async (req, res) => {
     try {
+      const id = req.params.id;
+      const body = req.body;
       let event = await updateEvent(req.params.id, req.body);
       return res.json(event);
     } catch (e) {
@@ -72,6 +83,7 @@ router
   })
   .delete(async(req, res) => {
     try{
+      if (!req.params.id) throw { status: 400, error: "No id" };
       let deletedEvent = await deleteEvent(req.params.id);
       return res.json(deletedEvent);
     } catch (e) {
@@ -84,3 +96,5 @@ router
       return res.status(e.status).json(e);
     }
   });
+
+export default router;
