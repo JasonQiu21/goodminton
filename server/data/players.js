@@ -29,6 +29,15 @@ const createNewPlayer = async(
 
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
+    try{
+        await getPlayerByEmail(email);
+        throw {status: 400, error: "A user with this email already exists."}
+    } catch (e) {
+        if(e?.status !== 404){
+            throw e;
+        }
+    }
+
     let answer = {
         "playerName": playerName,
         "email": email,
@@ -64,6 +73,21 @@ const getPlayer = async (id) => {
     player._id = player._id.toString();
     return player;
 };
+
+const getPlayerByEmail = async(email) => {
+    email = helperFunctions.isValidString(email);
+    const playerCollection = await players();
+    let player;
+    try{
+        player = await playerCollection.findOne({emailAddress: email}, {projection: {password:0}});
+    } catch (e) {
+        console.log(`Error on getPlayer: ${e}`);
+        throw {status: 500, error: `Error while getting player ${id}`};
+    }
+    if (player === null) throw { status: 404, error: "No player with id" };
+    player._id = player._id.toString();
+    return player;
+}
 
 const removePlayer = async (id) => {
     //TODO
