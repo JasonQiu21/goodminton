@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { stringToOid } from "../data/typecheck.js";
 import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
-import * as typecheck from './typecheck.js';
+import * as typecheck from '../typecheck.js';
 const router = Router();
 
 router
@@ -67,9 +66,9 @@ router
   })
   .patch(async (req, res) => {
     try {
-      const id = req.params.id;
-      const body = req.body;
-      let event = await updateEvent(req.params.id, req.body);
+      const id = typecheck.stringToOid(req.params.id);
+      const body = typecheck.isValidEvent(req.body, true);
+      let event = await updateEvent(req.params.id, body);
       return res.json(event);
     } catch (e) {
       if (!e.status) {
