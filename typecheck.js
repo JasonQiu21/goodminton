@@ -76,7 +76,6 @@ export const stringToOid = (id) => {
   return new ObjectId(id);
 };
 
-<<<<<<< HEAD:typecheck.js
 export const isValidEvent = (event, partial = false) => {
   /*
     Checks if an object is a valid event.
@@ -120,7 +119,8 @@ export const isValidUnix = (eventDate) => {
   if (typeof(eventDate) !== "number") throw {status: 400, error: "eventDate not a int"};
   if (!moment.unix(eventDate).isValid()) throw {status: 400, error: "eventDate not valid unix"};
   return eventDate;
-=======
+}
+
 export const checkEmail = (str) => {
   let [prefix, domain] = str.split('@');
 
@@ -148,5 +148,4 @@ export const isValidId = (id) => {
   if (id.length === 0) throw { status: 400, error: "Id empty string" };
   if (!ObjectId.isValid(id)) throw { status: 400, error: "Invalid object Id" };
   return id;
->>>>>>> 3-routes-users:server/data/typecheck.js
 };
