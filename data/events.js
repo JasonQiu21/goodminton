@@ -1,6 +1,5 @@
 import * as typecheck from "../typecheck.js";
 import { events } from "../config/mongoCollections.js";
-import { ObjectId } from "mongodb";
 
 const eventTypes = ["tournament", "leaguenight", "practice"];
 

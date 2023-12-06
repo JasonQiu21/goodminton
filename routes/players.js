@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import * as playerFunctions from '../data/players.js';
-import * as helperFunctions from '../data/typecheck.js';
+import * as helperFunctions from '../typecheck.js';
 
 router
     .route('/')

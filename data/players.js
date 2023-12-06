@@ -1,6 +1,6 @@
 import { players } from '../config/mongoCollections.js';
 import {ObjectId} from 'mongodb';
-import * as helperFunctions from './typecheck.js';
+import * as helperFunctions from '../typecheck.js';
 import bcrypt from "bcrypt";
 const saltRounds = 16;
 
