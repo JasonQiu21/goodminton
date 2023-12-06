@@ -54,7 +54,7 @@ router
         let id, answer;
         try {
             id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.get(id);
+            answer = await playerFunctions.getPlayer(id);
         } catch(e) {
             if(e.status){
                 return res.status(e.status).json(e);
@@ -71,7 +71,7 @@ router
         const id  = req.params.playerId;
         let answer;
         try {
-            answer = await playerFunctions.update(id, body);
+            answer = await playerFunctions.updatePlayer(id, body);
         }catch(e){
             if(e.status){
                 return res.status(e.status).json(e);
@@ -87,7 +87,7 @@ router
         let id, answer;
         try {
             id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.remove(id);
+            answer = await playerFunctions.removePlayer(id);
         } catch(e) {
             if(e.status){
                 return res.status(e.status).json(e);

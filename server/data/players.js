@@ -29,6 +29,15 @@ const createNewPlayer = async(
 
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
+    try{
+        await getPlayerByEmail(email);
+        throw {status: 400, error: "A user with this email already exists."}
+    } catch (e) {
+        if(e?.status !== 404){
+            throw e;
+        }
+    }
+
     let answer = {
         "playerName": playerName,
         "email": email,
@@ -37,30 +46,62 @@ const createNewPlayer = async(
         "singlesRating": 800,
         "doublesRating": 800
     }
-
-    const info = await playerCollection.insertOne(answer);
+    let info;
+    try{
+        info = await playerCollection.insertOne(answer);
+    } catch (e){
+        console.log(`Error on createNewPlayer: ${e}`);
+        throw {status: 500, error: "Error while creating player"};
+    }
     if (!info.acknowledged || !info.insertedId) throw { status: 500, error: "Could not add event" };
     const newId = info.insertedId.toString();
-    const player = await get(newId);
+    const player = await getPlayer(newId);
     return player;
 };
 
-const get = async (id) => {
+const getPlayer = async (id) => {
     id = helperFunctions.isValidId(id);
     const playerCollection = await players();
-    const player = await playerCollection.findOne({_id: new ObjectId(id)}, {projection: {password:0}});
+    let player;
+    try{
+        player = await playerCollection.findOne({_id: new ObjectId(id)}, {projection: {password:0}});
+    } catch (e) {
+        console.log(`Error on getPlayer: ${e}`);
+        throw {status: 500, error: `Error while getting player ${id}`};
+    }
     if (player === null) throw { status: 404, error: "No player with id" };
     player._id = player._id.toString();
     return player;
 };
 
-const remove = async (id) => {
+const getPlayerByEmail = async(email) => {
+    email = helperFunctions.isValidString(email);
+    const playerCollection = await players();
+    let player;
+    try{
+        player = await playerCollection.findOne({email: email}, {projection: {password:0}});
+    } catch (e) {
+        console.log(`Error on getPlayer: ${e}`);
+        throw {status: 500, error: `Error while getting player ${id}`};
+    }
+    if (player === null) throw { status: 404, error: "No player with id" };
+    player._id = player._id.toString();
+    return player;
+}
+
+const removePlayer = async (id) => {
     //TODO
     id = helperFunctions.isValidId(id);
     const playerCollection = await players();
-    const info = await playerCollection.findOneAndDelete({
-        _id: new ObjectId(id)
-    });
+    let info;
+    try{
+        info = await playerCollection.findOneAndDelete({
+            _id: new ObjectId(id)
+        });
+    } catch (e) {
+        console.log(`Error on removePlayer: ${e}`);
+        throw {status: 500, error: `Error while deleting player ${id}`};
+    }
     if (!info) throw { status: 404, error: "No player with id" };
     const answer = {
         "playerName": info.playerName,
@@ -69,7 +110,7 @@ const remove = async (id) => {
     return answer;
 };
 
-const update = async (id, body) => {
+const updatePlayer = async (id, body) => {
     //TODO
     if (!id) throw { status: 400, error: "No body" };
     if (!body) throw { status: 400, error: "No body" };
@@ -96,12 +137,19 @@ const update = async (id, body) => {
     };
     // console.log(JSON.stringify(newInfo));
     const playerCollection = await players();
-    const info = await playerCollection.findOneAndUpdate(
-        {_id: new ObjectId(id)}, 
-        {$set: newInfo}
-    );
+    let info;
+    try{
+        info = await playerCollection.findOneAndUpdate(
+            {_id: new ObjectId(id)}, 
+            {$set: newInfo}
+        );
+    } catch (e) {
+        console.log(`Error on updatePlayer: ${e}`);
+        throw {status: 500, error: `Error while updating player ${id}`};
+    }
     if (!info) throw { status: 404, error: "No player with id" };
-    return info;
+    const updatedInfo = await playerCollection.find({_id: new ObjectId(id)}).toArray();
+    return updatedInfo;
 };
 
-export {getAllPlayers, createNewPlayer, get, update, remove};
+export {getAllPlayers, createNewPlayer, getPlayer, updatePlayer, removePlayer};
