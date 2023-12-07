@@ -15,7 +15,5 @@ app.use(express.json());
 configRoutes(app);
 
 app.listen(3000, async () => {
-    console.log(matches);
-
     console.log("Goodminton server running on http://localhost:3000");
 });
