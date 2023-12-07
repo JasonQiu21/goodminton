@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent, createReservation} from "../data/events.js";
 import * as typecheck from '../typecheck.js';
 const router = Router();
 
@@ -30,7 +30,7 @@ router
 
       typecheck.isValidString(req.body.eventName, "Event Name");
       typecheck.isValidUnix(req.body.eventDate);
-      const eventTypes = ["tournament", "leaguenight", "practice"];
+      const eventTypes = ["tournament", "leaguenight", "practice"]; 
   
       typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
       if (!eventTypes.includes(req.body.eventType))throw { status: 400, error: "Invalid event type." };
@@ -95,5 +95,22 @@ router
       return res.status(e.status).json(e);
     }
   });
+router
+  .route("/reserve/:id")
+  .post(async(req, res) => {
+    const body = req.body;
+    const playerId = body.playerId;
+    const eventId = req.params.id;
+    const time = body.time;
+    // const court = body.court;
+    try {
+      await createReservation(playerId, eventId, time);
+      return res.json({1:1});
+    } catch(e) {
+      return res
+        .status(e.status)
+        .json({error: e});
+    }
+  })
 
 export default router;

@@ -85,12 +85,12 @@ const player8 = await playersCol.insertOne({
 
 const event1 = await eventsCol.insertOne({
     name: "11/28/2023 Practice",
-    date: "1701205200", //November 24th, 2023 at 4PM
+    date: 1701205200, //November 24th, 2023 at 4PM
     eventType: "practice",
     matches:  null,
     reservations: [
         {
-            time: "1700859600",
+            time: 1700859600,
             players: [
                 {_id: player1.insertedId, name: "Jason Qiu"},
                 {_id: player2.insertedId, name: "Patrick Hill"},
@@ -100,21 +100,21 @@ const event1 = await eventsCol.insertOne({
             max: 12
         },
         {
-            time: "1701207000",
+            time: 1701207000,
             players: [
                 {_id: player6.insertedId, name: "Britney Yang"},
             ],
             max: 12
         },
         {
-            time: "1701208800",
+            time: 1701208800,
             players: [
                 {_id: player8.insertedId, name: "Aidan Haberman"},
             ],
             max: 4
         },
         {
-            time: "1701210600",
+            time: 1701210600,
             players: [],
             max: 4
         }
