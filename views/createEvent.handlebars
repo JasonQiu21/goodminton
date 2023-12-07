@@ -1,0 +1,27 @@
+<main>
+    <form action="/api/events" method="POST" id="create-event-form" class = "createEventForm">
+    <h3>Create an Event</h3>
+    <label for="eventNameInput">Event Name</label>
+    <input name="eventNameInput" id="eventNameInput" type="text">
+    <br>
+    <label for="eventDateInput">Event Date</label>
+    <input name="eventDateInput" id="eventDateInput" type="date">
+    <br>
+    <label for="eventTypeInput">Event Name</label>
+    <select name="eventTypeInput" id="eventTypeInput">
+        <option value="doublesTournament">Doubles Tournament</option>
+        <option value="singlesTournament">Singles Tournament</option>
+        <option value="practice">Practice</option>
+    </select>
+    <br>
+    <button type="submit">Submit</button>
+    <div id="output-error"></div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="../public/js/createEvent.js"></script>
+</main>
+{{!-- 
+Event name
+Event date
+Event type - tournament, leaguenight, practice
+ --}}

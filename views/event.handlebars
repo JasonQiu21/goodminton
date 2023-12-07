@@ -1,0 +1,33 @@
+<section>
+    {{#if isPractice}}
+        <h1>Practice</h1>
+        <h3>{{name}}</h3>
+        <p>Date: {{date}}</p>
+        <p>Time: {{time}}</p>
+        <div class="grid-container">
+            {{#each reservations}}
+                <div>
+                    <h3>{{date}}</h3>
+                    <h4>{{time}}</h3>
+                    <p>Capacity: {{players.length}}/{{max}}</p>
+                    {{#if isFull}}
+                        <p>Full</p>
+                    {{else}}
+                        <button class="join-button" data-id="{{timeStamp}}">Join</button>
+                    {{/if}}
+                    <span class="nested-grid-container">
+                        {{#each players}}
+                            <span>
+                                <h3>{{playerName}}</h3>
+                            </span>
+                        {{/each}}
+                    </span>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <h1>Tournament</h1>
+    {{/if}}
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src = "../public/js/singleEvent.js"></script>
+</section>

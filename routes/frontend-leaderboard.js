@@ -15,6 +15,7 @@ router.route("/").get(async (req, res) => {
     user: req.session?.player,
     players: players,
     id: req.session?.player?._id,
+    isAdmin: req.session?.player?.role === "admin"
   });
 });
 export default router;
