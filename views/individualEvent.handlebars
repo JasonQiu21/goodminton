@@ -1,0 +1,15 @@
+<h1>{{event.name}}</h1>
+<main id="event">
+    <a>Date: {{event.date}}</a>
+    <br>
+    {{#each event.reservations}}
+        <a>Time: {{this.time}}</a>
+        <ol>
+            {{#each this.players}}
+            <li>
+                <a>{{this.name}}</a>
+            </li>
+            {{/each}}
+        </ol>
+    {{/each}}
+</main>

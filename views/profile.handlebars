@@ -8,32 +8,19 @@
 -->
 
 <section>
+    {{log this}}
     <div class = "profilePage">
-        <div class = "profileInfo">
-            <h1>Profile</h1>
-            <h3>Username: {{username}}</h3>
-        </div>
-        <div class = "profileRating">
-            <div class = "ratingBox">
-                <h3>Single Rating</h3>
-                <p>{{singleRating}}</p>
-            </div>
-            <div class = "ratingBox">
-                <h3>Double Rating</h3>
-                <p>{{doubleRating}}</p>
-            </div>
-        </div>
         {{#if owner}}
-            <form>
+            <form id = "profileForm">
                 <div class = "formItem">
-                    <label class = "formTitle" for="username">Username</label>
-                    <input class = "formInput" type="text" id="username" name="username" placeholder="yjiang68">
-                    <button class = "profileChangeButton">Change</button>     
+                    <label class = "formTitle" for="playerName">Player Name</label>
+                    <input class = "formInput" type="text" id="playerName" name="playerName" placeholder="{{player.playerName}}">
+                    <button class = "profileChangeButton" id = "usernameChangeButton">Change</button>     
                 </div> 
                 <div class = "formItem">
                     <label class = "formTitle" for="email">Email</label>
-                    <input class = "formInput" type="text" id="email" name="email" placeholder="yjiang68@stevens.edu">
-                    <button class = "profileChangeButton">Change</button>      
+                    <input class = "formInput" type="text" id="email" name="email" placeholder="{{player.email}}">
+                    <button class = "profileChangeButton" id = "emailChangeButton">Change</button>      
                 </div>
                 <div class = "formItem">
                     <label class = "formTitle" for="password">Password</label>
@@ -42,14 +29,47 @@
                 <div class = "formItem">
                     <label class = "formTitle" for="confirmPassword">Confirm Password</label>
                     <input class = "formInput" type="password" id="confirmPassword" name="confirmPassword" placeholder="********">
-                    <button class = "profileChangeButton">Change</button>      
+                    <button class = "profileChangeButton" id = "passwordChangeButton">Change</button>      
                 </div>
                 <div class = "formItem">
                     <label class = "formTitle" for="phoneNumber">Phone Number</label>
-                    <input class = "formInput" type="text" id="phoneNumber" name="phoneNumber" placeholder="201-123-4567">
-                    <button class = "profileChangeButton">Change</button>      
+                    <input class = "formInput" type="text" id="phoneNumber" name="phoneNumber" placeholder="{{player.phone}}">
+                    <button class = "profileChangeButton" id = "phoneChangeButton">Change</button>      
                 </div>
+                <p id = "error"></p>
             </form>
+            <div class = "profileRating">
+            <div class = "ratingBox">
+                <h3>Single Rating</h3>
+                <p id = "singlesRatingText">{{player.singlesRating}}</p>
+            </div>
+            <div class = "ratingBox">
+                <h3>Double Rating</h3>
+                <p id = "doublesRatingText">{{player.doublesRating}}</p>
+            </div>
+        </div>
+        {{else}}
+            <div class = "profileInfo">
+                <h1>Profile</h1>
+                <h3>Username: </h3>
+                <p>{{player.playerName}}</p>
+                <h3>Phone Number:</h3>
+                <p>{{player.phone}}</p>
+                <h3>Email: </h3>
+                <p>{{player.email}}</p>
+            </div>
+            <div class = "profileRating">
+                <div class = "ratingBox">
+                    <h3>Single Rating</h3>
+                    <p>{{player.singlesRating}}</p>
+                </div>
+                <div class = "ratingBox">
+                    <h3>Double Rating</h3>
+                    <p>{{player.doublesRating}}</p>
+                </div>
+            </div>
         {{/if}}
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src = "../public/js/profile_update.js"></script>
     </div>
 </section>

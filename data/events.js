@@ -44,15 +44,12 @@ export const getAllEvents = async () => {
   const eventsCol = await events();
   let res;
   try {
-    res = await eventsCol.find({}).toArray();
+    res = await eventsCol.find({}).project({ _id: 1, name: 1, date: 1 }).toArray();
+    return res;
   } catch (e) {
     console.log(e);
     throw { status: 500, error: "Error getting data" };
   }
-
-  return res.map((x) => {
-    return { _id: x._id, eventName: x.eventName };
-  });
 };
 
 export const getEvent = async (eventId) => {
@@ -81,7 +78,7 @@ export const updateEvent = async (eventId, updatedEvent) => {
   we'd supply
   eventId: 1, updatedEvent: { name: jkl; } 
   */
-  eventId = typecheck.stringToOid(eventId);
+  let eventOid = typecheck.stringToOid(eventId);
   const eventsCol = await events();
   let event = await getEvent(eventId);
   updatedEvent = typecheck.isNonEmptyObject(updatedEvent, "Event Updates");
@@ -89,13 +86,17 @@ export const updateEvent = async (eventId, updatedEvent) => {
     event[key] = updatedEvent[key];
   });
   // Now we know that (event - updatedEvent) union (updatedEvent) is a valid event; that is, updatedEvent is a valid partial event
+  delete event.matches;
+  delete event.reservations;
   event = typecheck.isValidEvent(event);
   try {
-    var { matchedCount, modifiedCount } = eventsCol.updateOne(
-      { _id: eventId },
+    delete updatedEvent?._id;
+    var { matchedCount, modifiedCount } = await eventsCol.updateOne(
+      { _id: eventOid },
       { $set: updatedEvent }
     );
   } catch (e) {
+    console.log(e);
     throw { status: 500, error: `Error while updating ${eventId}` };
   }
   if (matchedCount === 0) throw { status: 404, error: "Event not found" };
@@ -105,6 +106,8 @@ export const updateEvent = async (eventId, updatedEvent) => {
     );
     throw { status: 500, error: `Error while updating ${eventId}` };
   }
+  if (modifiedCount == 0)
+    throw { status: 400, error: "Event not updated - no changes were given" }
   if (modifiedCount !== 1)
     throw { status: 500, error: `Error while updating ${eventId}` };
 

@@ -1,9 +1,6 @@
 import { Router } from "express";
-import { stringToOid } from "../data/typecheck.js";
-import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
-import { Router } from "express";
-import { stringToOid } from "../data/typecheck.js";
-import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent, createReservation, deleteReservation } from "../data/events.js";
+import * as typecheck from '../typecheck.js';
 const router = Router();
 
 router
@@ -75,6 +72,7 @@ router
   })
   .delete(async (req, res) => {
     try {
+      if (!req.params.id) throw { status: 400, error: "No id" };
       let deletedEvent = await deleteEvent(req.params.id);
       return res.json(deletedEvent);
     } catch (e) {
