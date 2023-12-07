@@ -1,97 +1,89 @@
-import { Router } from 'express';
+import { Router } from "express";
+import { stringToOid } from "../data/typecheck.js";
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
 const router = Router();
 
-/*
-Schema for Event:
+router
+  .route("/")
+  .get(async (req, res) => {
+    try {
+      return res.json(await getAllEvents());
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on GET events/]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+  .post(async (req, res) => {
+    try {
+      const expectedKeys = ["eventName", "eventName", "eventType"];
+      const params = [];
+      expectedKeys.forEach((key) => {
+        if (!Object.keys(req.body).includes(key))
+          throw { status: 400, error: `Field '${key}' missing` };
+        params.push(req.body[key]);
+      });
 
-{
-    "id": new ObjectId(),
-    "name": string,
-    "date": string (MM/DD/YYYY),
-    "eventType": string (tournament, league night, practice, etc.),
-    "teamType": string (singles, doubles),
-    "matches": {},
-    "players": [
-        {
-            "id": "1",
-            "name": "John Doe",
-        },
-        ...
-    ]
-}
+      const createdEvent = await createEvent(...params);
+      return res.json(createdEvent);
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on POST events/]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+    }
+  });
 
-Example of Tournament Generation:
-{
-    "id": new ObjectId(),
-    "name": "2024 January Singles Tournament",
-    "date": "01/05/2024",
-    "eventType": "tournament",
-    "teamType": "doubles",
-    "matches": {
-        "1": [
-            {
-                "id": new ObjectId(),
-                "team1": [{"id": "1", "name": "Bryan Chan"}, {"id": "2", "name": "Britney Yang"}],
-                "team2": [{"id": "3", "name": "Jackey Yang"}, {"id": "4", "name": "Jason Qiu"}],
-                "team1Score": 0,
-                "team2Score": 0,
-                "winner": null
-            },
-            {
-                "id": new ObjectId(),
-                "team1": [{"id": "5", "name": "Patrick Hill"}, {"id": "6", "name": "Yihan Jiang"}],
-                "team2": [{"id": "7", "name": "Aidan Haberman"}, {"id": "8", "name": "Madhava Rakshit"}],
-                "team1Score": 0,
-                "team2Score": 0,
-                "winner": null
-            }
-        ],
-        "2": [
-            {
-                
-                "id": new ObjectId(),
-                "team1": [],
-                "team2": [],
-                "team1Score": 0,
-                "team2Score": 0,
-                "winner": null
-            
-            }
-        ]
-    },
-    "players": [
-        {
-            "id": "1",
-            "name": "Bryan Chan",
-        },
-        {
-            "id": "2",
-            "name": "Britney Yang",
-        },
-        {
-            "id": "3",
-            "name": "Jackey Yang",
-        },
-        {
-            "id": "4",
-            "name": "Jason Qiu",
-        },
-        {
-            "id": "5",
-            "name": "Patrick Hill",
-        },
-        {
-            "id": "6",
-            "name": "Yihan Jiang",
-        },
-        {
-            "id": "7",
-            "name": "Aidan Haberman",
-        },
-        {
-            "id": "8",
-            "name": "Madhava Rakshit",
-        },
-    ]
-}
-*/
+router
+  .route("/:id")
+  .get(async (req, res) => {
+    try {
+      let event = await getEvent(req.params.id);
+      return res.json(event);
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on GET events/:id]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+  .patch(async (req, res) => {
+    try {
+      let event = await updateEvent(req.params.id, req.body);
+      return res.json(event);
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on PATCH events/:id]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+  .delete(async(req, res) => {
+    try{
+      let deletedEvent = await deleteEvent(req.params.id);
+      return res.json(deletedEvent);
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on DELETE events/:id]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  });
+
+
+export default router;
