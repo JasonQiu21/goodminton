@@ -122,6 +122,11 @@ export const isValidUnix = (eventDate) => {
 }
 
 export const checkEmail = (str) => {
+  if (!str) throw {status: 400, error: "No email"};
+  if (typeof(str) !== "string") throw {status: 400, error: "Email not a string"};
+  str = str.trim();
+  if (str.length === 0) throw {status: 400, error: "Email empty string"};
+
   let [prefix, domain] = str.split('@');
 
   const prefixRegex = /^[a-zA-Z0-9_.-]+$/;
@@ -138,7 +143,7 @@ export const checkEmail = (str) => {
   if (!domainRegex.test(domain)) throw { status: 400, error: "Bad email domain" };
 
   if (!(/^[a-zA-Z]+$/.test(end)) || end.length < 2) throw { status: 400, error: "Bad email domain" };
-  return;
+  return str.toLowerCase();
 };
 
 export const isValidId = (id) => {
