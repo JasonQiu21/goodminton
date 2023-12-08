@@ -1,5 +1,6 @@
 import * as typecheck from "../typecheck.js";
 import { events , players } from "../config/mongoCollections.js";
+import * as playerFunctions from './players.js';
 
 
 const eventTypes = ["tournament", "leaguenight", "practice"];
@@ -186,5 +187,18 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 };
 
 export const deleteReservation = async(playerId, eventId) => {
-	return 0;
+	try {
+		const eventOID = typecheck.stringToOid(eventId);
+		const playerOID = typecheck.stringToOid(playerId);
+		const eventCollection = await events();
+		let playerInfo = await playerFunctions.getPlayer(playerId);
+		if (!playerInfo) throw {status: 404, error: 'Could not find player'};
+		let info = await eventCollection.updateOne({_id: eventOID}, {$pull: {'reservations': {'players._id': playerOID}}});
+		if (!info) throw {status: 500, error: 'Could not delete reservation'};
+		return info;
+	} catch(e) {
+		throw e;
+	}
+
+	
 };

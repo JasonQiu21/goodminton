@@ -123,15 +123,14 @@ router
       if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
       typecheck.stringToOid(playerId);
       typecheck.stringToOid(eventId);
-      const info = await deleteReservation
-
+      const info = await deleteReservation(playerId, eventId);
+      if (!info) throw {status: 500, error: 'Could not delete reservation'};
+      return res.json(info);
     } catch(e) {
       return res
       .status(e.status)
       .json({error: e});
     }
-
-
   })
 
 export default router;
