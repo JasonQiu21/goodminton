@@ -165,7 +165,17 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 			if (reservation) {
 				if (reservation.reservations[0].players.length === 4) throw {status: 500, error: "Court full"};
 				const info = await eventCollection.updateOne({_id: eventId, 'reservations.time': time}, {$addToSet:{'reservations.$.players': playerInfo}});
-				console.log(info);
+				if (!info.acknowledged) throw {status: 500, error: "Could not add reservation"};
+				return {player: playerInfo.playerName, event: eventInfo.name, created: true};
+			}
+			else {
+				const toInsert = {
+					time: time,
+					players: [playerInfo]
+				}
+				const info = await eventCollection.updateOne({_id: eventId}, {$push: {reservations: toInsert}});
+				if (!info.acknowledged) throw {status: 500, error: "Could not add reservation"};
+				return {player: playerInfo.playerName, event: eventInfo.name, created: true};
 			}
 
 		} catch(e) {
@@ -173,4 +183,8 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 		}
 		return;
 	}
+};
+
+export const deleteReservation = async(playerId, eventId) => {
+	return 0;
 };
