@@ -184,18 +184,18 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 };
 
 export const deleteReservation = async(playerId, eventId) => {
-	try {
-		const eventOID = typecheck.stringToOid(eventId);
-		const playerOID = typecheck.stringToOid(playerId);
-		const eventCollection = await events();
-		let playerInfo = await playerFunctions.getPlayer(playerId);
-		if (!playerInfo) throw {status: 404, error: 'Could not find player'};
-		let info = await eventCollection.updateOne({_id: eventOID}, {$pull: {'reservations': {'players._id': playerOID}}});
-		if (!info) throw {status: 500, error: 'Could not delete reservation'};
-		return info;
-	} catch(e) {
-		throw e;
+	const eventOID = typecheck.stringToOid(eventId);
+	const playerOID = typecheck.stringToOid(playerId);
+	const eventCollection = await events();
+	let playerInfo = await playerFunctions.getPlayer(playerId);
+	if (!playerInfo) throw {status: 404, error: 'Could not find player'};
+	let info;
+	try{
+		info = await eventCollection.updateOne({_id: eventOID}, {$pull: {'reservations': {'players._id': playerOID}}});
+	} catch (e) {
+		console.log(e);
+		throw {status: 500, error: "An Internal Server Error Occurred"};
 	}
-
-	
+	if (!info) throw {status: 500, error: 'Could not delete reservation'};
+	return info;
 };

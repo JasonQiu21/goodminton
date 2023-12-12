@@ -118,8 +118,7 @@ router
     }
   })
   .delete(async(req, res) => {
-    const body = req.body;
-    const playerId = body.playerId;
+    const playerId = req.body?.playerId;
     const eventId = req.params.id;
     try {
       if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
