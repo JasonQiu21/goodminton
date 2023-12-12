@@ -131,12 +131,12 @@ const event1 = await eventsCol.insertOne({
 
 const event2 = await eventsCol.insertOne({
     name: "12/08/2023 Practice",
-    date: "1702062000", //December 8th, 2023 at 2PM
+    date: 1702062000, //December 8th, 2023 at 2PM
     eventType: "tournament",
     matches: {},
     reservations: [
         {
-            time: "1702062000",
+            time: 1702062000,
             players: [
                 { _id: player1.insertedId, name: "Jason Qiu" },
                 { _id: player2.insertedId, name: "Patrick Hill" },
@@ -151,12 +151,12 @@ const event2 = await eventsCol.insertOne({
 
 const event3 = await eventsCol.insertOne({
     name: "11/28/2023 League Night",
-    date: "1701208800", //November 28th, 2023 at 6PM
+    date: 1701208800, //November 28th, 2023 at 6PM
     eventType: "leaguenight",
     matches: {},
     reservations: [
         {
-            time: "1701208800",
+            time: 1701208800,
             players: [
                 { _id: new ObjectId(player1.insertedId), name: "Jason Qiu" },
                 { _id: new ObjectId(player4.insertedId), name: "Eddison So" }

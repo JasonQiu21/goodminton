@@ -134,10 +134,11 @@ export const deleteEvent = async (eventId) => {
 export const createReservation = async(playerId, eventId, time=null, court=null) => {
 	if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
 	const eventCollection = await events();
-	playerId = typecheck.stringToOid(playerId);
-	eventId = typecheck.stringToOid(eventId);
+	let playerOid = typecheck.stringToOid(playerId);
+	let eventOid = typecheck.stringToOid(eventId);
 
-	let playerInfo = await playerFunctions.getPlayer(playerId);
+	let player = await playerFunctions.getPlayer(playerId);
+	let playerInfo = {_id: player._id, name: player.name};
 	let eventInfo = await getEvent(eventId);
 
 	try {
@@ -157,7 +158,7 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 		// if (typeof(court) !== "number") throw {status: 400, error: "Court needs to be a number"};
 		// if (court !== 1 && court !== 2 && court !== 3) throw {status: 400, error: "Court needs to be a number between 1-3"};
 		try{
-			var { reservations } = await eventCollection.findOne({_id: eventId, 'reservations.time': time}, {projection: {_id: 0, 'reservations.$': 1}});
+			var { reservations } = await eventCollection.findOne({_id: eventOid, 'reservations.time': time}, {projection: {_id: 0, 'reservations.$': 1}});
 			console.log(reservations);
 		} catch (e) {
 			console.log(e);
