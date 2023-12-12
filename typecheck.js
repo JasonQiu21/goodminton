@@ -1,5 +1,6 @@
 import moment from "moment";
 import { ObjectId } from "mongodb";
+import _ from "lodash";
 
 export const isNonEmptyArray = (arr, name = "Array input") => {
   if (!arr) throw { status: 400, error: `${name} is not provided.` };
@@ -122,11 +123,8 @@ export const isValidUnix = (eventDate) => {
 }
 
 export const checkEmail = (str) => {
-  if (!str) throw {status: 400, error: "No email"};
-  if (typeof(str) !== "string") throw {status: 400, error: "Email not a string"};
-  str = str.trim();
-  if (str.length === 0) throw {status: 400, error: "Email empty string"};
-
+  str = isValidString(str);
+  str = _.toLower(str);
   let [prefix, domain] = str.split('@');
 
   const prefixRegex = /^[a-zA-Z0-9_.-]+$/;
@@ -143,7 +141,7 @@ export const checkEmail = (str) => {
   if (!domainRegex.test(domain)) throw { status: 400, error: "Bad email domain" };
 
   if (!(/^[a-zA-Z]+$/.test(end)) || end.length < 2) throw { status: 400, error: "Bad email domain" };
-  return str.toLowerCase();
+  return str;
 };
 
 export const isValidId = (id) => {

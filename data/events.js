@@ -133,14 +133,12 @@ export const deleteEvent = async (eventId) => {
 
 export const createReservation = async(playerId, eventId, time=null, court=null) => {
 	if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
-	const playerCollection = await players();
 	const eventCollection = await events();
-	let playerInfo, eventInfo;
 	playerId = typecheck.stringToOid(playerId);
 	eventId = typecheck.stringToOid(eventId);
 
-	playerInfo = await playerFunctions.getPlayer(playerId);
-	eventInfo = await getEvent(eventId);
+	let playerInfo = await playerFunctions.getPlayer(playerId);
+	let eventInfo = await getEvent(eventId);
 
 	try {
 		playerInfo = typecheck.isNonEmptyObject(playerInfo);

@@ -110,9 +110,12 @@ router
       const info = await createReservation(playerId, eventId, time);
       return res.json(info);
     } catch(e) {
-      return res
-        .status(e.status)
-        .json({error: e});
+      if(e.status)
+        return res
+          .status(e.status)
+          .json(e);
+      console.log(e);
+      return res.status(500).json({status: 500, error: "An Internal Server Error Occurred"});
     }
   })
   .delete(async(req, res) => {
@@ -127,9 +130,12 @@ router
       if (!info) throw {status: 500, error: 'Could not delete reservation'};
       return res.json(info);
     } catch(e) {
-      return res
-      .status(e.status)
-      .json({error: e});
+      if(e.status)
+        return res
+          .status(e.status)
+          .json(e);
+      console.log(e);
+      return res.status(500).json({status: 500, error: "An Internal Server Error Occurred"});
     }
   })
 

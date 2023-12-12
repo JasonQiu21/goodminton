@@ -159,4 +159,29 @@ const updatePlayer = async (id, body) => {
     return updatedInfo;
 };
 
-export {getAllPlayers, createNewPlayer, getPlayer, updatePlayer, removePlayer};
+const authenticatePlayer = async(email, password) => {
+    // Error messages intentionally suppressed for security
+    try{
+        // Validate email and password
+        email = helperFunctions.checkEmail(email);
+        password = helperFunctions.isValidString(password);
+
+        // Find player in question
+        const playerCollection = await players();
+        let player = await playerCollection.findOne({email: email}, {projection: {password: 1}});
+        if(player === null) throw {status: 401, error: "Player not found"};
+
+        // Match passwords
+        let passwordMatch = false;
+        passwordMatch = await bcrypt.compare(password.trim(), user.password);
+        if(!passwordMatch) throw {status: 401, error: "Invalid password"};
+        return (await getPlayerByEmail(email));
+    } catch (e){
+        throw {status: 401, error: "Either the email or password provided are invalid"};
+    }
+
+
+
+}
+
+export {getAllPlayers, createNewPlayer, getPlayer, updatePlayer, removePlayer, authenticatePlayer};
