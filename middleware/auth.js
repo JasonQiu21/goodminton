@@ -1,4 +1,3 @@
-import { authenticatePlayer } from "../data/players.js";
 export const authenticatePlayer = async (req, res, next) => {
     if(!req.session) return res.redirect("/login");
     return next();

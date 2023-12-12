@@ -9,7 +9,7 @@ router.route("/login").post(async (req, res) => {
         password = typecheck.isValidString(req.body.password);
         let player = await authenticatePlayer(email, password);
         req.session.player = player;
-        res.redirect("/");
+        return res.redirect("/");
     } catch (e) {
         return res.status(401).json({status: 401, error: "Either the email or password provided are invalid."});
     }
