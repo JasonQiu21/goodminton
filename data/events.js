@@ -131,14 +131,16 @@ export const deleteEvent = async (eventId) => {
 	return { event: res, deleted: true };
 };
 
-export const createReservation = async(playerId, eventId, time=null, court=null) => {
+export const createReservation = async(playerId, eventId, time) => {
 	if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
 	const eventCollection = await events();
 	let playerOid = typecheck.stringToOid(playerId);
 	let eventOid = typecheck.stringToOid(eventId);
+	if (!time) throw {status: 400, error: "Need time"};
+	time = typecheck.isValidUnix(time);
 
 	let player = await playerFunctions.getPlayer(playerId);
-	let playerInfo = {_id: player._id, name: player.name};
+	let playerInfo = {_id: player._id, playerName: player.playerName};
 	let eventInfo = await getEvent(eventId);
 
 	try {
@@ -152,34 +154,32 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 	} catch(e) {
 		throw {status: 404, error: 'Event not found'};
 	}
-	if (eventInfo.eventType === "practice") {
-		if (!time) throw {status: 400, error: "Need time for practice"};
-		time = typecheck.isValidUnix(time);
-		// if (typeof(court) !== "number") throw {status: 400, error: "Court needs to be a number"};
-		// if (court !== 1 && court !== 2 && court !== 3) throw {status: 400, error: "Court needs to be a number between 1-3"};
+	const event = await eventCollection.findOne({_id: eventOid, 'reservations.time': time});
+	if (!event) throw {status: 404, error: "No matching time and event"};
+	try{
+		var { reservations } = await eventCollection.findOne({_id: eventOid, 'reservations.time': time}, {projection: {_id: 0, 'reservations.$': 1}});
+		console.log(reservations);
+	} catch (e) {
+		console.log(e);
+		throw {status: 500, error: "Internal Server Error"};
+	}
+
+	if (reservations) {
+		if (reservations[0].players.length >= reservations[0].max) throw {status: 500, error: "Courts are full for the provided time."};
+		let info;
+		info = await eventCollection.find({_id: eventOid, 'reservations.players._id': playerOid}).toArray();
+		if (!info) throw {status: 404, error: "Player already reserved"};
 		try{
-			var { reservations } = await eventCollection.findOne({_id: eventOid, 'reservations.time': time}, {projection: {_id: 0, 'reservations.$': 1}});
-			console.log(reservations);
+			info = await eventCollection.updateOne({_id: eventId, 'reservations.time': time}, {$addToSet:{'reservations.$.players': playerInfo}});
 		} catch (e) {
 			console.log(e);
 			throw {status: 500, error: "Internal Server Error"};
 		}
-
-		if (reservations) {
-			if (reservations[0].players.length >= reservations[0].max) throw {status: 500, error: "Courts are full for the provided time."};
-			let info;
-			try{
-				info = await eventCollection.updateOne({_id: eventId, 'reservations.time': time}, {$addToSet:{'reservations.$.players': playerInfo}});
-			} catch (e) {
-				console.log(e);
-				throw {status: 500, error: "Internal Server Error"};
-			}
-			if (!info.acknowledged) throw {status: 500, error: "Could not add reservation"};
-			return {player: playerInfo.playerName, event: eventInfo.name, created: true};
-		}
-		else {
-			throw {error: 400, status: "There is no slot matching the time and event given."}
-		}
+		if (!info.acknowledged) throw {status: 500, error: "Could not add reservation"};
+		return {player: playerInfo.playerName, event: eventInfo.name, created: true};
+	}
+	else {
+		throw {error: 400, status: "There is no slot matching the time and event given."}
 	}
 };
 
@@ -191,7 +191,9 @@ export const deleteReservation = async(playerId, eventId) => {
 	if (!playerInfo) throw {status: 404, error: 'Could not find player'};
 	let info;
 	try{
-		info = await eventCollection.updateOne({_id: eventOID}, {$pull: {'reservations': {'players._id': playerOID}}});
+		info = await eventCollection.findOne({_id: eventOID});
+		console.log(info);
+		info = await eventCollection.updateOne({_id: eventOID, 'reservations.players._id': playerOID}, {$pull: {'reservations.$.players': {_id: playerOID}}});
 	} catch (e) {
 		console.log(e);
 		throw {status: 500, error: "An Internal Server Error Occurred"};

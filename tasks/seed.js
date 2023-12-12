@@ -100,24 +100,24 @@ const event1 = await eventsCol.insertOne({
         {
             time: 1700859600,
             players: [
-                { _id: player1.insertedId, name: "Jason Qiu" },
-                { _id: player2.insertedId, name: "Patrick Hill" },
-                { _id: player3.insertedId, name: "Jackey Yang" },
-                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player1.insertedId, playerName: "Jason Qiu" },
+                { _id: player2.insertedId, playerName: "Patrick Hill" },
+                { _id: player3.insertedId, playerName: "Jackey Yang" },
+                { _id: player4.insertedId, playerName: "Eddison So" },
             ],
             max: 12
         },
         {
             time: 1701207000,
             players: [
-                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player6.insertedId, playerName: "Britney Yang" },
             ],
             max: 12
         },
         {
             time: 1701208800,
             players: [
-                { _id: player8.insertedId, name: "Aidan Haberman" },
+                { _id: player8.insertedId, playerName: "Aidan Haberman" },
             ],
             max: 4
         },
@@ -138,11 +138,11 @@ const event2 = await eventsCol.insertOne({
         {
             time: 1702062000,
             players: [
-                { _id: player1.insertedId, name: "Jason Qiu" },
-                { _id: player2.insertedId, name: "Patrick Hill" },
-                { _id: player3.insertedId, name: "Jackey Yang" },
-                { _id: player4.insertedId, name: "Eddison So" },
-                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player1.insertedId, playerName: "Jason Qiu" },
+                { _id: player2.insertedId, playerName: "Patrick Hill" },
+                { _id: player3.insertedId, playerName: "Jackey Yang" },
+                { _id: player4.insertedId, playerName: "Eddison So" },
+                { _id: player5.insertedId, playerName: "Bryan Chan" },
             ],
             max: 20
         }
@@ -158,8 +158,8 @@ const event3 = await eventsCol.insertOne({
         {
             time: 1701208800,
             players: [
-                { _id: new ObjectId(player1.insertedId), name: "Jason Qiu" },
-                { _id: new ObjectId(player4.insertedId), name: "Eddison So" }
+                { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
+                { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" }
             ],
             max: 5
         }
