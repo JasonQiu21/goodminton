@@ -1,7 +1,7 @@
-import {dbConnection, closeConnection} from '../config/mongoConnection.js';
+import { dbConnection, closeConnection } from '../config/mongoConnection.js';
 
 import { events, players } from "../config/mongoCollections.js";
-import {ObjectId} from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 const db = await dbConnection();
 await db.dropDatabase();
@@ -16,6 +16,7 @@ const player1 = await playersCol.insertOne({
     playerName: "Jason Qiu",
     email: "jqiu21@stevens.edu",
     phone: null,
+    role: "admin",
     singlesRating: 469,
     doublesRating: 902,
 });
@@ -25,6 +26,7 @@ const player2 = await playersCol.insertOne({
     playerName: "Patrick Hill",
     email: "phill@stevens.edu",
     phone: "8484682000",
+    role: "user",
     singlesRating: 800,
     doublesRating: 800
 });
@@ -34,6 +36,7 @@ const player3 = await playersCol.insertOne({
     playerName: "Jackey Yang",
     email: "jyang28@stevens.edu",
     phone: null,
+    role: "admin",
     singlesRating: 500,
     doublesRating: 500
 });
@@ -43,6 +46,7 @@ const player4 = await playersCol.insertOne({
     playerName: "Eddison So",
     email: "eso69@stevens.edu",
     phone: "7322518976",
+    role: "admin",
     singlesRating: 1200,
     doublesRating: 1200
 });
@@ -52,6 +56,7 @@ const player5 = await playersCol.insertOne({
     playerName: "Bryan Chan",
     email: "bchan4@stevens.edu",
     phone: "8484688222",
+    role: "user",
     singlesRating: 800,
     doublesRating: 800
 });
@@ -61,6 +66,7 @@ const player6 = await playersCol.insertOne({
     playerName: "Britney Yang",
     email: "byang69@stevens.edu",
     phone: null,
+    role: "admin",
     singlesRating: 200,
     doublesRating: 200
 });
@@ -70,6 +76,7 @@ const player7 = await playersCol.insertOne({
     playerName: "Jing Ngo",
     email: "jngo@stevens.edu",
     phone: "1111111111",
+    role: "user",
     singlesRating: 230,
     doublesRating: 500
 });
@@ -78,6 +85,7 @@ const player8 = await playersCol.insertOne({
     password: "$2y$10$G3rgcBM.iMH2fcYmo6mHlOSfy7Ti9CGtPT8csOoA76YWA3frpCqqe", //password67890
     playerName: "Aidan Haberman",
     email: "ahaberm@stevens.edu",
+    role: "user",
     phone: null,
     singlesRating: 1300,
     doublesRating: 1000
@@ -87,29 +95,29 @@ const event1 = await eventsCol.insertOne({
     name: "11/28/2023 Practice",
     date: "1701205200", //November 24th, 2023 at 4PM
     eventType: "practice",
-    matches:  null,
+    matches: null,
     reservations: [
         {
             time: "1700859600",
             players: [
-                {_id: player1.insertedId, name: "Jason Qiu"},
-                {_id: player2.insertedId, name: "Patrick Hill"},
-                {_id: player3.insertedId, name: "Jackey Yang"},
-                {_id: player4.insertedId, name: "Eddison So"},
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
             ],
             max: 12
         },
         {
             time: "1701207000",
             players: [
-                {_id: player6.insertedId, name: "Britney Yang"},
+                { _id: player6.insertedId, name: "Britney Yang" },
             ],
             max: 12
         },
         {
             time: "1701208800",
             players: [
-                {_id: player8.insertedId, name: "Aidan Haberman"},
+                { _id: player8.insertedId, name: "Aidan Haberman" },
             ],
             max: 4
         },
@@ -130,11 +138,11 @@ const event2 = await eventsCol.insertOne({
         {
             time: "1702062000",
             players: [
-                {_id: player1.insertedId, name: "Jason Qiu"},
-                {_id: player2.insertedId, name: "Patrick Hill"},
-                {_id: player3.insertedId, name: "Jackey Yang"},
-                {_id: player4.insertedId, name: "Eddison So"},
-                {_id: player5.insertedId, name: "Bryan Chan"},
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
             ],
             max: 20
         }
@@ -150,8 +158,8 @@ const event3 = await eventsCol.insertOne({
         {
             time: "1701208800",
             players: [
-                {_id: new ObjectId(player1.insertedId), name: "Jason Qiu"},
-                {_id: new ObjectId(player4.insertedId), name: "Eddison So"}
+                { _id: new ObjectId(player1.insertedId), name: "Jason Qiu" },
+                { _id: new ObjectId(player4.insertedId), name: "Eddison So" }
             ],
             max: 5
         }
