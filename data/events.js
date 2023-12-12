@@ -136,14 +136,12 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 	const playerCollection = await players();
 	const eventCollection = await events();
 	let playerInfo, eventInfo;
-	try {
-		playerId = typecheck.stringToOid(playerId);
-		eventId = typecheck.stringToOid(eventId);
-		playerInfo = await playerCollection.findOne({_id: playerId}, {projection: {_id: 1, playerName: 1}});
-		eventInfo = await eventCollection.findOne({_id: eventId});
-	} catch(e) {
-		throw e;
-	}
+	playerId = typecheck.stringToOid(playerId);
+	eventId = typecheck.stringToOid(eventId);
+
+	playerInfo = await playerFunctions.getPlayer(playerId);
+	eventInfo = await getEvent(eventId);
+
 	try {
 		playerInfo = typecheck.isNonEmptyObject(playerInfo);
 		console.log(playerInfo);
@@ -157,32 +155,32 @@ export const createReservation = async(playerId, eventId, time=null, court=null)
 	}
 	if (eventInfo.eventType === "practice") {
 		if (!time) throw {status: 400, error: "Need time for practice"};
-		try {
-			time = typecheck.isValidUnix(time);
-			// if (typeof(court) !== "number") throw {status: 400, error: "Court needs to be a number"};
-			// if (court !== 1 && court !== 2 && court !== 3) throw {status: 400, error: "Court needs to be a number between 1-3"};
-			let reservation = await eventCollection.findOne({_id: eventId, 'reservations.time': time}, {projection: {_id: 0, 'reservations.$': 1}});
-			console.log(reservation);
-			if (reservation) {
-				if (reservation.reservations[0].players.length === 4) throw {status: 500, error: "Court full"};
-				const info = await eventCollection.updateOne({_id: eventId, 'reservations.time': time}, {$addToSet:{'reservations.$.players': playerInfo}});
-				if (!info.acknowledged) throw {status: 500, error: "Could not add reservation"};
-				return {player: playerInfo.playerName, event: eventInfo.name, created: true};
-			}
-			else {
-				const toInsert = {
-					time: time,
-					players: [playerInfo]
-				}
-				const info = await eventCollection.updateOne({_id: eventId}, {$push: {reservations: toInsert}});
-				if (!info.acknowledged) throw {status: 500, error: "Could not add reservation"};
-				return {player: playerInfo.playerName, event: eventInfo.name, created: true};
-			}
-
-		} catch(e) {
-			throw e;
+		time = typecheck.isValidUnix(time);
+		// if (typeof(court) !== "number") throw {status: 400, error: "Court needs to be a number"};
+		// if (court !== 1 && court !== 2 && court !== 3) throw {status: 400, error: "Court needs to be a number between 1-3"};
+		try{
+			var { reservations } = await eventCollection.findOne({_id: eventId, 'reservations.time': time}, {projection: {_id: 0, 'reservations.$': 1}});
+			console.log(reservations);
+		} catch (e) {
+			console.log(e);
+			throw {status: 500, error: "Internal Server Error"};
 		}
-		return;
+
+		if (reservations) {
+			if (reservations[0].players.length >= reservations[0].max) throw {status: 500, error: "Courts are full for the provided time."};
+			let info;
+			try{
+				info = await eventCollection.updateOne({_id: eventId, 'reservations.time': time}, {$addToSet:{'reservations.$.players': playerInfo}});
+			} catch (e) {
+				console.log(e);
+				throw {status: 500, error: "Internal Server Error"};
+			}
+			if (!info.acknowledged) throw {status: 500, error: "Could not add reservation"};
+			return {player: playerInfo.playerName, event: eventInfo.name, created: true};
+		}
+		else {
+			throw {error: 400, status: "There is no slot matching the time and event given."}
+		}
 	}
 };
 
