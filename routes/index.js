@@ -1,9 +1,15 @@
-import eventsRoutes from "./events.js";
-import path from "path";
-import { static as staticDir } from "express";
+import eventRoutes from './events.js';
+import playerRoutes from './players.js';
+// import * as playerRoutes from './players.js';
 
 const constructorMethod = (app) => {
-  app.use("/", eventsRoutes);
+  // app.use('/players', playerRoutes);
+  app.use('/events', eventRoutes);
+  app.use('/players', playerRoutes);
+
+  app.use('*', (req, res) => {
+    res.status(404).json({ error: 'Route Not found' });
+  });
 };
 
 export default constructorMethod;
