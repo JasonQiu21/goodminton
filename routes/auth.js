@@ -12,7 +12,7 @@ const router = Router();
 router
   .route("/login")
   .get(async (req, res) => {
-    res.render("login", { title: "Login" });
+    res.render("login", { title: "Login", user: req.session?.player });
   })
   .post(async (req, res) => {
     try {
