@@ -1,0 +1,52 @@
+<!--DATA COMING IN
+[
+    [   // in order of bracket:
+        {
+            "name": "Yihan",
+            "score": 79,
+            "winner": true
+        },
+        {
+            "name": "Aidan",
+            "score": 48,
+            "winner": false
+        },
+        {
+            "name": "Britney",
+            "score": 84,
+            "winner": true
+        },
+        {
+            "name": "Bryan",
+            "score": 72,
+            "winner": false
+        }
+    ],
+    [
+        {
+            "name": "Yihan",
+            "score": 55,
+            "winner": false
+        },
+        {
+            "name": "Britney",
+            "score": 56,
+            "winner": true
+        }
+    ]
+]
+-->
+
+<h1>Epic Bracket</h1>
+<main id="tournament">
+    {{#each bracket}}
+        <ul class="round round-{{@index}}">
+        <li class="spacer">&nbsp;</li>
+        {{#each this}}
+            <li class="game game-top {{#if winner}}winner{{/if}}">{{name}} <span>{{score}}</span></li>
+            <li class="game game-spacer">&nbsp;</li>
+            <li class="game game-bottom {{#if winner}}winner{{/if}}">{{name}} <span>{{score}}</span></li>
+        {{/each}}
+        <li class="spacer">&nbsp;</li>
+    {{/each}}
+</main>

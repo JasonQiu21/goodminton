@@ -1,18 +1,23 @@
-import express from 'express';
+import express from "express";
 const app = express();
 import configRoutes from './routes/index.js';
 import { authenticateAdmin, authenticatePlayer } from './middleware/auth.js';
 
 const port = 3000;
 const debug = true;
+import exphbs from "express-handlebars";
 
 /*
 TODO:
 - Build out routes
 */
 
+app.use("/public", express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({extened: true}));
+
+app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 app.use(session({
     name: "AuthState",

@@ -1,0 +1,55 @@
+<!--
+    Data:
+        owner: boolean
+        username: string
+        singleRating: number
+        doubleRating: number
+
+-->
+
+<section>
+    <div class = "profilePage">
+        <div class = "profileInfo">
+            <h1>Profile</h1>
+            <h3>Username: {{username}}</h3>
+        </div>
+        <div class = "profileRating">
+            <div class = "ratingBox">
+                <h3>Single Rating</h3>
+                <p>{{singleRating}}</p>
+            </div>
+            <div class = "ratingBox">
+                <h3>Double Rating</h3>
+                <p>{{doubleRating}}</p>
+            </div>
+        </div>
+        {{#if owner}}
+            <form>
+                <div class = "formItem">
+                    <label class = "formTitle" for="username">Username</label>
+                    <input class = "formInput" type="text" id="username" name="username" placeholder="yjiang68">
+                    <button class = "profileChangeButton">Change</button>     
+                </div> 
+                <div class = "formItem">
+                    <label class = "formTitle" for="email">Email</label>
+                    <input class = "formInput" type="text" id="email" name="email" placeholder="yjiang68@stevens.edu">
+                    <button class = "profileChangeButton">Change</button>      
+                </div>
+                <div class = "formItem">
+                    <label class = "formTitle" for="password">Password</label>
+                    <input class = "formInput" type="password" id="password" name="password" placeholder="********">
+                </div>
+                <div class = "formItem">
+                    <label class = "formTitle" for="confirmPassword">Confirm Password</label>
+                    <input class = "formInput" type="password" id="confirmPassword" name="confirmPassword" placeholder="********">
+                    <button class = "profileChangeButton">Change</button>      
+                </div>
+                <div class = "formItem">
+                    <label class = "formTitle" for="phoneNumber">Phone Number</label>
+                    <input class = "formInput" type="text" id="phoneNumber" name="phoneNumber" placeholder="201-123-4567">
+                    <button class = "profileChangeButton">Change</button>      
+                </div>
+            </form>
+        {{/if}}
+    </div>
+</section>
