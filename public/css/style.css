@@ -1,8 +1,5 @@
 body {
     font-family: 'sans-serif';
-    /* font-size:small;
-    padding:10px;
-    line-height:1.4em;  */
 }
 
 .navbar {
@@ -109,9 +106,13 @@ body {
 *  Bracket specific styles
 */
 
+
 main.tournament{
     display:flex;
     flex-direction:row;
+    font-size:small;
+    padding:10px;
+    line-height:1.4em;
 }
 
 .round{
