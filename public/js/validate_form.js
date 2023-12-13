@@ -8,8 +8,8 @@ if (loginForm) {
     e.preventDefault();
     let email = document.getElementById("email").value;
     let password = document.getElementById("password").value;
-    // email = typecheck.checkEmail(email, "Email");
-    // password = typecheck.isValidString(password, "Password");
+    email = typecheck.checkEmail(email, "Email");
+    password = typecheck.isValidString(password, "Password");
     let body = {
       email,
       password,
