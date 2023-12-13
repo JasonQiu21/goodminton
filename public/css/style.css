@@ -22,7 +22,7 @@ body {
     border-right: 1px solid #bbb;
 }
 
-.navitem a {
+.navitem a { 
   color: black;
   text-align: center;
   padding: 20px;
