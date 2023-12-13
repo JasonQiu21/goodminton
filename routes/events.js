@@ -7,7 +7,8 @@ router
   .route("/")
   .get(async (req, res) => {
     try {
-      return res.json(await getAllEvents());
+      const events = await getAllEvents();
+      return res.render('events', {events: events});
     } catch (e) {
       if (!e.status) {
         console.log(`[Error on GET events/]: ${e}`);
@@ -53,7 +54,7 @@ router
   .get(async (req, res) => {
     try {
       let event = await getEvent(req.params.id);
-      return res.json(event);
+      return res.render('event', {event: event});
     } catch (e) {
       if (!e.status) {
         console.log(`[Error on GET events/:id]: ${e}`);
