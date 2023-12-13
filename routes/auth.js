@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
+import { authenticatePlayer } from "../data/players.js";
 import * as typecheck from '../typecheck.js';
 const router = Router();
 

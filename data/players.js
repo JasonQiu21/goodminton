@@ -172,9 +172,6 @@ const authenticatePlayer = async(email, password) => {
     } catch (e){
         throw {status: 401, error: "Either the email or password provided are invalid"};
     }
-
-
-
 }
 
 export {getAllPlayers, createNewPlayer, getPlayer, updatePlayer, removePlayer, authenticatePlayer};
