@@ -66,12 +66,7 @@ router
         .status(500)
         .json({ status: 500, error: "An Internal Server Error Occurred" });
     }
-    return res.render("profile", {
-      player: answer,
-      owner:
-        req.session?.player?.role == "admin" || req.sesion?.player == answer,
-    });
-    // return res.json(answer);
+    return res.json(answer);
   })
   .patch(async (req, res) => {
     const body = req.body;
@@ -83,7 +78,7 @@ router
       if (e.status) {
         return res.status(e.status).json(e);
       }
-      console.log(`[Error on POST players/:id]: ${e}`);
+      console.log(`[Error on PATCH players/:id]: ${e}`);
       return res
         .status(500)
         .json({ status: 500, error: "An Internal Server Error Occurred" });

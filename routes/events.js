@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent, createReservation, deleteReservation} from "../data/events.js";
 import * as typecheck from '../typecheck.js';
 const router = Router();
 
@@ -30,7 +30,7 @@ router
 
       typecheck.isValidString(req.body.eventName, "Event Name");
       typecheck.isValidUnix(req.body.eventDate);
-      const eventTypes = ["tournament", "leaguenight", "practice"];
+      const eventTypes = ["tournament", "leaguenight", "practice"]; 
   
       typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
       if (!eventTypes.includes(req.body.eventType))throw { status: 400, error: "Invalid event type." };
@@ -95,5 +95,46 @@ router
       return res.status(e.status).json(e);
     }
   });
+router
+  .route("/reserve/:id")
+  .post(async(req, res) => {
+    const playerId = req.body?.playerId;
+    const eventId = req.params.id;
+    const time = req.body?.time;
+    // const court = body.court;
+    try {
+      if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
+      typecheck.stringToOid(playerId);
+      typecheck.stringToOid(eventId);
+      const info = await createReservation(playerId, eventId, time);
+      return res.json(info);
+    } catch(e) {
+      if(e.status)
+        return res
+          .status(e.status)
+          .json(e);
+      console.log(e);
+      return res.status(500).json({status: 500, error: "An Internal Server Error Occurred"});
+    }
+  })
+  .delete(async(req, res) => {
+    const playerId = req.body?.playerId;
+    const eventId = req.params.id;
+    try {
+      if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
+      typecheck.stringToOid(playerId);
+      typecheck.stringToOid(eventId);
+      const info = await deleteReservation(playerId, eventId);
+      if (!info) throw {status: 500, error: 'Could not delete reservation'};
+      return res.json(info);
+    } catch(e) {
+      if(e.status)
+        return res
+          .status(e.status)
+          .json(e);
+      console.log(e);
+      return res.status(500).json({status: 500, error: "An Internal Server Error Occurred"});
+    }
+  })
 
 export default router;
