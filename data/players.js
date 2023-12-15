@@ -14,13 +14,15 @@ const getAllPlayers = async () => {
   return playerList;
 };
 
-<<<<<<< HEAD
 const createNewPlayer = async (playerName, email, password, phone = null) => {
   const playerCollection = await players();
-  playerName = helperFunctions.isValidString(playerName);
-  email = helperFunctions.isValidString(email);
-  password = helperFunctions.isValidString(password);
-  helperFunctions.checkEmail(email);
+  try {
+    playerName = helperFunctions.isValidString(playerName);
+    password = helperFunctions.isValidString(password);
+    email = helperFunctions.checkEmail(email);
+  } catch (e) {
+    throw e;
+  }
   if (phone) {
     phone = helperFunctions.isValidString(phone);
     if (
@@ -28,26 +30,6 @@ const createNewPlayer = async (playerName, email, password, phone = null) => {
     )
       throw { status: 400, error: "Bad phone number" };
   }
-=======
-const createNewPlayer = async(
-    playerName, 
-    email, 
-    password,
-    phone = null
-    ) => {
-    const playerCollection = await players();
-    try {
-        playerName = helperFunctions.isValidString(playerName);
-        password = helperFunctions.isValidString(password);
-        email = helperFunctions.checkEmail(email);
-    } catch(e) {
-        throw e;
-    }
-    if (phone) {
-        phone = helperFunctions.isValidString(phone);
-        if (!(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone))) throw { status: 400, error: "Bad phone number"};
-    }
->>>>>>> 11-middleware-handle-login-sessions-etc
 
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
@@ -100,12 +82,11 @@ const getPlayer = async (id) => {
   return player;
 };
 
-<<<<<<< HEAD
 const getPlayerByEmail = async (email) => {
-  email = helperFunctions.isValidString(email);
-  const playerCollection = await players();
   let player;
   try {
+    email = helperFunctions.checkEmail(email);
+    const playerCollection = await players();
     player = await playerCollection.findOne(
       { email: email },
       { projection: { password: 0 } }
@@ -118,22 +99,6 @@ const getPlayerByEmail = async (email) => {
   player._id = player._id.toString();
   return player;
 };
-=======
-const getPlayerByEmail = async(email) => {
-    let player;
-    try{
-        email = helperFunctions.checkEmail(email);
-        const playerCollection = await players();
-        player = await playerCollection.findOne({email: email}, {projection: {password:0}});
-    } catch (e) {
-        console.log(`Error on getPlayer: ${e}`);
-        throw {status: 500, error: `Error while getting player ${id}`};
-    }
-    if (player === null) throw { status: 404, error: "No player with id" };
-    player._id = player._id.toString();
-    return player;
-}
->>>>>>> 11-middleware-handle-login-sessions-etc
 
 const removePlayer = async (id) => {
   //TODO
@@ -157,49 +122,57 @@ const removePlayer = async (id) => {
 };
 
 const updatePlayer = async (id, body) => {
-    //TODO
-    if (!id) throw { status: 400, error: "No body" };
-    if (!body) throw { status: 400, error: "No body" };
-    let playerName, email, password, phone, singlesRating, doublesRating
-    try {
-        if (body.playerName) playerName = helperFunctions.isValidString(body.playerName);
-        if (body.email) {
-            email = helperFunctions.checkEmail(body.email);
-        }
-        if (body.password) password = helperFunctions.isValidString(body.password);
-    } catch(e) {
-        throw e;
+  //TODO
+  if (!id) throw { status: 400, error: "No body" };
+  if (!body) throw { status: 400, error: "No body" };
+  let playerName, email, password, phone, singlesRating, doublesRating;
+  try {
+    if (body.playerName)
+      playerName = helperFunctions.isValidString(body.playerName);
+    if (body.email) {
+      email = helperFunctions.checkEmail(body.email);
     }
+    if (body.password) password = helperFunctions.isValidString(body.password);
+  } catch (e) {
+    throw e;
+  }
 
-    if (body.phone) {
-        phone = helperFunctions.isValidString(body.phone);
-        if (!(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone))) throw { status: 400, error: "Bad phone number"};
-    }
-    if(body.singlesRating) singlesRating = helperFunctions.isValidNumber(body.singlesRating);
-    if(body.doublesRating) doublesRating = helperFunctions.isValidNumber(body.doublesRating);
-    let newInfo = {
-        ...body.playerName && {playerName: playerName},
-        ...body.email && {email: email},
-        ...body.password && {password: password},
-        ...body.phone && {phone: phone},
-        ...body.singlesRating && {singlesRating: singlesRating},
-        ...body.doublesRating && {doublesRating: doublesRating}
-    };
-    // console.log(JSON.stringify(newInfo));
-    const playerCollection = await players();
-    let info;
-    try{
-        info = await playerCollection.findOneAndUpdate(
-            {_id: new ObjectId(id)}, 
-            {$set: newInfo}
-        );
-    } catch (e) {
-        console.log(`Error on updatePlayer: ${e}`);
-        throw {status: 500, error: `Error while updating player ${id}`};
-    }
-    if (!info) throw { status: 404, error: "No player with id" };
-    const updatedInfo = await playerCollection.find({_id: new ObjectId(id)}).toArray();
-    return updatedInfo;
+  if (body.phone) {
+    phone = helperFunctions.isValidString(body.phone);
+    if (
+      !/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone)
+    )
+      throw { status: 400, error: "Bad phone number" };
+  }
+  if (body.singlesRating)
+    singlesRating = helperFunctions.isValidNumber(body.singlesRating);
+  if (body.doublesRating)
+    doublesRating = helperFunctions.isValidNumber(body.doublesRating);
+  let newInfo = {
+    ...(body.playerName && { playerName: playerName }),
+    ...(body.email && { email: email }),
+    ...(body.password && { password: password }),
+    ...(body.phone && { phone: phone }),
+    ...(body.singlesRating && { singlesRating: singlesRating }),
+    ...(body.doublesRating && { doublesRating: doublesRating }),
+  };
+  // console.log(JSON.stringify(newInfo));
+  const playerCollection = await players();
+  let info;
+  try {
+    info = await playerCollection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: newInfo }
+    );
+  } catch (e) {
+    console.log(`Error on updatePlayer: ${e}`);
+    throw { status: 500, error: `Error while updating player ${id}` };
+  }
+  if (!info) throw { status: 404, error: "No player with id" };
+  const updatedInfo = await playerCollection
+    .find({ _id: new ObjectId(id) })
+    .toArray();
+  return updatedInfo;
 };
 
 const authenticatePlayer = async (email, password) => {
@@ -217,7 +190,6 @@ const authenticatePlayer = async (email, password) => {
     );
     if (player === null) throw { status: 401, error: "Player not found" };
 
-<<<<<<< HEAD
     // Match passwords
     let passwordMatch = false;
     passwordMatch = await bcrypt.compare(password.trim(), player.password);
@@ -239,16 +211,3 @@ export {
   removePlayer,
   authenticatePlayer,
 };
-=======
-        // Match passwords
-        let passwordMatch = false;
-        passwordMatch = await bcrypt.compare(password.trim(), player.password);
-        if(!passwordMatch) throw {status: 401, error: "Invalid password"};
-        return (await getPlayerByEmail(email));
-    } catch (e){
-        throw {status: 401, error: "Either the email or password provided are invalid"};
-    }
-}
-
-export {getAllPlayers, createNewPlayer, getPlayer, updatePlayer, removePlayer, authenticatePlayer};
->>>>>>> 11-middleware-handle-login-sessions-etc
