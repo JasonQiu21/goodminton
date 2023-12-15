@@ -1,7 +1,7 @@
-import {dbConnection, closeConnection} from '../config/mongoConnection.js';
+import { dbConnection, closeConnection } from '../config/mongoConnection.js';
 
 import { events, players } from "../config/mongoCollections.js";
-import {ObjectId} from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 const db = await dbConnection();
 await db.dropDatabase();
@@ -88,29 +88,29 @@ const event1 = await eventsCol.insertOne({
     date: "1701205200", //November 24th, 2023 at 4PM
     eventType: "practice",
     teamType: null,
-    matches:  null,
+    matches: null,
     reservations: [
         {
             time: "1700859600",
             players: [
-                {_id: player1.insertedId, name: "Jason Qiu"},
-                {_id: player2.insertedId, name: "Patrick Hill"},
-                {_id: player3.insertedId, name: "Jackey Yang"},
-                {_id: player4.insertedId, name: "Eddison So"},
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
             ],
             max: 12
         },
         {
             time: "1701207000",
             players: [
-                {_id: player6.insertedId, name: "Britney Yang"},
+                { _id: player6.insertedId, name: "Britney Yang" },
             ],
             max: 12
         },
         {
             time: "1701208800",
             players: [
-                {_id: player8.insertedId, name: "Aidan Haberman"},
+                { _id: player8.insertedId, name: "Aidan Haberman" },
             ],
             max: 4
         },
@@ -126,22 +126,60 @@ const event2 = await eventsCol.insertOne({
     name: "12/08/2023 Practice",
     date: "1702062000", //December 8th, 2023 at 2PM
     eventType: "tournament",
-    teamType: "doubles",
+    teamType: "singles",
     matches: {},
     reservations: [
         {
             time: "1702062000",
             players: [
-                {_id: player1.insertedId, name: "Jason Qiu"},
-                {_id: player2.insertedId, name: "Patrick Hill"},
-                {_id: player3.insertedId, name: "Jackey Yang"},
-                {_id: player4.insertedId, name: "Eddison So"},
-                {_id: player5.insertedId, name: "Bryan Chan"},
-                {_id: player6.insertedId, name: "Britney Yang"},
-                {_id: player6.insertedId, name: "Britney Yang"},
-                {_id: player6.insertedId, name: "Britney Yang"},
-                {_id: player6.insertedId, name: "Britney Yang"},
-                {_id: player6.insertedId, name: "Britney Yang"}
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" },
             ],
             max: 20
         }
@@ -158,12 +196,12 @@ const event3 = await eventsCol.insertOne({
         {
             time: "1701208800",
             players: [
-                {_id: player1.insertedId, name: "Jason Qiu"},
-                {_id: player2.insertedId, name: "Patrick Hill"},
-                {_id: player3.insertedId, name: "Jackey Yang"},
-                {_id: player4.insertedId, name: "Eddison So"},
-                {_id: player5.insertedId, name: "Bryan Chan"},
-                {_id: player6.insertedId, name: "Britney Yang"}
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" }
             ],
             max: 5
         }
