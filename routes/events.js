@@ -85,5 +85,11 @@ router
     }
   });
 
+router
+  .route("/runTournament/:id")
+  .post(async (req, res) => {
+    
+  });
+
 
 export default router;

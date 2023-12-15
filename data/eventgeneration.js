@@ -39,28 +39,58 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
         let roundTitle = `winners-${teamlength}`;
         let round = [];
 
-        for(let i = 0; i < teamlength - players.length; i++) {
-            round.push({
-                id: matchcounter,
-                team1: players[i],
-                team2: null,
-                score: [0, 0],
-                winner: 1,
-                byeround: true
-            })
-            matchcounter++;
-        }
+        for(let i = 0; i < teamlength; i += 2) {
+            console.log(i);
+            if(i < teamlength - players.length) {
+                round.push({
+                    id: matchcounter,
+                    team1: players[i],
+                    team2: null,
+                    score: [0, 0],
+                    winner: 1,
+                    byeround: true,
+                    winner_to: matchcounter + Math.floor(teamlength / 2) - (i % 2),
+                    loser_to: null
+                })
+            } else {
+                round.push({
+                    id: matchcounter,
+                    team1: players[i],
+                    team2: players[i+1],
+                    score: [0, 0],
+                    winner: 0,
+                    byeround: false,
+                    winner_to: matchcounter + Math.floor(teamlength / 2) - (i % 2),
+                    loser_to: null
+                })
+            }
 
-        for(let i = teamlength - players.length; i < players.length; i += 2) {
-            round.push({
-                id: matchcounter,
-                team1: players[i],
-                team2: players[i+1],
-                score: [0, 0],
-                winner: 0,
-                byeround: false
-            })
-            matchcounter++;
+            if(i + 1 < teamlength - players.length) {
+                round.push({
+                    id: matchcounter + 1,
+                    team1: players[i + 2],
+                    team2: null,
+                    score: [0, 0],
+                    winner: 1,
+                    byeround: true,
+                    winner_to: matchcounter + Math.floor(teamlength / 2) - (i % 2),
+                    loser_to: null
+                })
+            } else {
+                round.push({
+                    id: matchcounter + 1,
+                    team1: players[i + 2],
+                    team2: players[i + 3],
+                    score: [0, 0],
+                    winner: 0,
+                    byeround: false,
+                    winner_to: matchcounter + Math.floor(teamlength / 2) - (i % 2),
+                    loser_to: null
+                })
+            }
+
+    
+            matchcounter += 2;
         }
         
 
@@ -72,7 +102,7 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
             let roundTitle = `winners-${teamlength}`;
             let round = []
             
-            for(let i = 0; i < teamlength; i++) {
+            for(let i = 0; i < teamlength / 2; i++) {
                 round.push({
                     id: matchcounter,
                     team1: null,
@@ -80,6 +110,8 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
                     score: [0, 0],
                     winner: 0,
                     byeround: false,
+                    winner_to: matchcounter + (teamlength / 2),
+                    loser_to: null
                 })
                 matchcounter++;
             }
@@ -98,7 +130,9 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
                 team2: null,
                 score: [0, 0],
                 winner: 1,
-                byeround: true
+                byeround: true,
+                winner_to: matchcounter + teamlength / 2,
+                loser_to: matchcounter + teamlength - 1
             })
             matchcounter++;
         }
@@ -110,7 +144,9 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
                 team2: players[i+1],
                 score: [0, 0],
                 winner: 0,
-                byeround: false
+                byeround: false,
+                winner_to: matchcounter + teamlength / 2,
+                loser_to: matchcounter + teamlength
             })
             matchcounter++;
         }
@@ -118,12 +154,13 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
 
         matches[roundTitle] = round;
         teamlength /= 2;
+        teamlength1 /= 2;
 
         while(teamlength > 1) {
             let roundTitle = `winners-${teamlength}`;
             let round = []
             
-            for(let i = 0; i < teamlength; i++) {
+            for(let i = 0; i < teamlength / 2; i++) {
                 round.push({
                     id: matchcounter,
                     team1: null,
@@ -131,6 +168,8 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
                     score: [0, 0],
                     winner: 0,
                     byeround: false,
+                    winner_to: matchcounter + teamlength / 2,
+                    loser_to: matchcounter + teamlength
                 });
                 matchcounter++;
             }
@@ -143,7 +182,7 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
             let roundTitle = `losers-${teamlength1}`;
             let round = []
             
-            for(let i = 0; i < teamlength; i++) {
+            for(let i = 0; i < teamlength1 / 2; i++) {
                 round.push({
                     id: matchcounter,
                     team1: null,
@@ -151,6 +190,8 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
                     score: [0, 0],
                     winner: 0,
                     byeround: false,
+                    winner_to: matchcounter + teamlength / 2,
+                    loser_to: null
                 });
                 matchcounter++;
             }
@@ -171,4 +212,8 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
     }
 
     return matches;
+}
+
+export const setMatchScore = async (eventId, matchId, score) => {
+
 }
