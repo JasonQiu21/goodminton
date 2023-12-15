@@ -1,26 +1,15 @@
 import { Router } from "express";
-import {
-  createEvent,
-  getAllEvents,
-  getEvent,
-  updateEvent,
-  deleteEvent,
-} from "../data/events.js";
-import * as typecheck from "../typecheck.js";
+import { authenticatePlayer } from "../data/players.js";
+import * as typecheck from '../typecheck.js';
 const router = Router();
 
-router
-  .route("/login")
-  .get(async (req, res) => {
-    res.render("login", { title: "Login" });
-  })
-  .post(async (req, res) => {
-    try {
-      email = typecheck.checkEmail(req.body.email);
-      password = typecheck.isValidString(req.body.password);
-      let player = await authenticatePlayer(email, password);
-      req.session.player = player;
-      res.redirect("/");
+router.route("/login").post(async (req, res) => {
+    try{
+        let email = typecheck.checkEmail(req.body.email);
+        let password = typecheck.isValidString(req.body.password);
+        let player = await authenticatePlayer(email, password);
+        req.session.player = player;
+        return res.redirect("/");
     } catch (e) {
       return res.status(401).json({
         status: 401,

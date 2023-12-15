@@ -18,10 +18,13 @@ const createNewPlayer = async(
     phone = null
     ) => {
     const playerCollection = await players();
-    playerName = helperFunctions.isValidString(playerName);
-    email = helperFunctions.isValidString(email);
-    password = helperFunctions.isValidString(password);
-    helperFunctions.checkEmail(email);
+    try {
+        playerName = helperFunctions.isValidString(playerName);
+        password = helperFunctions.isValidString(password);
+        email = helperFunctions.checkEmail(email);
+    } catch(e) {
+        throw e;
+    }
     if (phone) {
         phone = helperFunctions.isValidString(phone);
         if (!(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone))) throw { status: 400, error: "Bad phone number"};
@@ -75,10 +78,10 @@ const getPlayer = async (id) => {
 };
 
 const getPlayerByEmail = async(email) => {
-    email = helperFunctions.isValidString(email);
-    const playerCollection = await players();
     let player;
     try{
+        email = helperFunctions.checkEmail(email);
+        const playerCollection = await players();
         player = await playerCollection.findOne({email: email}, {projection: {password:0}});
     } catch (e) {
         console.log(`Error on getPlayer: ${e}`);
@@ -115,12 +118,16 @@ const updatePlayer = async (id, body) => {
     if (!id) throw { status: 400, error: "No body" };
     if (!body) throw { status: 400, error: "No body" };
     let playerName, email, password, phone, singlesRating, doublesRating
-    if (body.playerName) playerName = helperFunctions.isValidString(body.playerName);
-    if (body.email) {
-        email = helperFunctions.isValidString(body.email);
-        helperFunctions.checkEmail(email);
+    try {
+        if (body.playerName) playerName = helperFunctions.isValidString(body.playerName);
+        if (body.email) {
+            email = helperFunctions.checkEmail(body.email);
+        }
+        if (body.password) password = helperFunctions.isValidString(body.password);
+    } catch(e) {
+        throw e;
     }
-    if (body.password) password = helperFunctions.isValidString(body.password);
+
     if (body.phone) {
         phone = helperFunctions.isValidString(body.phone);
         if (!(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone))) throw { status: 400, error: "Bad phone number"};
@@ -166,15 +173,12 @@ const authenticatePlayer = async(email, password) => {
 
         // Match passwords
         let passwordMatch = false;
-        passwordMatch = await bcrypt.compare(password.trim(), user.password);
+        passwordMatch = await bcrypt.compare(password.trim(), player.password);
         if(!passwordMatch) throw {status: 401, error: "Invalid password"};
         return (await getPlayerByEmail(email));
     } catch (e){
         throw {status: 401, error: "Either the email or password provided are invalid"};
     }
-
-
-
 }
 
 export {getAllPlayers, createNewPlayer, getPlayer, updatePlayer, removePlayer, authenticatePlayer};

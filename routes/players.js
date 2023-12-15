@@ -50,57 +50,57 @@ router
   });
 
 router
-  .route("/:playerId")
-  .get(async (req, res) => {
-    //GET
-    let id, answer;
-    try {
-      id = helperFunctions.isValidId(req.params.playerId);
-      answer = await playerFunctions.getPlayer(id);
-    } catch (e) {
-      if (e.status) {
-        return res.status(e.status).json(e);
-      }
-      console.log(`[Error on GET players/:id]: ${e}`);
-      return res
-        .status(500)
-        .json({ status: 500, error: "An Internal Server Error Occurred" });
-    }
-    return res.json(answer);
-  })
-  .patch(async (req, res) => {
-    const body = req.body;
-    const id = req.params.playerId;
-    let answer;
-    try {
-      answer = await playerFunctions.updatePlayer(id, body);
-    } catch (e) {
-      if (e.status) {
-        return res.status(e.status).json(e);
-      }
-      console.log(`[Error on POST players/:id]: ${e}`);
-      return res
-        .status(500)
-        .json({ status: 500, error: "An Internal Server Error Occurred" });
-    }
-    return res.json(answer);
-  })
-  .delete(async (req, res) => {
-    let id, answer;
-    try {
-      id = helperFunctions.isValidId(req.params.playerId);
-      answer = await playerFunctions.removePlayer(id);
-    } catch (e) {
-      if (e.status) {
-        return res.status(e.status).json(e);
-      }
-      console.log(`[Error on DELETE players/:id]: ${e}`);
-      return res
-        .status(500)
-        .json({ status: 500, error: "An Internal Server Error Occurred" });
-    }
-    res.json(answer);
-  });
+    .route('/:playerId')
+    .get(async (req, res) => {
+        //GET
+        let id, answer;
+        try {
+            id = helperFunctions.isValidId(req.params.playerId);
+            answer = await playerFunctions.getPlayer(id);
+        } catch(e) {
+            if(e.status){
+                return res.status(e.status).json(e);
+            }
+            console.log(`[Error on GET players/:id]: ${e}`);
+            return res
+            .status(500)
+            .json({status: 500, error: "An Internal Server Error Occurred"});
+        }
+        return res.json(answer);
+    })
+    .patch(async (req, res) => {
+        const body = req.body;
+        const id  = req.params.playerId;
+        let answer;
+        try {
+            answer = await playerFunctions.updatePlayer(id, body);
+        }catch(e){
+            if(e.status){
+                return res.status(e.status).json(e);
+            }
+            console.log(`[Error on PATCH players/:id]: ${e}`);
+            return res
+            .status(500)    
+            .json({status: 500, error: "An Internal Server Error Occurred"});
+        }
+        return res.json(answer);
+    })
+    .delete(async (req, res) => {
+        let id, answer;
+        try {
+            id = helperFunctions.isValidId(req.params.playerId);
+            answer = await playerFunctions.removePlayer(id);
+        } catch(e) {
+            if(e.status){
+                return res.status(e.status).json(e);
+            }
+            console.log(`[Error on DELETE players/:id]: ${e}`);
+            return res
+            .status(500)
+            .json({status: 500, error: "An Internal Server Error Occurred"});
+        }
+        res.json(answer);
+    });
 
 export default router;
 
