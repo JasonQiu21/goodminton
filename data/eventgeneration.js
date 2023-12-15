@@ -3,13 +3,10 @@ import { get } from './players.js';
 import { events } from "../config/mongoCollections.js";
 import { getEvent } from "./events.js";
 
-export const generateRoundRobinTournament = async (event) => {
-    let players = event.reservations[0].players;
-
+export const createTeams = async (players) => {
     for (let i = 0; i < players.length; i++) players[i] = [await get(players[i]._id.toString())];
 
     if (event.teamType == "singles") {
-        if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
         players = players.map(player => { return [{ id: player[0]._id, playerName: player[0].playerName }] });
     } else {
         let playerCopy = players
@@ -17,10 +14,45 @@ export const generateRoundRobinTournament = async (event) => {
             players[i / 2] = [playerCopy[i][0], playerCopy[i + 1][0]];
         }
         players = players.slice(0, players.length / 2);
-        if (seeded) players = players.sort((a, b) => (b[0].doublesRating + b[1].doublesRating) / 2 - (a[0].doublesRating + a[1].doublesRating) / 2);
         players = players.map(player => { return [{ id: player[0]._id, playerName: player[0].playerName }, { id: player[1]._id, playerName: player[1].playerName }] });
     }
 
+    return players;
+}
+
+export const generateRoundRobinTournament = async (eventId) => {
+    eventId = typecheck.stringToOid(eventId);
+    const event = await getEvent(eventId.toString());
+
+    let players = createTeams(event.reservations[0].players);
+
+    const matches = {};
+    const round = [];
+    let matchcounter = 0;
+
+    for (let i = 0; i < players.length; i++) {
+        for (let j = i; j < players.length; j++) {
+            round.push({
+                id: matchcounter,
+                team1: players[i],
+                team2: players[j],
+                score: [0, 0],
+                winner: 0,
+                byeround: false,
+                winner_to: null,
+                loser_to: null
+            })
+
+            matchcounter++;
+        }
+    }
+
+    matches["round"] = round;
+
+    const eventsCol = await events();
+    const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
+
+    if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
 
 }
 
@@ -37,23 +69,7 @@ export const generateElimTournament = async (eventId, tournamentType, seeded = t
     eventId = typecheck.stringToOid(eventId);
     const event = await getEvent(eventId.toString());
 
-    let players = event.reservations[0].players;
-
-    for (let i = 0; i < players.length; i++) players[i] = [await get(players[i]._id.toString())];
-
-    if (event.teamType == "singles") {
-        if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
-        players = players.map(player => { return [{ id: player[0]._id, playerName: player[0].playerName }] });
-    } else {
-        let playerCopy = players
-        for (let i = 0; i < playerCopy.length - 1; i += 2) {
-            players[i / 2] = [playerCopy[i][0], playerCopy[i + 1][0]];
-        }
-        players = players.slice(0, players.length / 2);
-        if (seeded) players = players.sort((a, b) => (b[0].doublesRating + b[1].doublesRating) / 2 - (a[0].doublesRating + a[1].doublesRating) / 2);
-        players = players.map(player => { return [{ id: player[0]._id, playerName: player[0].playerName }, { id: player[1]._id, playerName: player[1].playerName }] });
-    }
-
+    let players = createTeams(event.reservations[0].players);
 
     //at this point, each index of players is a string (either "Person1" or "Person1 & Person2")
     let teamlength = Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)));
@@ -213,8 +229,6 @@ export const generateElimTournament = async (eventId, tournamentType, seeded = t
     const eventsCol = await events();
     const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
 
-    console.log(returnedUpdate);
-
     if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
 
 
@@ -222,11 +236,7 @@ export const generateElimTournament = async (eventId, tournamentType, seeded = t
     for (let round in matches) {
         for (let match of matches[round]) {
             if (match.byeround) {
-                try {
-                    let result = await submitScores(eventId.toString(), match.id, [0, 0], 1);
-                } catch (e) {
-                    console.log(e);
-                }
+                let result = await submitScores(eventId.toString(), match.id, [0, 0], 1);
             }
         }
     }
