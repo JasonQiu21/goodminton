@@ -66,6 +66,7 @@ router
         .status(500)
         .json({ status: 500, error: "An Internal Server Error Occurred" });
     }
+    res.render("player", { player: answer });
     return res.json(answer);
   })
   .patch(async (req, res) => {

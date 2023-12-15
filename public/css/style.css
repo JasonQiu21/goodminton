@@ -108,15 +108,12 @@ body {
 
 .loginForm, .registerForm {
     display: block;
-    margin: 0 auto;
     left: 50%;
     top: 50%;
     position: absolute;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%,-40%);
     width: 36%;
     padding: 24px;
-    /* padding-top: 5%;
-    padding-bottom: 5%; */
     border: 1px solid #ccc;
     border-radius: 5px;
 }
