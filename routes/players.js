@@ -66,8 +66,12 @@ router
         .status(500)
         .json({ status: 500, error: "An Internal Server Error Occurred" });
     }
-    res.render("player", { player: answer });
-    return res.json(answer);
+    return res.render("profile", {
+      player: answer,
+      owner:
+        req.session?.player?.role == "admin" || req.sesion?.player == answer,
+    });
+    // return res.json(answer);
   })
   .patch(async (req, res) => {
     const body = req.body;

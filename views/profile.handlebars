@@ -8,19 +8,25 @@
 -->
 
 <section>
+    {{log this}}
     <div class = "profilePage">
         <div class = "profileInfo">
             <h1>Profile</h1>
-            <h3>Username: {{username}}</h3>
+            <h3>Username: </h3>
+            <p>{{player.playerName}}</p>
+            <h3>Phone Number:</h3>
+            <p>{{player.phone}}</p>
+            <h3>Email: </h3>
+            <p>{{player.email}}</p>
         </div>
         <div class = "profileRating">
             <div class = "ratingBox">
                 <h3>Single Rating</h3>
-                <p>{{singleRating}}</p>
+                <p>{{player.singlesRating}}</p>
             </div>
             <div class = "ratingBox">
                 <h3>Double Rating</h3>
-                <p>{{doubleRating}}</p>
+                <p>{{player.doublesRating}}</p>
             </div>
         </div>
         {{#if owner}}
