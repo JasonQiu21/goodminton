@@ -5,8 +5,8 @@ const router = Router();
 
 router.route("/login").post(async (req, res) => {
     try{
-        email = typecheck.checkEmail(req.body.email);
-        password = typecheck.isValidString(req.body.password);
+        let email = typecheck.checkEmail(req.body.email);
+        let password = typecheck.isValidString(req.body.password);
         let player = await authenticatePlayer(email, password);
         req.session.player = player;
         return res.redirect("/");

@@ -1,6 +1,7 @@
 import express from "express";
 const app = express();
 import configRoutes from './routes/index.js';
+import session from "express-session";
 import { authenticateAdmin, authenticatePlayer } from './middleware/auth.js';
 
 const port = 3000;
@@ -14,7 +15,7 @@ TODO:
 
 app.use("/public", express.static("public"));
 app.use(express.json());
-app.use(express.urlencoded({extened: true}));
+app.use(express.urlencoded({extended: true}));
 
 app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
@@ -34,6 +35,7 @@ if(debug){
             req.session.user ? "User is authenticated as" : "User not authenticated"
           } ${req.session.user ? req.session.user.role : ""})`
         );
+        return next();
     });
 }
 

@@ -5,7 +5,7 @@ import authRoutes from "./auth.js";
 
 const constructorMethod = (app) => {
   // app.use('/players', playerRoutes);
-  app.use('/login', authRoutes);
+  app.use('/', authRoutes);
   app.use('/api/events', eventRoutes);
   app.use('/api/players', playerRoutes);
 

@@ -3,6 +3,9 @@ import { dbConnection, closeConnection } from '../config/mongoConnection.js';
 import { events, players } from "../config/mongoCollections.js";
 import { ObjectId } from 'mongodb';
 
+import bcrypt from "bcrypt";
+const saltRounds = 16;
+
 const db = await dbConnection();
 await db.dropDatabase();
 
@@ -11,8 +14,10 @@ const playersCol = await players();
 
 //NOTE: For BCrypt Hash, cost factor/salt rounds is set to 10.
 
+let player1Pass = await bcrypt.hash("password1", saltRounds);
+
 const player1 = await playersCol.insertOne({
-    password: "$2y$10$u7PotR0ZFKhLBMu2M8p9Ne9wVQiu1OPk6NoQybbWXxU.ilX8JqVQK", //password1
+    password: player1Pass, //password1
     playerName: "Jason Qiu",
     email: "jqiu21@stevens.edu",
     phone: null,
@@ -21,8 +26,10 @@ const player1 = await playersCol.insertOne({
     doublesRating: 902,
 });
 
+let player2Pass = await bcrypt.hash("password12", saltRounds);
+
 const player2 = await playersCol.insertOne({
-    password: "$2y$10$C5jhZtGVF3eN4feeZYn5V.3UTCnbtL9YpROQLsqqHeW2r2rrrTzb.", //password12
+    password: player2Pass, //password12
     playerName: "Patrick Hill",
     email: "phill@stevens.edu",
     phone: "8484682000",
@@ -31,8 +38,10 @@ const player2 = await playersCol.insertOne({
     doublesRating: 800
 });
 
+let player3Pass = await bcrypt.hash("password123", saltRounds);
+
 const player3 = await playersCol.insertOne({
-    password: "$2y$10$mqn.wu3E7DwCdr.wdsXuQezjq/6iE4qLzzzqVY3iIfy.q.bl1nNIu", //password123
+    password: player3Pass, //password123
     playerName: "Jackey Yang",
     email: "jyang28@stevens.edu",
     phone: null,
@@ -41,8 +50,10 @@ const player3 = await playersCol.insertOne({
     doublesRating: 500
 });
 
+let player4Pass = await bcrypt.hash("password1234", saltRounds);
+
 const player4 = await playersCol.insertOne({
-    password: "$2y$10$.3z6jVXFV/z8JRat1ZCjYOSnHzY8cVaNg9mJ1b9Z0UxWYNpLxqMvC", //password1234
+    password: player4Pass, //password1234
     playerName: "Eddison So",
     email: "eso69@stevens.edu",
     phone: "7322518976",
@@ -51,8 +62,10 @@ const player4 = await playersCol.insertOne({
     doublesRating: 1200
 });
 
+let player5Pass = await bcrypt.hash("password12345", saltRounds);
+
 const player5 = await playersCol.insertOne({
-    password: "$2y$10$H4vtw4Yt6m94GouZlY.j.eK/R7O0rTysYlk7rhN2JFu5amw/q3ttK", //password12345
+    password: player5Pass, //password12345
     playerName: "Bryan Chan",
     email: "bchan4@stevens.edu",
     phone: "8484688222",
@@ -61,8 +74,10 @@ const player5 = await playersCol.insertOne({
     doublesRating: 800
 });
 
+let player6Pass = await bcrypt.hash("password6", saltRounds);
+
 const player6 = await playersCol.insertOne({
-    password: "$2y$10$gRNAfkP0UAKjo/l5xaoP4urr1JxOtMdRXFjqvBAoD8foRitx0DnfK", //password6
+    password: player6Pass, //password6
     playerName: "Britney Yang",
     email: "byang69@stevens.edu",
     phone: null,
@@ -71,8 +86,10 @@ const player6 = await playersCol.insertOne({
     doublesRating: 200
 });
 
+let player7Pass =  await bcrypt.hash("password67", saltRounds);
+
 const player7 = await playersCol.insertOne({
-    password: "$2y$10$feOQEQTk0UvQFEwmYtYQjeiea8WTyw/Ti4AWAZMvydfQ1o4537Fyq", //password67
+    password: player7Pass, //password67
     playerName: "Jing Ngo",
     email: "jngo@stevens.edu",
     phone: "1111111111",
@@ -81,8 +98,10 @@ const player7 = await playersCol.insertOne({
     doublesRating: 500
 });
 
+let player8Pass =  await bcrypt.hash("password67890", saltRounds);
+
 const player8 = await playersCol.insertOne({
-    password: "$2y$10$G3rgcBM.iMH2fcYmo6mHlOSfy7Ti9CGtPT8csOoA76YWA3frpCqqe", //password67890
+    password: player8Pass, //password67890
     playerName: "Aidan Haberman",
     email: "ahaberm@stevens.edu",
     role: "user",

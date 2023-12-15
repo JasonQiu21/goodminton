@@ -166,7 +166,7 @@ const authenticatePlayer = async(email, password) => {
 
         // Match passwords
         let passwordMatch = false;
-        passwordMatch = await bcrypt.compare(password.trim(), user.password);
+        passwordMatch = await bcrypt.compare(password.trim(), player.password);
         if(!passwordMatch) throw {status: 401, error: "Invalid password"};
         return (await getPlayerByEmail(email));
     } catch (e){
