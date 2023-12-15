@@ -1,5 +1,6 @@
 (function($) {
     let allEvents = $('#allEvents');
+    let count = 0;
     let requestAllEvents = {
         method: 'GET',
         url: 'api/events'
@@ -17,9 +18,10 @@
                     <br>`
                 )
                 allEvents.append(element);
+                count++;
             }
         })
-        if (allEvents.is(':empty')) {
+        if (!count) {
             allEvents.append('<a>No upcoming events, stay tuned for updates!</a>')
         }
     })
