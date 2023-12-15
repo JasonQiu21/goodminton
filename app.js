@@ -2,7 +2,7 @@ import express from "express";
 const app = express();
 import configRoutes from './routes/index.js';
 import session from "express-session";
-import { authenticateAdmin, authenticatePlayer } from './middleware/auth.js';
+import { authenticateAdmin, authenticatePlayer, checkPlayerIdAgainstRequestBody } from './middleware/auth.js';
 
 const port = 3000;
 const debug = true;
@@ -45,6 +45,8 @@ adminRoutes.forEach(route => app.use(route, authenticateAdmin));
 const playerRoutes = [];
 playerRoutes.forEach(route => app.use(route, authenticatePlayer));
 
+const samePlayerIdRoutes = [];
+samePlayerIdRoutes.forEach(route => app.use(route, checkPlayerIdAgainstRequestBody));
 
 configRoutes(app);
 
