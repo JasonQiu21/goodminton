@@ -37,7 +37,7 @@ export const getAllEvents = async () => {
 	const eventsCol = await events();
 	let res;
 	try {
-		res = await eventsCol.find({}).project({ _id: 1, name: 1 }).toArray();
+		res = await eventsCol.find({}).project({ _id: 1, name: 1, date: 1 }).toArray();
 		return res;
 	} catch (e) {
 		console.log(e);

@@ -8,7 +8,7 @@ router
   .get(async (req, res) => {
     try {
       const events = await getAllEvents();
-      return res.render('events', {events: events});
+      return res.json(events);
     } catch (e) {
       if (!e.status) {
         console.log(`[Error on GET events/]: ${e}`);
