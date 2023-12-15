@@ -1,13 +1,41 @@
 import * as typecheck from './typecheck.js'
 import { get } from './players.js';
+import { events } from "../config/mongoCollections.js";
+import { getEvent } from "./events.js";
 
-export const generateMatches = async (event, tournamentType, seeded = true) => {
+export const generateRoundRobinTournament = async (event) => {
+    let players = event.reservations[0].players;
+
+    for (let i = 0; i < players.length; i++) players[i] = [await get(players[i]._id.toString())];
+
+    if (event.teamType == "singles") {
+        if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
+        players = players.map(player => { return [{ id: player[0]._id, playerName: player[0].playerName }] });
+    } else {
+        let playerCopy = players
+        for (let i = 0; i < playerCopy.length - 1; i += 2) {
+            players[i / 2] = [playerCopy[i][0], playerCopy[i + 1][0]];
+        }
+        players = players.slice(0, players.length / 2);
+        if (seeded) players = players.sort((a, b) => (b[0].doublesRating + b[1].doublesRating) / 2 - (a[0].doublesRating + a[1].doublesRating) / 2);
+        players = players.map(player => { return [{ id: player[0]._id, playerName: player[0].playerName }, { id: player[1]._id, playerName: player[1].playerName }] });
+    }
+
+
+}
+
+export const generateSwissRound = async (event) => {
+
+}
+
+export const generateElimTournament = async (eventId, tournamentType, seeded = true) => {
     /*
     This function takes in the event and whether or not the event is seeded and generates an object with keys that have values of lists of matches
     */
 
-
     //skipping validation for now, but TODO? idk
+    eventId = typecheck.stringToOid(eventId);
+    const event = await getEvent(eventId.toString());
 
     let players = event.reservations[0].players;
 
@@ -148,37 +176,144 @@ export const generateMatches = async (event, tournamentType, seeded = true) => {
 
             let roundcounter = matchcounter + teamlength / 2 - 1;
 
-            round1.push({
-                id: matchcounter,
-                team1: null,
-                team2: null,
-                score: [0, 0],
-                winner: 0,
-                byeround: false,
-                winner_to: roundcounter,
-                loser_to: null
-            });
+            for (let i = 0; i < teamlength / 2; i++) {
+                if (matchcounter % 2 === 1) roundcounter++;
 
-            round2.push({
-                id: matchcounter + teamlength,
-                team1: null,
-                team2: null,
-                score: [0, 0],
-                winner: 0,
-                byeround: false,
-                winner_to: roundcounter + teamlength,
-                loser_to: null
-            });
+                round1.push({
+                    id: matchcounter,
+                    team1: null,
+                    team2: null,
+                    score: [0, 0],
+                    winner: 0,
+                    byeround: false,
+                    winner_to: roundcounter + 1,
+                    loser_to: null
+                });
 
+                round2.push({
+                    id: matchcounter + teamlength / 2,
+                    team1: null,
+                    team2: null,
+                    score: [0, 0],
+                    winner: 0,
+                    byeround: false,
+                    winner_to: roundcounter + teamlength / 2 + 1,
+                    loser_to: null
+                });
+                matchcounter++;
+            }
+
+            matchcounter += teamlength / 2;
             matches[roundTitle1] = round1;
             matches[roundTitle2] = round2;
             teamlength /= 2;
         }
     }
 
-    return matches;
+    const eventsCol = await events();
+    const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
+
+    console.log(returnedUpdate);
+
+    if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
+
+
+    //now we update bye rounds
+    for (let round in matches) {
+        for (let match of matches[round]) {
+            if (match.byeround) {
+                try {
+                    let result = await submitScores(eventId.toString(), match.id, [0, 0], 1);
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        }
+    }
+
+    return returnedUpdate;
 }
 
-export const setMatchScore = async (eventId, matchId, score) => {
+export const translationBracketLayer = async (eventId) => {
+    eventId = typecheck.stringToOid(eventId);
+    const event = await getEvent(eventId.toString());
+
+    const matches = event.matches;
+
+    let matchArray = [];
+    for (let round in matches) {
+        let roundArray = [];
+        for (let match of matches[round]) {
+            //get each player or something i guess
+            roundArray.push({
+                name: (match.team1 === null) ? "null" : match.team1[0].playerName + ((match.team1.length > 1) ? " & " + match.team1[1].playerName : ""),
+                score: match.score[0],
+                "byeround?": match.byeround,
+                "winner?": match.winner === 1 || (match.byeround && match.team2 === null)
+            });
+            roundArray.push({
+                name: (match.team2 === null) ? "null" : match.team2[0].playerName + ((match.team2.length > 1) ? " & " + match.team2[1].playerName : ""),
+                score: match.score[1],
+                "byeround?": match.byeround,
+                "winner?": match.winner === 2 || (match.byeround && match.team1 === null)
+            });
+        }
+        matchArray.push(roundArray);
+    }
+
+    return matchArray;
 
 }
+
+export const submitScores = async (eventId, matchId, score, winner) => {
+    /*
+    This function takes in the event ID, the match ID, the score, and the winner and updates the match with the score and winner.
+    */
+
+    eventId = typecheck.stringToOid(eventId);
+    score = typecheck.isNonEmptyArray(score);
+
+    const event = await getEvent(eventId.toString());
+
+    const matches = event.matches;
+
+    for (let round in matches) {
+        for (let match of matches[round]) {
+            if (match.id === matchId) {
+                match.score = score;
+                match.winner = winner;
+
+                //now we have to update the next match
+                if (match.winner_to !== null) {
+                    for (let round2 in matches) {
+                        for (let match2 of matches[round2]) {
+                            if (match2.id === match.winner_to) {
+                                if (match2.team1 === null) match2.team1 = match.team1;
+                                else match2.team2 = match.team1;
+                            }
+                        }
+                    }
+                }
+
+                if (match.loser_to !== null) {
+                    for (let round2 in matches) {
+                        for (let match2 of matches[round2]) {
+                            if (match2.id === match.loser_to) {
+                                if (match2.team1 === null) match2.team1 = match.team2;
+                                else match2.team2 = match.team2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    const eventsCol = await events();
+    const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
+
+
+    if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
+    return returnedUpdate;
+}
+

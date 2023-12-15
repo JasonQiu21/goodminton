@@ -28,7 +28,7 @@ export const createEvent = async (
       matches: eventType === "practice" ? null : {},
       reservations: [],
     });
-    if(!insertInfo.acknowledged) throw { status: 500, error: "An error occurred while creating event" };
+    if (!insertInfo.acknowledged) throw { status: 500, error: "An error occurred while creating event" };
   } catch (e) {
     console.log(e);
     throw { status: 500, error: "An error occurred while creating event" };
@@ -113,18 +113,18 @@ export const deleteEvent = async (eventId) => {
   eventId = typecheck.stringToOid(eventId);
   const evensCol = await events();
   let event = await getEvent(eventId);
-  try{
-    var res = await eventsCol.findOneAndDelete({_id: id});
+  try {
+    var res = await eventsCol.findOneAndDelete({ _id: id });
   } catch (e) {
     console.log(e);
-    throw {status: 500, error: `Error while removing ${eventId}`};
+    throw { status: 500, error: `Error while removing ${eventId}` };
   }
 
-  try{
+  try {
     res = typecheck.isNonEmptyObject(res)
   } catch (e) {
-    throw {errorCode: 404, message: `Could not delete event with id '${id.toString()}'`};
+    throw { errorCode: 404, message: `Could not delete event with id '${id.toString()}'` };
   }
 
-  return {event: res, deleted: true};
+  return { event: res, deleted: true };
 };

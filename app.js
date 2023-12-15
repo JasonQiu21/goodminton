@@ -3,7 +3,7 @@ const app = express();
 import configRoutes from './routes/index.js';
 
 import { getEvent } from './data/events.js'
-import { generateMatches } from './data/eventgeneration.js'
+import { generateElimTournament, translationBracketLayer } from './data/eventgeneration.js'
 
 /*
 TODO:
@@ -15,11 +15,9 @@ app.use(express.json());
 configRoutes(app);
 
 app.listen(3000, async () => {
-
-    const event = await getEvent('657caeb861aeb43f04fd81da');
-    const matches = await generateMatches(event, { name: "Double Elimination" }, false);
-
+    const matches = await generateElimTournament('657cc85551885368ed83d995', { name: "Double Elimination" }, false);
     //console.log(JSON.stringify(matches, null, 4));
-    console.log(matches);
+    const translation = await translationBracketLayer('657cc85551885368ed83d995');
+    //console.log(translation);
     console.log("Goodminton server running on http://localhost:3000");
 });
