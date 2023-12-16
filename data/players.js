@@ -1,4 +1,4 @@
-import { players } from "../config/mongoCollections.js";
+import { players, events } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import * as helperFunctions from "../typecheck.js";
 import bcrypt from "bcrypt";
@@ -211,6 +211,26 @@ const authenticatePlayer = async (email, password) => {
   }
 };
 
+const getReservations = async (playerId) => {
+  let playerOid = helperFunctions.stringToOid(playerId);
+  await getPlayer(playerId);
+  const eventsCol = await events();
+  try{
+    var events = await eventsCol.find(
+      {reservations: {$elemMatch: {"players._id": playerOid}}}
+    ).project({ reservations: 0 })
+    .toArray();
+
+    console.log(events);
+  } catch (e) {
+    console.log(`Error on getReservations: ${e}`);
+    throw { status: 500, error: `Error while getting reservations for player ${id}` }
+  }
+  if(!helperFunctions.isNonEmptyArray(events)) throw {status: 404, error: "No reservations"};
+
+  return events.map(event => {event._id = event._id.toString(); return event});
+}
+
 export {
   getAllPlayers,
   createNewPlayer,
@@ -218,4 +238,5 @@ export {
   updatePlayer,
   removePlayer,
   authenticatePlayer,
+  getReservations
 };
