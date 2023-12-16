@@ -25,8 +25,9 @@ router.route("/reservations/:playerid").get(async (req, res) => {
   try {
     let id = typecheck.isValidId(req.params.playerid);
     let events = await playerFunctions.getReservations(id);
+    console.log(events)
     for (let i = 0; i < events.length; i++) {
-      const eventTime = new Date(events[i].date * 1000);
+      const eventTime = new Date(events[i].time * 1000);
       events[i].time = eventTime.toDateString() + " @ " + eventTime.toTimeString();
     }
 
@@ -38,6 +39,9 @@ router.route("/reservations/:playerid").get(async (req, res) => {
     });
   } catch (e) {
     return res.render("error", {
+      user: req.session?.player,
+      title: "Error",
+      id: req.session?.player?._id,
       error: e.error,
     });
   }
