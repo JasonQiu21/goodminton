@@ -130,11 +130,15 @@ const updatePlayer = async (id, body) => {
     playerName = helperFunctions.isValidString(body.playerName);
   if (body.email) {
     email = helperFunctions.checkEmail(body.email);
-    try{
+    try {
       let player = await getPlayerByEmail(email);
-      throw {status: 400, error: "Email already registered for another user"}
+      throw { status: 400, error: "Email already registered for another user" };
     } catch (e) {
-      if(e?.status !== 404) throw {status: 400, error: "Email already registered for another user"}
+      if (e?.status !== 404)
+        throw {
+          status: 400,
+          error: "Email already registered for another user",
+        };
     }
   }
   if (body.password) {
@@ -143,9 +147,7 @@ const updatePlayer = async (id, body) => {
   }
   if (body.phone) {
     phone = helperFunctions.isValidString(body.phone);
-    if (
-      !/^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/im.test(phone)
-    )
+    if (!/^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/im.test(phone))
       throw { status: 400, error: "Bad phone number" };
   }
   if (body.singlesRating)
@@ -163,7 +165,7 @@ const updatePlayer = async (id, body) => {
   // console.log(JSON.stringify(newInfo));
   const playerCollection = await players();
   try {
-    var {matchedCount, modifiedCount} = await playerCollection.updateOne(
+    var { matchedCount, modifiedCount } = await playerCollection.updateOne(
       { _id: helperFunctions.stringToOid(id) },
       { $set: newInfo }
     );
@@ -171,14 +173,18 @@ const updatePlayer = async (id, body) => {
     console.log(`Error on updatePlayer: ${e}`);
     throw { status: 500, error: `Error while updating player ${id}` };
   }
-  if(matchedCount === 0) throw {status: 404, error: "Player not found"};
+  if (matchedCount === 0) throw { status: 404, error: "Player not found" };
   else if (matchedCount !== 1) {
-    console.log(`<ERROR> found ${matchedCount} documents with same ObjectID. playerId: ${id}`);
-    throw{status: 500, error: `Error while updating ${id}`};
+    console.log(
+      `<ERROR> found ${matchedCount} documents with same ObjectID. playerId: ${id}`
+    );
+    throw { status: 500, error: `Error while updating ${id}` };
   }
 
-  if(modifiedCount === 0) throw {status: 400, error: "Player not updated - no changes were given"};
-  else if(modifiedCount !== 1) throw {status: 500, error: `Error while updating ${id}`};
+  if (modifiedCount === 0)
+    throw { status: 400, error: "Player not updated - no changes were given" };
+  else if (modifiedCount !== 1)
+    throw { status: 500, error: `Error while updating ${id}` };
 
   return await getPlayer(id);
 };
@@ -215,21 +221,31 @@ const getReservations = async (playerId) => {
   let playerOid = helperFunctions.stringToOid(playerId);
   await getPlayer(playerId);
   const eventsCol = await events();
-  try{
-    var reservations = await eventsCol.find(
-      {reservations: {$elemMatch: {"players._id": playerOid}}}
-    ).project({ reservations: 0 })
-    .toArray();
-
-    console.log(reservations);
+  try {
+    var reservations = await eventsCol
+      .find({ reservations: { $elemMatch: { "players._id": playerOid } } })
+      .toArray();
+    // console.log(reservations);
   } catch (e) {
     console.log(`Error on getReservations: ${e}`);
-    throw { status: 500, error: `Error while getting reservations for player ${id}` }
+    throw {
+      status: 500,
+      error: `Error while getting reservations for player ${id}`,
+    };
   }
-  if(!helperFunctions.isNonEmptyArray(reservations)) throw {status: 404, error: "No reservations"};
+  if (!helperFunctions.isNonEmptyArray(reservations))
+    throw { status: 404, error: "No reservations" };
 
-  return reservations.map(event => {event._id = event._id.toString(); return event});
-}
+  return reservations.map((event) => {
+    let time = 0;
+    event.reservations.forEach(res => {
+      res.players.forEach(player => {
+        if(player._id.toString() === playerId.trim()) time = res.time
+      })
+    })
+    return { _id: event._id.toString(), name: event.name, time: time };
+  });
+};
 
 export {
   getAllPlayers,
@@ -238,5 +254,5 @@ export {
   updatePlayer,
   removePlayer,
   authenticatePlayer,
-  getReservations
+  getReservations,
 };
