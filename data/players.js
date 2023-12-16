@@ -130,6 +130,12 @@ const updatePlayer = async (id, body) => {
     playerName = helperFunctions.isValidString(body.playerName);
   if (body.email) {
     email = helperFunctions.checkEmail(body.email);
+    try{
+      let player = await getPlayerByEmail(email);
+      throw {status: 400, error: "Email already registered for another user"}
+    } catch (e) {
+      if(e?.status !== 404) throw {status: 400, error: "Email already registered for another user"}
+    }
   }
   if (body.password) {
     password = helperFunctions.isValidString(body.password);

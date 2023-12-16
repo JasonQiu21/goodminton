@@ -71,7 +71,13 @@ router
     try {
       const body = helperFunctions.isValidPlayer(req.body, true);
       const id = req.params.playerId;
-      
+
+      console.log(req.session);
+      if(req.session?.player?.role !== "admin"){
+        delete body?.singlesRating;
+        delete body?.doublesRating;
+      }
+      console.log(body);
       let player = await playerFunctions.updatePlayer(id, body);
       return res.json(player);
     } catch (e) {
