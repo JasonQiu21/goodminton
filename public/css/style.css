@@ -233,3 +233,48 @@ li.game-bottom{
     column-gap: 20px;
     flex: 1; 
 }
+
+.homeButton {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #dddddd;
+
+}
+
+.homeButton:hover{
+    background-color: #111111;
+    color: white;
+}
+
+/*
+    CSS For Leaderboard Page
+*/
+
+.leaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboardTable td, .leaderboardTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.leaderboardTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dddddd;
+    color: black;
+}
+
+.leaderboardTable tr:hover {background-color: #ddd;}
+
+.leaderboardPage h1 {
+    text-align: center;
+}
