@@ -10,40 +10,16 @@
 <section>
     {{log this}}
     <div class = "profilePage">
-        <div class = "profileInfo">
-            <h1>Profile</h1>
-            <h3>Username: </h3>
-            <p>{{player.playerName}}</p>
-            <h3>Phone Number:</h3>
-            <p>{{player.phone}}</p>
-            <h3>Email: </h3>
-            <p>{{player.email}}</p>
-        </div>
-        <div class = "profileRating">
-            <div class = "ratingBox">
-                <h3>Single Rating</h3>
-                <p>{{player.singlesRating}}</p>
-            </div>
-            <div class = "ratingBox">
-                <h3>Double Rating</h3>
-                <p>{{player.doublesRating}}</p>
-            </div>
-        </div>
         {{#if owner}}
-            <form>
+            <form id = "profileForm">
                 <div class = "formItem">
                     <label class = "formTitle" for="username">Username</label>
-                    <input class = "formInput" type="text" id="username" name="username" placeholder="yjiang68">
+                    <input class = "formInput" type="text" id="username" name="username" placeholder="{{player.playerName}}">
                     <button class = "profileChangeButton">Change</button>     
                 </div> 
                 <div class = "formItem">
-                    <label class = "formTitle" for="realName">Real Name</label>
-                    <input class = "formInput" type="text" id="realName" name="realName" placeholder="Yihan Jiang">
-                    <button class = "profileChangeButton">Change</button>      
-                </div>
-                <div class = "formItem">
                     <label class = "formTitle" for="email">Email</label>
-                    <input class = "formInput" type="text" id="email" name="email" placeholder="yjiang68@stevens.edu">
+                    <input class = "formInput" type="text" id="email" name="email" placeholder="{{player.email}}">
                     <button class = "profileChangeButton">Change</button>      
                 </div>
                 <div class = "formItem">
@@ -57,10 +33,41 @@
                 </div>
                 <div class = "formItem">
                     <label class = "formTitle" for="phoneNumber">Phone Number</label>
-                    <input class = "formInput" type="text" id="phoneNumber" name="phoneNumber" placeholder="201-123-4567">
+                    <input class = "formInput" type="text" id="phoneNumber" name="phoneNumber" placeholder="{{player.phone}}">
                     <button class = "profileChangeButton">Change</button>      
                 </div>
+                <p id = "error"></p>
             </form>
+            <div class = "profileRating">
+            <div class = "ratingBox">
+                <h3>Single Rating</h3>
+                <p id = "singlesRatingText">{{player.singlesRating}}</p>
+            </div>
+            <div class = "ratingBox">
+                <h3>Double Rating</h3>
+                <p id = "doublesRatingText">{{player.doublesRating}}</p>
+            </div>
+        </div>
+        {{else}}
+            <div class = "profileInfo">
+                <h1>Profile</h1>
+                <h3>Username: </h3>
+                <p>{{player.playerName}}</p>
+                <h3>Phone Number:</h3>
+                <p>{{player.phone}}</p>
+                <h3>Email: </h3>
+                <p>{{player.email}}</p>
+            </div>
+            <div class = "profileRating">
+                <div class = "ratingBox">
+                    <h3>Single Rating</h3>
+                    <p>{{player.singlesRating}}</p>
+                </div>
+                <div class = "ratingBox">
+                    <h3>Double Rating</h3>
+                    <p>{{player.doublesRating}}</p>
+                </div>
+            </div>
         {{/if}}
     </div>
 </section>
