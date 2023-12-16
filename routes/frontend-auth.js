@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticatePlayer } from "../data/players.js";
+import { authenticatePlayer, createNewPlayer } from "../data/players.js";
 import * as typecheck from "../typecheck.js";
 const router = Router();
 
@@ -53,6 +53,7 @@ router
       let email = typecheck.checkEmail(req.body.email);
       let password = typecheck.isValidString(req.body.password);
       let player = await createNewPlayer(playerName, email, password);
+      req.session.player = player;
       return res.redirect("/players/" + player._id.toString());
     } catch (e) {
       return res.render("register", {

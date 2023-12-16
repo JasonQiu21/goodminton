@@ -67,27 +67,27 @@ if (registerForm) {
     let errorList = [];
     e.preventDefault();
     try {
-      isValidString(document.getElementById("username").value, "Username");
+      isValidString(document.getElementById("playerName").value, "Player Name");
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      isValidString(document.getElementById("realName").value, "Real Name");
+      checkEmail(document.getElementById("email").value, "Email");
+    } catch (e) {
+      errorList.push(e.error);
+    }
+    let password = "";
+    let confirmPassword = "";
+    try {
+      password = isValidString(
+        document.getElementById("password").value,
+        "Password"
+      );
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      checkEmail(document.getElementById("email").value);
-    } catch (e) {
-      errorList.push(e.error);
-    }
-    try {
-      isValidString(document.getElementById("password").value, "Password");
-    } catch (e) {
-      errorList.push(e.error);
-    }
-    try {
-      isValidString(
+      confirmPassword = isValidString(
         document.getElementById("confirmPassword").value,
         "Confirm Password"
       );
@@ -95,14 +95,6 @@ if (registerForm) {
       errorList.push(e.error);
     }
     if (password !== confirmPassword) errorList.push("Passwords don't match");
-    try {
-      isValidString(
-        document.getElementById("phoneNumber").value,
-        "Phone Number"
-      );
-    } catch (e) {
-      errorList.push(e.error);
-    }
     if (errorList.length > 0) {
       error.innerHTML = errorList.join("<br>");
       return;
