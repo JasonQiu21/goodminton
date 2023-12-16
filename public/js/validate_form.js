@@ -45,16 +45,23 @@ const checkEmail = (str) => {
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     console.log("login");
+    let errorList = [];
     e.preventDefault();
     try {
       let email = checkEmail(document.getElementById("email").value);
+    } catch (e) {
+      errorList.push(e.error);
+    }
+    try {
       let password = isValidString(
         document.getElementById("password").value,
         "Password"
       );
     } catch (e) {
-      console.log(e);
-      error.innerHTML = e.error;
+      errorList.push(e.error);
+    }
+    if (errorList.length > 0) {
+      error.innerHTML = errorList.join("<br>");
       return;
     }
     registerForm.submit();
@@ -64,95 +71,51 @@ if (loginForm) {
 if (registerForm) {
   registerForm.addEventListener("submit", async (e) => {
     console.log("register");
+    let errorList = [];
     e.preventDefault();
     try {
       let username = isValidString(
         document.getElementById("username").value,
         "Username"
       );
+    } catch (e) {
+      errorList.push(e.error);
+    }
+    try {
       let realName = isValidString(
         document.getElementById("realName").value,
         "Real Name"
       );
+    } catch (e) {
+      errorList.push(e.error);
+    }
+    try {
       let email = checkEmail(document.getElementById("email").value);
+    } catch (e) {
+      errorList.push(e.error);
+    }
+    try {
       let password = isValidString(
         document.getElementById("password").value,
         "Password"
       );
+    } catch (e) {
+      errorList.push(e.error);
+    }
+    try {
       let confirmPassword = isValidString(
         document.getElementById("confirmPassword").value,
         "Confirm Password"
       );
-      if (password !== confirmPassword)
-        throw { status: 400, error: "Passwords do not match" };
+    } catch (e) {
+      errorList.push(e.error);
+    }
+    if (password !== confirmPassword) errorList.push("Passwords don't match");
+    try {
       let phoneNumber = isValidString(
         document.getElementById("phoneNumber").value,
         "Phone Number"
       );
-    } catch (e) {
-      console.log(e);
-      error.innerHTML = e.error;
-      return;
-    }
-  });
-}
-
-if (profileForm) {
-  profileForm.addEventListener("submit", async (e) => {
-    console.log("profile");
-    let errorList = [];
-    e.preventDefault();
-    let username = document.getElementById("username")?.value;
-    if (username == "") {
-      username = document
-        .getElementById("username")
-        .getAttribute("placeholder");
-    }
-    try {
-      username = isValidString(username);
-    } catch (e) {
-      errorList.push(e.error);
-    }
-    let email = document.getElementById("email")?.value;
-    if (email == "") {
-      email = document.getElementById("email").getAttribute("placeholder");
-    }
-    try {
-      email = checkEmail(email);
-    } catch (e) {
-      errorList.push(e.error);
-    }
-    let password = document.getElementById("password")?.value;
-    if (password == "") {
-      password = document
-        .getElementById("password")
-        .getAttribute("placeholder");
-    }
-    try {
-      password = isValidString(password);
-    } catch (e) {
-      errorList.push(e.error);
-    }
-    let confirmPassword = document.getElementById("confirmPassword")?.value;
-    if (confirmPassword == "") {
-      confirmPassword = document
-        .getElementById("confirmPassword")
-        .getAttribute("placeholder");
-    }
-    try {
-      confirmPassword = isValidString(confirmPassword);
-    } catch (e) {
-      errorList.push(e.error);
-    }
-    if (password !== confirmPassword) errorList.push("Passwords do not match");
-    let phoneNumber = document.getElementById("phoneNumber")?.value;
-    if (phoneNumber == "") {
-      phoneNumber = document
-        .getElementById("phoneNumber")
-        .getAttribute("placeholder");
-    }
-    try {
-      phoneNumber = isValidString(phoneNumber);
     } catch (e) {
       errorList.push(e.error);
     }
@@ -160,19 +123,7 @@ if (profileForm) {
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
-      let requestConfig = {
-        method: "PATCH",
-        url: "/api/",
-        body: {
-          username: username,
-          email: email,
-          password: password,
-          phoneNumber: phoneNumber,
-          singlesRating: document.getElementById("singlesRatingText"),
-          doublesRating: document.getElementById("doublesRatingText"),
-        },
-      };
+      registerForm.submit();
     }
-    profileForm.submit();
   });
 }
