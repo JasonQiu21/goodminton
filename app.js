@@ -94,7 +94,7 @@ loggedOutRoutes.forEach((route) => {
 
 configRoutes(app);
 
-/*
+
 app.listen(3000, async () => {
   console.log("Goodminton server running on http://localhost:3000");
 });
