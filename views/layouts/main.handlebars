@@ -16,6 +16,9 @@
                     <li class = "navitem"><a href = "/profile">Profile</a></li>
                     <li class = "navitem"><a href = "/">Tournaments</a></li>
                     <li class = "navitem"><a href = "/">Reservations</a></li>
+                    {{#if isAdmin}}
+                    <li class = "navitem"><a href = "/createEvents">Create Event</a></li>
+                    {{/if}}
                     <li class = "navitem"><a href = "/">Sign Out</a></li>
                 </ul>
                 <br>
