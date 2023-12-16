@@ -14,7 +14,7 @@ router
       let password = typecheck.isValidString(req.body.password);
       let player = await authenticatePlayer(email, password);
       req.session.player = player;
-      console.log(req.session.player);
+      // console.log(req.session.player);
       return res.redirect("/players/" + player._id.toString());
     } catch (e) {
       return res.status(401).json({

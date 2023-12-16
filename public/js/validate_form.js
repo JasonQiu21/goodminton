@@ -48,15 +48,12 @@ if (loginForm) {
     let errorList = [];
     e.preventDefault();
     try {
-      let email = checkEmail(document.getElementById("email").value);
+      checkEmail(document.getElementById("email").value);
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      let password = isValidString(
-        document.getElementById("password").value,
-        "Password"
-      );
+      isValidString(document.getElementById("password").value, "Password");
     } catch (e) {
       errorList.push(e.error);
     }
@@ -74,36 +71,27 @@ if (registerForm) {
     let errorList = [];
     e.preventDefault();
     try {
-      let username = isValidString(
-        document.getElementById("username").value,
-        "Username"
-      );
+      isValidString(document.getElementById("username").value, "Username");
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      let realName = isValidString(
-        document.getElementById("realName").value,
-        "Real Name"
-      );
+      isValidString(document.getElementById("realName").value, "Real Name");
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      let email = checkEmail(document.getElementById("email").value);
+      checkEmail(document.getElementById("email").value);
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      let password = isValidString(
-        document.getElementById("password").value,
-        "Password"
-      );
+      isValidString(document.getElementById("password").value, "Password");
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      let confirmPassword = isValidString(
+      isValidString(
         document.getElementById("confirmPassword").value,
         "Confirm Password"
       );
@@ -112,7 +100,7 @@ if (registerForm) {
     }
     if (password !== confirmPassword) errorList.push("Passwords don't match");
     try {
-      let phoneNumber = isValidString(
+      isValidString(
         document.getElementById("phoneNumber").value,
         "Phone Number"
       );
