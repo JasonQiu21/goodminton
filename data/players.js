@@ -216,19 +216,19 @@ const getReservations = async (playerId) => {
   await getPlayer(playerId);
   const eventsCol = await events();
   try{
-    var events = await eventsCol.find(
+    var reservations = await eventsCol.find(
       {reservations: {$elemMatch: {"players._id": playerOid}}}
     ).project({ reservations: 0 })
     .toArray();
 
-    console.log(events);
+    console.log(reservations);
   } catch (e) {
     console.log(`Error on getReservations: ${e}`);
     throw { status: 500, error: `Error while getting reservations for player ${id}` }
   }
-  if(!helperFunctions.isNonEmptyArray(events)) throw {status: 404, error: "No reservations"};
+  if(!helperFunctions.isNonEmptyArray(reservations)) throw {status: 404, error: "No reservations"};
 
-  return events.map(event => {event._id = event._id.toString(); return event});
+  return reservations.map(event => {event._id = event._id.toString(); return event});
 }
 
 export {
