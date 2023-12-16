@@ -233,3 +233,19 @@ li.game-bottom{
     column-gap: 20px;
     flex: 1; 
 }
+
+.homeButton {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #dddddd;
+
+}
+
+.homeButton:hover{
+    background-color: #111111;
+    color: white;
+}
