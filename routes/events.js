@@ -70,8 +70,8 @@ router
       return res.status(e.status).json(e);
     }
   })
-  .delete(async(req, res) => {
-    try{
+  .delete(async (req, res) => {
+    try {
       let deletedEvent = await deleteEvent(req.params.id);
       return res.json(deletedEvent);
     } catch (e) {
@@ -86,9 +86,9 @@ router
   });
 
 router
-  .route("/runTournament/:id")
+  .route("/:id/generateTournament")
   .post(async (req, res) => {
-    
+
   });
 
 
