@@ -114,6 +114,7 @@ const event1 = await eventsCol.insertOne({
     name: "11/28/2023 Practice",
     date: 1701205200, //November 24th, 2023 at 4PM
     eventType: "practice",
+    teamType: null,
     matches: null,
     reservations: [
         {
@@ -150,19 +151,20 @@ const event1 = await eventsCol.insertOne({
 
 const event2 = await eventsCol.insertOne({
     name: "12/08/2023 Practice",
-    date: 1702062000, //December 8th, 2023 at 2PM
-    eventType: "Double Elimination Tournament",
-    teamType: "singles",
+    date: "1702062000", //December 8th, 2023 at 2PM
+    eventType: "tournament",
+    teamType: "doubles",
     matches: {},
     reservations: [
         {
             time: 1702062000,
             players: [
-                { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
-                { _id: new ObjectId(player2.insertedId), playerName: "Patrick Hill" },
-                { _id: new ObjectId(player3.insertedId), playerName: "Jackey Yang" },
-                { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" },
-                { _id: new ObjectId(player5.insertedId), playerName: "Bryan Chan" }
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" }
             ],
             max: 20
         }
@@ -173,13 +175,18 @@ const event3 = await eventsCol.insertOne({
     name: "11/28/2023 League Night",
     date: 1701208800, //November 28th, 2023 at 6PM
     eventType: "leaguenight",
+    teamType: "singles",
     matches: {},
     reservations: [
         {
             time: 1701208800,
             players: [
-                { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
-                { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" }
+                { _id: player1.insertedId, name: "Jason Qiu" },
+                { _id: player2.insertedId, name: "Patrick Hill" },
+                { _id: player3.insertedId, name: "Jackey Yang" },
+                { _id: player4.insertedId, name: "Eddison So" },
+                { _id: player5.insertedId, name: "Bryan Chan" },
+                { _id: player6.insertedId, name: "Britney Yang" }
             ],
             max: 5
         }

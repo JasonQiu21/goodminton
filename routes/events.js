@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { stringToOid } from "../data/typecheck.js";
 import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
+import { Router } from "express";
+import { stringToOid } from "../data/typecheck.js";
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../data/events.js";
 const router = Router();
 
 router
@@ -83,12 +86,6 @@ router
       }
       return res.status(e.status).json(e);
     }
-  });
-
-router
-  .route("/:id/generateTournament")
-  .post(async (req, res) => {
-
   });
 
 

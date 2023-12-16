@@ -1,42 +1,53 @@
-import express from 'express';
+import express from "express";
 const app = express();
 import configRoutes from './routes/index.js';
 
-import { getEvent } from './data/events.js'
-import { generateElimTournament, generateRoundRobinTournament, generateSwissRound, getStandings, swissTopCut } from './data/eventgeneration.js'
+import { getEvent } from './data/events.js';
+import { generateMatches } from './data/eventgeneration.js';
 
 /*
 TODO:
 - Build out routes
 */
 
+app.use("/public", express.static("public"));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
+app.use(session({
+    name: "AuthState",
+    secret: "Goodminton",
+    saveUninitialized: false,
+    resave: false,
+    cookie: { maxAge: 60000 },
+}));
+
+if (debug) {
+    app.use("/", (req, res, next) => {
+        console.log(
+            `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.user ? "User is authenticated as" : "User not authenticated"
+            } ${req.session.user ? req.session.user.role : ""})`
+        );
+        return next();
+    });
+}
+
+const adminRoutes = [];
+adminRoutes.forEach(route => app.use(route, authenticateAdmin));
+
+const playerRoutes = [];
+playerRoutes.forEach(route => app.use(route, authenticatePlayer));
+
+const samePlayerIdRoutes = [];
+samePlayerIdRoutes.forEach(route => app.use(route, checkPlayerIdAgainstRequestBody));
 
 configRoutes(app);
 
-/*
+
+
 app.listen(3000, async () => {
-    try {
-        const matches = await generateElimTournament('657dac3f4067c86744de0a7e', false);
-        //console.log(JSON.stringify(matches, null, 4));
-        const translation = await translationBracketLayer('657cc85551885368ed83d995');
-        //console.log(translation);
-    } catch (e) {
-        console.log(e);
-    }
     console.log("Goodminton server running on http://localhost:3000");
 });
-*/
-
-try {
-    const id = '657e110d1d76891eaebb69db';
-    const event = await getEvent(id);
-    //const matches = await generateSwissRound(event, true);
-    //const standings = await getStandings(event);
-    //console.log(JSON.stringify(event.matches, null, 4));
-    //console.log(JSON.stringify(standings, null, 4));
-    const matches = await generateElimTournament(event, true);
-    //const top = await swissTopCut(event, 4);
-} catch (e) {
-    console.log(e);
-}

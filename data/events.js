@@ -20,11 +20,13 @@ export const createEvent = async (
   if (!eventTypes.includes(eventType))
     throw { status: 400, error: "Invalid event type." };
   //in this case, reservations need to be made
+  //in this case, reservations need to be made
   try {
     var { acknowledged, insertedId } = await eventsCol.insertOne({
       name: eventName,
       date: eventDate,
       type: eventType,
+      matches: eventType === "practice" ? null : {},
       matches: eventType === "practice" ? null : {},
       reservations: [],
     });
