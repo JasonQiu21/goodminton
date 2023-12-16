@@ -100,7 +100,7 @@ export const updateEvent = async (eventId, updatedEvent) => {
 		throw { status: 500, error: `Error while updating ${eventId}` };
 	}
 	if(modifiedCount == 0)
-		throw{ status: 400, error: "Event not updated - no changes passed" }
+		throw{ status: 400, error: "Event not updated - no changes were given" }
 	if (modifiedCount !== 1)
 		throw { status: 500, error: `Error while updating ${eventId}` };
 

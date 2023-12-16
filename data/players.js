@@ -132,9 +132,9 @@ const updatePlayer = async (id, body) => {
     email = helperFunctions.checkEmail(body.email);
   }
   if (body.password) {
-      password = helperFunctions.isValidString(body.password);
-      var passwordHash = await bcrypt.hash(password, saltRounds);
-    }
+    password = helperFunctions.isValidString(body.password);
+    var passwordHash = await bcrypt.hash(password, saltRounds);
+  }
   if (body.phone) {
     phone = helperFunctions.isValidString(body.phone);
     if (
@@ -154,23 +154,27 @@ const updatePlayer = async (id, body) => {
     ...(body.singlesRating && { singlesRating: singlesRating }),
     ...(body.doublesRating && { doublesRating: doublesRating }),
   };
-  console.log(JSON.stringify(newInfo));
+  // console.log(JSON.stringify(newInfo));
   const playerCollection = await players();
-  let info;
   try {
-    info = await playerCollection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+    var {matchedCount, modifiedCount} = await playerCollection.updateOne(
+      { _id: helperFunctions.stringToOid(id) },
       { $set: newInfo }
     );
   } catch (e) {
     console.log(`Error on updatePlayer: ${e}`);
     throw { status: 500, error: `Error while updating player ${id}` };
   }
-  if (!info) throw { status: 404, error: "No player with id" };
-  const updatedInfo = await playerCollection
-    .find({ _id: new ObjectId(id) })
-    .toArray();
-  return updatedInfo;
+  if(matchedCount === 0) throw {status: 404, error: "Player not found"};
+  else if (matchedCount !== 1) {
+    console.log(`<ERROR> found ${matchedCount} documents with same ObjectID. playerId: ${id}`);
+    throw{status: 500, error: `Error while updating ${id}`};
+  }
+
+  if(modifiedCount === 0) throw {status: 400, error: "Player not updated - no changes were given"};
+  else if(modifiedCount !== 1) throw {status: 500, error: `Error while updating ${id}`};
+
+  return await getPlayer(id);
 };
 
 const authenticatePlayer = async (email, password) => {
@@ -186,7 +190,7 @@ const authenticatePlayer = async (email, password) => {
       { email: email },
       { projection: { password: 1 } }
     );
-    if (player === null) throw { status: 401, error: "Player not found" };
+    if (player === null) throw { status: 404, error: "Player not found" };
 
     // Match passwords
     let passwordMatch = false;
