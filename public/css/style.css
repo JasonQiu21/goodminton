@@ -206,3 +206,30 @@ li.game-spacer{
 li.game-bottom{ 
     border-top:1px solid #aaa;
 }
+
+/*
+    CSS For Home Page
+*/
+
+.parentDiv {
+    display: flex;
+}
+
+.homeInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    flex: 1; 
+}
+
+.pictureInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-right: 50px;
+    column-gap: 20px;
+    flex: 1; 
+}

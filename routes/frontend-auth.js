@@ -3,6 +3,9 @@ import { authenticatePlayer } from "../data/players.js";
 import * as typecheck from "../typecheck.js";
 const router = Router();
 
+router.route("/").get(async (req, res) => {
+  return res.render("home", { user: req.session?.player });
+});
 router
   .route("/login")
   .get(async (req, res) => {
@@ -17,18 +20,13 @@ router
       // console.log(req.session.player);
       return res.redirect("/players/" + player._id.toString());
     } catch (e) {
-      return res.status(401).json({
-        status: 401,
-        error: "Either the email or password provided are invalid.",
-      });
+      return res.render("login", { user: req.session?.player, error: e.error });
     }
   });
 
-router
-  .route("/logout")
-  .get(async (req, res) => {
-    req.session.destroy();
-    res.redirect("/login");
-  });
+router.route("/logout").get(async (req, res) => {
+  req.session.destroy();
+  res.redirect("/login");
+});
 
 export default router;

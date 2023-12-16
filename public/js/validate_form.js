@@ -1,7 +1,3 @@
-import _ from "lodash";
-import moment from "moment";
-import { ObjectId } from "mongodb";
-
 let loginForm = document.getElementById("loginForm");
 let registerForm = document.getElementById("registerForm");
 let error = document.getElementById("error");
@@ -18,7 +14,7 @@ const isValidString = (input, name = "String input", allow_empty = false) => {
 };
 const checkEmail = (str) => {
   str = isValidString(str);
-  str = _.toLower(str);
+  str = str.toLowerCase();
   let [prefix, domain] = str.split("@");
 
   const prefixRegex = /^[a-zA-Z0-9_.-]+$/;
@@ -50,18 +46,18 @@ if (loginForm) {
     try {
       checkEmail(document.getElementById("email").value);
     } catch (e) {
-      errorList.push(e.error);
+      errorList.push("Email was formatted incorrectly");
     }
     try {
       isValidString(document.getElementById("password").value, "Password");
     } catch (e) {
-      errorList.push(e.error);
+      errorList.push("Password was formatted incorrectly");
     }
     if (errorList.length > 0) {
       error.innerHTML = errorList.join("<br>");
       return;
     }
-    registerForm.submit();
+    loginForm.submit();
   });
 }
 
