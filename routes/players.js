@@ -106,6 +106,22 @@ router
     }
   });
 
+router.route("/reservations/:playerId").get(async (req, res) => {
+  try {
+    let id = helperFunctions.isValidId(req.params.playerId);
+    let events = await playerFunctions.getReservations(id);
+    return res.json(events);
+  } catch (e) {
+    if (e.status) {
+      return res.status(e.status).json(e);
+    }
+    console.log(`[Error on GET reservations/:id]: ${e}`);
+    return res
+      .status(500)
+      .json({ status: 500, error: "An Internal Server Error Occurred" });
+  }
+});
+
 export default router;
 
 /*
