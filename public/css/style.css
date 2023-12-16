@@ -292,3 +292,25 @@ li.game-bottom{
 .leaderboardPage h1 {
     text-align: center;
 }
+
+/*
+    CSS For Reservations Page
+*/
+
+.grid-container {
+    display: grid;
+    height: 400px;
+    align-content: center;
+    grid-template-columns: auto auto auto;
+    gap: 10px;
+    background-color: #333333;
+    padding: 10px;
+}
+
+.grid-container > div {
+    background-color: #999999;
+    stroke: #111111;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 30px;
+}
