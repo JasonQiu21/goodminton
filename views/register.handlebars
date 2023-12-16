@@ -1,11 +1,9 @@
 <section>
     <div class = "registerPage">
-        <form class = "registerForm" id = "registerForm">
+        <form action = "/register" method = "POST" class = "registerForm" id = "registerForm">
             <h3>Register</h3>
-            <label>Username</label>
-            <input type="text" id="username" name="username" placeholder="">
-            <label>Real Name</label>
-            <input type="text" id="realName" name="realName" placeholder="">
+            <label>Player Name</label>
+            <input type="text" id="playerName" name="playerName" placeholder="">
             <label>Email</label>
             <input type="text" id="email" name="email" placeholder="">
             <label>Password</label>
@@ -15,7 +13,7 @@
             <label>Phone Number</label>
             <input type="text" id="phoneNumber" name="phoneNumber" placeholder="">
             <button class="registerButton" type="submit">Register</button>
-            <p id = "error"></p>
+            <p id = "error">{{error}}</p>
             <p>Already have an account? <a href="/login">Login</a></p>
          </form>
     </div>

@@ -11,7 +11,8 @@ router.route("/").get(async (req, res) => {
   } catch (e) {
     return res.render("error", {
       user: req.session?.player,
-      id: req.session?.player?._id,
+      id: req.sesion?.player?._id,
+      error: e.error,
     });
   }
 });
