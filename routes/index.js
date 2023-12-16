@@ -6,7 +6,7 @@ import frontendAuthRoutes from "./frontend-auth.js";
 
 const constructorMethod = (app) => {
   // app.use('/players', playerRoutes);
-  app.use("/auth", frontendAuthRoutes);
+  app.use("/", frontendAuthRoutes);
   app.use("/players", frontendPlayerRoutes);
   app.use("/api/events", eventRoutes);
   app.use("/api/players", playerRoutes);
