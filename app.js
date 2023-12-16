@@ -3,7 +3,7 @@ const app = express();
 import configRoutes from './routes/index.js';
 
 import { getEvent } from './data/events.js'
-import { generateElimTournament, generateRoundRobinTournament, generateSwissRound } from './data/eventgeneration.js'
+import { generateElimTournament, generateRoundRobinTournament, generateSwissRound, getStandings } from './data/eventgeneration.js'
 
 /*
 TODO:
@@ -29,8 +29,12 @@ app.listen(3000, async () => {
 */
 
 try {
-    const id = '657db7917287dcf4e53999f8';
+    const id = '657ddbf99995a8d9c5936d75';
+    const event = await getEvent(id);
     const matches = await generateSwissRound(id, true);
+    const standings = await getStandings(event);
+    console.log(JSON.stringify(event.matches, null, 4));
+    //console.log(JSON.stringify(standings, null, 4));
 } catch (e) {
     console.log(e);
 }

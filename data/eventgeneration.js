@@ -3,6 +3,7 @@ import { get } from './players.js';
 import { events } from "../config/mongoCollections.js";
 import { getEvent } from "./events.js";
 import { group } from 'console';
+import {ObjectId} from 'mongodb';
 
 /*
 HELPER FUNCTIONS GO HERE!
@@ -15,7 +16,7 @@ export const createTeams = async (event, seeded = false) => {
 
     if (event.teamType == "singles") {
         if (seeded) players = players.sort((a, b) => { return b[0].singlesRating - a[0].singlesRating });
-        players = players.map(player => { return [{ _id: player[0]._id, playerName: player[0].playerName }] });
+        players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }] });
     } else {
         let playerCopy = players
         for (let i = 0; i < playerCopy.length - 1; i += 2) {
@@ -23,7 +24,7 @@ export const createTeams = async (event, seeded = false) => {
         }
         players = players.slice(0, players.length / 2);
         if (seeded) players = players.sort((a, b) => { return (b[0].doublesRating + b[1].doublesRating) - (a[0].doublesRating + a[1].doublesRating) });
-        players = players.map(player => { return [{ _id: player[0]._id, playerName: player[0].playerName }, { _id: player[1]._id, playerName: player[1].playerName }] });
+        players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }, { _id: new ObjectId(player[1]._id), playerName: player[1].playerName }] });
 
     }
 
@@ -45,10 +46,12 @@ export const getTeamWins = (event, team) => {
     let wins = 0;
     for (let round in event.matches) {
         for (let match of event.matches[round]) {
-            if (match.team1 !== null && match.team2 !== null) {
-                if (match.team1[0].id === team[0].id || match.team1[0].id === team[1].id) {
+            if (match.team1 !== null || match.team2 !== null) {
+                if (match.team1 !== null && (match.team1[0]._id.equals(team[0]._id) || (team.length > 1 && match.team1[1]._id.equals(team[1]._id)))) {
                     if (match.winner === 1) wins++;
-                } else if (match.team2[0].id === team[0].id || match.team2[0].id === team[1].id) {
+                }
+                if (match.team2 !== null && (match.team2[0]._id.equals(team[0]._id) || (team.length > 1 && match.team2[1]._id.equals(team[1]._id)))) {
+                    console.log(match.winner);
                     if (match.winner === 2) wins++;
                 }
             }
@@ -62,10 +65,12 @@ export const getTeamLosses = (event, team) => {
     let losses = 0;
     for (let round in event.matches) {
         for (let match of event.matches[round]) {
-            if (match.team1 !== null && match.team2 !== null) {
-                if (match.team1[0].id === team[0].id || match.team1[0].id === team[1].id) {
+            if (match.team1 !== null || match.team2 !== null) {
+                if (match.team1[0]._id.equals(team[0]._id) || (team.length > 1 && match.team1[1]._id.equals(team[1]._id))) {
                     if (match.winner === 2) losses++;
-                } else if (match.team2[0].id === team[0].id || match.team2[0].id === team[1].id) {
+                }
+                if (match.team2[0]._id.equals(team[0]._id) || (team.length > 1 && match.team2[1]._id.equals(team[1]._id))) {
+                    console.log(match.winner);
                     if (match.winner === 1) losses++;
                 }
             }
@@ -104,30 +109,10 @@ export const playedBefore = (event, team1, team2) => {
     return false;
 }
 
-export const validSwissGroup = (event, group) => {
-    let valid = false;
-
-    while (!valid) {
-        valid = true;
-
-        for (let i = 0; i < group.length; i++) {
-            for (let j = i + 1; j < group.length; j++) {
-                if (!playedBefore(event, group[i], group[j])) {
-                    group.splice(i, 1);
-                    group.splice(j, 1);
-                }
-            }
-        }
-    }
-
-
-    return true;
-}
-
-export const getStandings = (event) => {
+export const getStandings = async (event) => {
     let standings = [];
     //first, we get all the teams
-    const teams = createTeams(event);
+    let teams = await createTeams(event);
     teams = teams.sort((a, b) => {
         if (getTeamWins(event, a) === getTeamWins(event, b)) return getTeamScore(event, b) - getTeamScore(event, a);
         else return getTeamWins(event, b) - getTeamWins(event, a)
@@ -191,8 +176,18 @@ export const generateSwissRound = async (eventId, seeded = false) => {
     const event = await getEvent(eventId.toString());
     let teams = await createTeams(event, seeded);
 
+    for (let round in event.matches) {
+        for (let match of event.matches[round]) {
+            if (match.team1 !== null && match.team2 !== null) {
+                if (match.winner === 0) throw { status: 400, error: "Previous rounds have not been completed yet." };
+            }
+        }
+    }
+
+    let matches = event.matches;
 
     let roundnumber = Object.keys(event.matches).length + 1;
+    let matchnumber = 1 + Math.floor(Object.keys(event.matches).length * teams.length / 2);
     let round = [];
 
     teams = teams.sort((a, b) => {
@@ -202,49 +197,97 @@ export const generateSwissRound = async (eventId, seeded = false) => {
 
     if (teams.length % 2 === 1) teams.push("bye");
 
-    let groupedByWin = [];
-    for (let i = 0; i < teams.length; i++) {
-        if (!groupedByWin[getTeamWins(event, teams[i])]) groupedByWin[getTeamWins(event, teams[i])] = [teams[i]];
-        else groupedByWin[getTeamWins(event, teams[i])].push(teams[i]);
+
+    while(teams.length > 0) {
+        let team1 = teams[0];
+        let counter = 0;
+
+        let validTeam = false;
+
+        while(!validTeam && counter < teams.length) {
+            counter++;
+            if(teams[counter] === "bye") break;
+            validTeam = !playedBefore(team1, teams[counter]);
+        }
+
+        if(counter === teams.length) throw { status: 400, error: "Cannot generate any more rounds: rematches will be made." };
+
+        round.push({
+            id: matchnumber,
+            team1: team1,
+            team2: (teams[counter] === "bye") ? null : teams[counter],
+            score: [0, 0],
+            winner: (teams[counter] == "bye") ? 1 : 0,
+            byeround: (teams[counter] === "bye")
+        });
+
+        teams.splice(counter, 1);
+        teams.splice(0, 1);
+        matchnumber++;
     }
 
-    for (let i = 0; i < groupedByWin.length; i++) {
-        if (groupedByWin[i].length % 2 === 1) {
-            groupedByWin[i + 1].push(groupedByWin[i].pop());
+    matches[`swissround-${roundnumber}`] = round;
+
+    const eventsCol = await events();
+    const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
+
+    if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
+
+    return returnedUpdate;
+}
+
+export const swissTopCut = async (eventId, topCut = 4) => {
+    eventId = typecheck.stringToOid(eventId);
+    const event = await getEvent(eventId.toString());
+    let teams = await createTeams(event, seeded);
+
+    for (let round in event.matches) {
+        for (let match of event.matches[round]) {
+            if (match.team1 !== null && match.team2 !== null) {
+                if (winner === 0) throw { status: 400, error: "Previous rounds have not been completed yet." };
+            }
         }
     }
 
-    let roundPossible = false;
+    teams = teams.sort((a, b) => {
+        if (getTeamWins(event, a) === getTeamWins(event, b)) return getTeamScore(event, b) - getTeamScore(event, a);
+        else return getTeamWins(event, b) - getTeamWins(event, a)
+    });
 
-
-    while (!roundPossible) {
-        roundPossible = true;
+    fakeReservation = [];
+    for(let i = 0; i < topCut; i++) {
+        fakeReservation.push(teams[i][0]);
+        if (teams[i][1]) fakeReservation.push(teams[i][1]);
     }
 
-
+    const fakeEvent = {
+        _id: eventId,
+        eventType: "Swiss Tournament",
+        matches: event.matches,
+        reservations: fakeReservation
+    }
+    generateElimTournament(fakeEvent, true);
 }
 
-export const generateElimTournament = async (eventId, seeded = false) => {
+export const generateElimTournament = async (event, seeded = false) => {
     /*
     This function takes in the event and whether or not the event is seeded and generates an object with keys that have values of lists of matches
     */
 
     //skipping validation for now, but TODO? idk
-    eventId = typecheck.stringToOid(eventId);
-    const event = await getEvent(eventId.toString());
 
     let players = await createTeams(event, seeded);
 
     //at this point, each index of players is a string (either "Person1" or "Person1 & Person2")
     let teamlength = Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)));
 
-    let matchcounter = 1;
+    let matchcounter = 1 + Math.floor(Object.keys(event.matches).length * teamlength / 2); //this multiplication is to allocate space for previously made swiss rounds if they have been made.
     let roundcounter;
     let roundnumber = 1;
 
     let matches = event.matches;
 
-    if (event.eventType === "Single Elimination Tournament") {
+    if (event.eventType === "Single Elimination Tournament" || event.eventType === "Swiss Tournament") {
         //Generate the first round. This has to be uniquely done due to the nature of bye rounds.
         let roundTitle = `winners-${roundnumber}`;
         let round = [];
