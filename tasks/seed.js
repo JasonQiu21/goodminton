@@ -14,10 +14,10 @@ const playersCol = await players();
 
 //NOTE: For BCrypt Hash, cost factor/salt rounds is set to 10.
 
-let player1Pass = await bcrypt.hash("password1", saltRounds);
+//let player1Pass = await bcrypt.hash("password1", saltRounds);
 
 const player1 = await playersCol.insertOne({
-    password: player1Pass, //password1
+    //password: player1Pass, //password1
     playerName: "Jason Qiu",
     email: "jqiu21@stevens.edu",
     phone: null,
@@ -26,10 +26,10 @@ const player1 = await playersCol.insertOne({
     doublesRating: 902,
 });
 
-let player2Pass = await bcrypt.hash("password12", saltRounds);
+//let player2Pass = await bcrypt.hash("password12", saltRounds);
 
 const player2 = await playersCol.insertOne({
-    password: player2Pass, //password12
+    //password: player2Pass, //password12
     playerName: "Patrick Hill",
     email: "phill@stevens.edu",
     phone: "8484682000",
@@ -38,10 +38,10 @@ const player2 = await playersCol.insertOne({
     doublesRating: 800
 });
 
-let player3Pass = await bcrypt.hash("password123", saltRounds);
+//let player3Pass = await bcrypt.hash("password123", saltRounds);
 
 const player3 = await playersCol.insertOne({
-    password: player3Pass, //password123
+    //password: player3Pass, //password123
     playerName: "Jackey Yang",
     email: "jyang28@stevens.edu",
     phone: null,
@@ -50,10 +50,10 @@ const player3 = await playersCol.insertOne({
     doublesRating: 500
 });
 
-let player4Pass = await bcrypt.hash("password1234", saltRounds);
+//let player4Pass = await bcrypt.hash("password1234", saltRounds);
 
 const player4 = await playersCol.insertOne({
-    password: player4Pass, //password1234
+    //password: player4Pass, //password1234
     playerName: "Eddison So",
     email: "eso69@stevens.edu",
     phone: "7322518976",
@@ -62,10 +62,10 @@ const player4 = await playersCol.insertOne({
     doublesRating: 1200
 });
 
-let player5Pass = await bcrypt.hash("password12345", saltRounds);
+//let player5Pass = await bcrypt.hash("password12345", saltRounds);
 
 const player5 = await playersCol.insertOne({
-    password: player5Pass, //password12345
+    //password: player5Pass, //password12345
     playerName: "Bryan Chan",
     email: "bchan4@stevens.edu",
     phone: "8484688222",
@@ -74,10 +74,10 @@ const player5 = await playersCol.insertOne({
     doublesRating: 800
 });
 
-let player6Pass = await bcrypt.hash("password6", saltRounds);
+//let player6Pass = await bcrypt.hash("password6", saltRounds);
 
 const player6 = await playersCol.insertOne({
-    password: player6Pass, //password6
+    //password: player6Pass, //password6
     playerName: "Britney Yang",
     email: "byang69@stevens.edu",
     phone: null,
@@ -86,10 +86,10 @@ const player6 = await playersCol.insertOne({
     doublesRating: 200
 });
 
-let player7Pass = await bcrypt.hash("password67", saltRounds);
+//let player7Pass = await bcrypt.hash("password67", saltRounds);
 
 const player7 = await playersCol.insertOne({
-    password: player7Pass, //password67
+    //password: player7Pass, //password67
     playerName: "Jing Ngo",
     email: "jngo@stevens.edu",
     phone: "1111111111",
@@ -101,7 +101,7 @@ const player7 = await playersCol.insertOne({
 let player8Pass = await bcrypt.hash("password67890", saltRounds);
 
 const player8 = await playersCol.insertOne({
-    password: player8Pass, //password67890
+    //password: player8Pass, //password67890
     playerName: "Aidan Haberman",
     email: "ahaberm@stevens.edu",
     role: "user",
@@ -151,7 +151,7 @@ const event1 = await eventsCol.insertOne({
 const event2 = await eventsCol.insertOne({
     name: "12/08/2023 Practice",
     date: 1702062000, //December 8th, 2023 at 2PM
-    eventType: "Single Elimination Tournament",
+    eventType: "Double Elimination Tournament",
     teamType: "singles",
     matches: {},
     reservations: [
@@ -162,7 +162,7 @@ const event2 = await eventsCol.insertOne({
                 { _id: new ObjectId(player2.insertedId), playerName: "Patrick Hill" },
                 { _id: new ObjectId(player3.insertedId), playerName: "Jackey Yang" },
                 { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" },
-                { _id: new ObjectId(player5.insertedId), playerName: "Bryan Chan" },
+                { _id: new ObjectId(player5.insertedId), playerName: "Bryan Chan" }
             ],
             max: 20
         }
