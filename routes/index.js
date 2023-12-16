@@ -6,8 +6,8 @@ import frontendRoutes from "./frontend.js";
 
 const constructorMethod = (app) => {
   // app.use('/players', playerRoutes);
-  app.use("/events", eventRoutes);
-  app.use("/players", playerRoutes);
+  app.use("/api/events", eventRoutes);
+  app.use("/api/players", playerRoutes);
   app.use("/", authRoutes);
   app.use("/", frontendRoutes)
 
