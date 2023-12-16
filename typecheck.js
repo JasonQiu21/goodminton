@@ -115,6 +115,58 @@ export const isValidEvent = (event, partial = false) => {
   return event;
 };
 
+export const isValidPlayer = (player, partial = false) => {
+  let keys = [
+    "_id",
+    "password",
+    "playerName",
+    "email",
+    "phone",
+    "role",
+    "singlesRating",
+    "doublesRating",
+  ];
+  Object.keys(player).forEach((key) => {
+    if (!keys.includes(key))
+      throw { status: 400, error: `Extraneous key '${key}'` };
+  });
+
+  if(!isNonEmptyObject(player)) throw {status: 400, error: "Player is not a nonempty object"}
+
+  if(!partial || player?.password){
+    player.password = isValidString(player.password, "Password", false);
+  }
+
+  if(!partial || player?.playerName){
+    player.playerName = isValidString(player.playerName, "Player Name", false);
+  }
+
+  if(!partial || player?.email){
+    player.email = checkEmail(player.email, "Email", false);
+  }
+
+  if(!partial || player?.phone){
+    if(player.phone !== null) {
+      player.phone = isValidString(player.phone)
+    }
+  }
+
+  if(!partial || player?.role){
+    player.role = isValidString(player.role, "Player Role")
+    const validRoles = ["admin", "user"]
+    if(!validRoles.contains(player.role)) throw {status: 400, error: "Invalid role"}
+  }
+
+  if(!partial || player?.singlesRating){
+    player.singlesRating = isFiniteNumber(player.singlesRating, "Singles Rating");
+  }
+  if(!partial || player?.doubelsRating){
+    player.doubelsRating = isFiniteNumber(player.doubelsRating, "Doubles Rating");
+  }
+
+  return player;
+};
+
 export const isValidUnix = (eventDate) => {
   if (!eventDate) throw { status: 400, error: "No eventDate" };
   if (typeof eventDate !== "number")

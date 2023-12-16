@@ -126,17 +126,15 @@ const updatePlayer = async (id, body) => {
   if (!id) throw { status: 400, error: "No body" };
   if (!body) throw { status: 400, error: "No body" };
   let playerName, email, password, phone, singlesRating, doublesRating;
-  try {
-    if (body.playerName)
-      playerName = helperFunctions.isValidString(body.playerName);
-    if (body.email) {
-      email = helperFunctions.checkEmail(body.email);
-    }
-    if (body.password) password = helperFunctions.isValidString(body.password);
-  } catch (e) {
-    throw e;
+  if (body.playerName)
+    playerName = helperFunctions.isValidString(body.playerName);
+  if (body.email) {
+    email = helperFunctions.checkEmail(body.email);
   }
-
+  if (body.password) {
+      password = helperFunctions.isValidString(body.password);
+      var passwordHash = await bcrypt.hash(password, saltRounds);
+    }
   if (body.phone) {
     phone = helperFunctions.isValidString(body.phone);
     if (
@@ -151,12 +149,12 @@ const updatePlayer = async (id, body) => {
   let newInfo = {
     ...(body.playerName && { playerName: playerName }),
     ...(body.email && { email: email }),
-    ...(body.password && { password: password }),
+    ...(body.password && { password: passwordHash }),
     ...(body.phone && { phone: phone }),
     ...(body.singlesRating && { singlesRating: singlesRating }),
     ...(body.doublesRating && { doublesRating: doublesRating }),
   };
-  // console.log(JSON.stringify(newInfo));
+  console.log(JSON.stringify(newInfo));
   const playerCollection = await players();
   let info;
   try {
