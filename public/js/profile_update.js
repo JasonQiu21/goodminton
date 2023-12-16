@@ -10,7 +10,8 @@ $("#playerNameChangeButton").click(function (e) {
     },
     success: function (result) {
       console.log(result);
-      $("#playerName").val(result.playerName);
+      $("#playerName").attr("placeholder", result.playerName);
+      $("#playerName").val("");
     },
   });
 });
@@ -27,7 +28,8 @@ $("#emailChangeButton").click(function (e) {
     },
     success: function (result) {
       console.log(result);
-      $("#email").val(result.email);
+      $("#email").attr("placeholder", result.email);
+      $("#email").val("");
     },
   });
 });
@@ -44,9 +46,10 @@ $("#passwordChangeButton").click(function (e) {
     },
     success: function (result) {
       console.log(result);
-      const astrisks = "*".repeat(result.password.length);
-      $("#password").val(astrisks);
-      $("#confirmPassword").val(astrisks);
+      $("#password").attr("placeholder", "********");
+      $("#confirmPassword").attr("placeholder", "********");
+      $("#password").val("");
+      $("#confirmPassword").val("");
     },
   });
 });
@@ -63,7 +66,8 @@ $("#phoneChangeButton").click(function (e) {
     },
     success: function (result) {
       console.log(result);
-      $("#phone").val(result.phone);
+      $("#phone").attr("placeholder", result.phone);
+      $("#phone").val("");
     },
   });
 });
