@@ -14,7 +14,7 @@ const playersCol = await players();
 
 //NOTE: For BCrypt Hash, cost factor/salt rounds is set to 10.
 
-let player1Pass = await bcrypt.hash("password1", saltRounds);
+//let player1Pass = await bcrypt.hash("password1", saltRounds);
 
 const player1 = await playersCol.insertOne({
   password: player1Pass, //password1
@@ -26,7 +26,7 @@ const player1 = await playersCol.insertOne({
   doublesRating: 902,
 });
 
-let player2Pass = await bcrypt.hash("password12", saltRounds);
+//let player2Pass = await bcrypt.hash("password12", saltRounds);
 
 const player2 = await playersCol.insertOne({
   password: player2Pass, //password12
@@ -38,7 +38,7 @@ const player2 = await playersCol.insertOne({
   doublesRating: 800
 });
 
-let player3Pass = await bcrypt.hash("password123", saltRounds);
+//let player3Pass = await bcrypt.hash("password123", saltRounds);
 
 const player3 = await playersCol.insertOne({
   password: player3Pass, //password123
@@ -50,7 +50,7 @@ const player3 = await playersCol.insertOne({
   doublesRating: 500
 });
 
-let player4Pass = await bcrypt.hash("password1234", saltRounds);
+//let player4Pass = await bcrypt.hash("password1234", saltRounds);
 
 const player4 = await playersCol.insertOne({
   password: player4Pass, //password1234
@@ -62,7 +62,7 @@ const player4 = await playersCol.insertOne({
   doublesRating: 1200
 });
 
-let player5Pass = await bcrypt.hash("password12345", saltRounds);
+//let player5Pass = await bcrypt.hash("password12345", saltRounds);
 
 const player5 = await playersCol.insertOne({
   password: player5Pass, //password12345
@@ -74,7 +74,7 @@ const player5 = await playersCol.insertOne({
   doublesRating: 800
 });
 
-let player6Pass = await bcrypt.hash("password6", saltRounds);
+//let player6Pass = await bcrypt.hash("password6", saltRounds);
 
 const player6 = await playersCol.insertOne({
   password: player6Pass, //password6
@@ -86,7 +86,7 @@ const player6 = await playersCol.insertOne({
   doublesRating: 200
 });
 
-let player7Pass = await bcrypt.hash("password67", saltRounds);
+//let player7Pass = await bcrypt.hash("password67", saltRounds);
 
 const player7 = await playersCol.insertOne({
   password: player7Pass, //password67
