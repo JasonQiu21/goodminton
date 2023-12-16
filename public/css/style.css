@@ -101,6 +101,20 @@ body {
     align-content: center;
 }
 
+p.error {
+    color: red;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+p.success {
+    color: green;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+}
+
 /*
 *  Login / Register styles
 */
