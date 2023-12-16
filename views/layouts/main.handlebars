@@ -14,13 +14,15 @@
             <nav>
                 <ul class = "navbar">
                     <li class = "navlogo"><a href = "/">Goodminton</a></li>
-                    <li class = "navitem"><a href = "/players/{{id}}">Profile</a></li>
-                    <li class = "navitem"><a href = "/">Tournaments</a></li>
+                    {{#if id}}
+                        <li class = "navitem"><a href = "/players/{{id}}">Profile</a></li>
+                    {{/if}}
+                    <li class = "navitem"><a href = "/events">Events</a></li>
                     <li class = "navitem"><a href = "/">Reservations</a></li>
                     {{#if user}}
-                        <li class = "navitem"><a href = "/auth/logout">Sign Out</a></li>
+                        <li class = "navitem"><a href = "/logout">Sign Out</a></li>
                     {{else}}
-                        <li class = "navitem"><a href = "/auth/login">Sign In</a></li>
+                        <li class = "navitem"><a href = "/login">Sign In</a></li>
                     {{/if}}
                 </ul>
                 <br>

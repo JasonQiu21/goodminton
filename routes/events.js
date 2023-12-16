@@ -67,7 +67,7 @@ router
   })
   .patch(async (req, res) => {
     try {
-      const id = typecheck.stringToOid(req.params.id);
+      const _id = typecheck.stringToOid(req.params.id);
       const body = typecheck.isValidEvent(req.body, true);
       let event = await updateEvent(req.params.id, body);
       return res.json(event);

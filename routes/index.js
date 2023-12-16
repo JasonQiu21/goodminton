@@ -2,7 +2,6 @@ import eventRoutes from "./events.js";
 import playerRoutes from "./players.js";
 import frontendPlayerRoutes from "./frontend-players.js";
 import frontendAuthRoutes from "./frontend-auth.js";
-import authRoutes from "./auth.js";
 import frontendRoutes from "./frontend-events.js";
 // import * as playerRoutes from './players.js';
 
@@ -17,7 +16,7 @@ const constructorMethod = (app) => {
   app.use("/api/players", playerRoutes);
 
   app.use("*", (req, res) => {
-    res.status(404).json({ error: "Route Not found" });
+    res.status(404).render("error", {error: "Not Found"});
   });
 };
 
