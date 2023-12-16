@@ -1,13 +1,10 @@
-import { Router } from 'express';
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
-import * as playerFunctions from '../data/players.js';
-import * as helperFunctions from '../data/typecheck.js';
-import * as playerFunctions from '../data/players.js';
-import * as helperFunctions from '../data/typecheck.js';
+import * as playerFunctions from "../data/players.js";
+import * as helperFunctions from "../typecheck.js";
 
 router
-    .route('/')
+    .route("/")
     .get(async (req, res) => {
         //code here for GET
         try {
@@ -15,7 +12,9 @@ router
             res.json(playerList);
         } catch (e) {
             console.log(`[Error on GET players/]: ${e}`);
-            res.status(500).json({ status: 500, error: "An Internal Server Error Occurred" });
+            res
+                .status(500)
+                .json({ status: 500, error: "An Internal Server Error Occurred" });
         }
     })
     .post(async (req, res) => {
@@ -36,7 +35,9 @@ router
         }
         try {
             await playerFunctions.createNewPlayer(
-                body.playerName, body.email, body.password
+                body.playerName,
+                body.email,
+                body.password
             );
             res.json({ status: 200, created: true });
         } catch (e) {
@@ -44,9 +45,7 @@ router
                 return res.status(e.status).json(e);
             }
             console.log(`[Error on POST players/]: ${e}`);
-            return res
-                .status(500)
-                .json({ error: e });
+            return res.status(500).json({ error: e });
         }
     });
 
@@ -57,7 +56,7 @@ router
         let id, answer;
         try {
             id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.get(id);
+            answer = await playerFunctions.getPlayer(id);
         } catch (e) {
             if (e.status) {
                 return res.status(e.status).json(e);
@@ -74,12 +73,12 @@ router
         const id = req.params.playerId;
         let answer;
         try {
-            answer = await playerFunctions.update(id, body);
+            answer = await playerFunctions.updatePlayer(id, body);
         } catch (e) {
             if (e.status) {
                 return res.status(e.status).json(e);
             }
-            console.log(`[Error on POST players/:id]: ${e}`);
+            console.log(`[Error on PATCH players/:id]: ${e}`);
             return res
                 .status(500)
                 .json({ status: 500, error: "An Internal Server Error Occurred" });
@@ -90,7 +89,7 @@ router
         let id, answer;
         try {
             id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.remove(id);
+            answer = await playerFunctions.removePlayer(id);
         } catch (e) {
             if (e.status) {
                 return res.status(e.status).json(e);
@@ -102,159 +101,6 @@ router
         }
         res.json(answer);
     });
-
-export default router;
-import * as playerFunctions from '../data/players.js';
-import * as helperFunctions from '../data/typecheck.js';
-
-router
-    .route('/')
-    .get(async (req, res) => {
-        //code here for GET
-        try {
-            const playerList = await playerFunctions.getAllPlayers();
-            res.json(playerList);
-        } catch (e) {
-            console.log(`[Error on GET players/]: ${e}`);
-            res.status(500).json({ status: 500, error: "An Internal Server Error Occurred" });
-        }
-    })
-    .post(async (req, res) => {
-        //code here for POST
-        const body = req.body;
-        try {
-            if (!body.playerName) throw { status: 400, error: "Missing playerName" };
-            if (!body.email) throw { status: 400, error: "Missing email" };
-            if (!body.password) throw { status: 400, error: "Missing password" };
-        } catch (e) {
-            if (e.status) {
-                return res.status(e.status).json(e);
-            }
-            console.log(`[Error on POST players/]: ${e}`);
-            return res
-                .status(500)
-                .json({ status: 500, error: "An Internal Server Error Occurred" });
-        }
-        try {
-            await playerFunctions.createNewPlayer(
-                body.playerName, body.email, body.password
-            );
-            res.json({ status: 200, created: true });
-        } catch (e) {
-            if (e.status) {
-                return res.status(e.status).json(e);
-            }
-            console.log(`[Error on POST players/]: ${e}`);
-            return res
-                .status(500)
-                .json({ error: e });
-        }
-    });
-    .route('/')
-    .get(async (req, res) => {
-        //code here for GET
-        try {
-            const playerList = await playerFunctions.getAllPlayers();
-            res.json(playerList);
-        } catch (e) {
-            console.log(`[Error on GET players/]: ${e}`);
-            res.status(500).json({ status: 500, error: "An Internal Server Error Occurred" });
-        }
-    })
-    .post(async (req, res) => {
-        //code here for POST
-        const body = req.body;
-        try {
-            if (!body.playerName) throw { status: 400, error: "Missing playerName" };
-            if (!body.email) throw { status: 400, error: "Missing email" };
-            if (!body.password) throw { status: 400, error: "Missing password" };
-        } catch (e) {
-            if (e.status) {
-                return res.status(e.status).json(e);
-            }
-            console.log(`[Error on POST players/]: ${e}`);
-            return res
-                .status(500)
-                .json({ status: 500, error: "An Internal Server Error Occurred" });
-        }
-        try {
-            await playerFunctions.createNewPlayer(
-                body.playerName, body.email, body.password
-            );
-            res.json({ status: 200, created: true });
-        } catch (e) {
-            if (e.status) {
-                return res.status(e.status).json(e);
-            }
-            console.log(`[Error on POST players/]: ${e}`);
-            return res
-                .status(500)
-                .json({ error: e });
-        }
-    });
-
-router
-    .route('/:playerId')
-    .get(async (req, res) => {
-        //GET
-        let id, answer;
-        try {
-            id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.get(id);
-        } catch (e) {
-            if (e.status) {
-                answer = await playerFunctions.get(id);
-            } catch (e) {
-                if (e.status) {
-                    return res.status(e.status).json(e);
-                }
-                console.log(`[Error on GET players/:id]: ${e}`);
-                return res
-                    .status(500)
-                    .json({ status: 500, error: "An Internal Server Error Occurred" });
-            }
-            return res.json(answer);
-        })
-    .patch(async (req, res) => {
-        const body = req.body;
-        const id = req.params.playerId;
-        let answer;
-        try {
-            answer = await playerFunctions.update(id, body);
-        } catch (e) {
-            if (e.status) {
-                answer = await playerFunctions.update(id, body);
-            }catch (e) {
-                if (e.status) {
-                    return res.status(e.status).json(e);
-                }
-                console.log(`[Error on POST players/:id]: ${e}`);
-                console.log(`[Error on POST players/:id]: ${e}`);
-                return res
-                    .status(500)
-                    .json({ status: 500, error: "An Internal Server Error Occurred" });
-            }
-            return res.json(answer);
-        })
-    .delete(async (req, res) => {
-        let id, answer;
-        try {
-            id = helperFunctions.isValidId(req.params.playerId);
-            answer = await playerFunctions.remove(id);
-        } catch (e) {
-            if (e.status) {
-                answer = await playerFunctions.remove(id);
-            } catch (e) {
-                if (e.status) {
-                    return res.status(e.status).json(e);
-                }
-                console.log(`[Error on DELETE players/:id]: ${e}`);
-                return res
-                    .status(500)
-                    .json({ status: 500, error: "An Internal Server Error Occurred" });
-            }
-            res.json(answer);
-        });
 
 export default router;
 
