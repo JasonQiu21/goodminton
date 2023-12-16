@@ -370,7 +370,7 @@ export const generateElimTournament = async (event, seeded = false) => {
                     winner: ((players[i] === "bye") ? 2 : (players[i + 1] === "bye") && roundnumber === 1) ? 1 : 0,
                     byeround: false,
                     winner_to: (teamlength === 2) ? Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2 : roundcounter,
-                    loser_to: (matchcounter) - 1 - (roundnumber === 1) + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) + roundnumber
+                    loser_to: (roundnumber == 1) ? roundcounter - teamlength / 2 - 1 + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) : (matchcounter) - 3 - (roundnumber === 1) + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) + roundnumber
                 });
 
                 matchcounter++;
@@ -382,19 +382,19 @@ export const generateElimTournament = async (event, seeded = false) => {
         }
 
         teamlength = Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) / 2; //do this again for losers bracket
+        roundcounter = matchcounter + teamlength / 2 - 1;
         roundnumber = 1;
 
         while (teamlength > 1) {
             //now we create TWO rounds at a time, since it's n/2 --> n/2 --> n/4 --> n/4 -->  etc.
-            let roundTitle1 = `losers - ${roundnumber} - 1`;
-            let roundTitle2 = `losers - ${roundnumber} - 2 `;
+            let roundTitle = `losers - ${roundnumber}`;
             let round1 = [];
             let round2 = [];
 
             let roundcounter = matchcounter + teamlength / 2 - 1;
 
             for (let i = 0; i < teamlength / 2; i++) {
-                if (matchcounter % 2 === 1) roundcounter++;
+                if (matchcounter % 2 === 0) roundcounter++;
 
                 round1.push({
                     id: matchcounter,
@@ -403,28 +403,16 @@ export const generateElimTournament = async (event, seeded = false) => {
                     score: [0, 0],
                     winner: 0,
                     byeround: false,
-                    winner_to: roundcounter + 1,
-                    loser_to: null
-                });
-
-                round2.push({
-                    id: matchcounter + teamlength / 2,
-                    team1: null,
-                    team2: null,
-                    score: [0, 0],
-                    winner: 0,
-                    byeround: false,
-                    winner_to: roundcounter + teamlength / 2 + 1,
+                    winner_to: (roundnumber % 2 == 1) ? roundcounter + i : roundcounter,
                     loser_to: null
                 });
                 matchcounter++;
             }
 
-            matchcounter += teamlength / 2;
-            matches[roundTitle1] = round1;
-            matches[roundTitle2] = round2;
-            teamlength /= 2;
-            roundnumber += 2;
+            matches[roundTitle] = round1;
+
+            roundnumber++;
+            if (roundnumber % 2 == 1) teamlength /= 2;
         }
     }
 
@@ -497,8 +485,13 @@ export const submitScores = async (event, matchId, score, winner) => {
                     for (let round2 in matches) {
                         for (let match2 of matches[round2]) {
                             if (match2.id === match.winner_to) {
-                                if (match2.team1 % 2 === 0) match2.team1 = match.team1;
-                                else match2.team2 = match.team1;
+                                if (match2.team1 === null) {
+                                    if (match.winner === 1) match2.team1 = match.team1;
+                                    else match2.team1 = match.team2;
+                                } else {
+                                    if (match.winner === 1) match2.team2 = match.team1;
+                                    else match2.team2 = match.team2;
+                                }
                             }
                         }
                     }
@@ -508,8 +501,13 @@ export const submitScores = async (event, matchId, score, winner) => {
                     for (let round2 in matches) {
                         for (let match2 of matches[round2]) {
                             if (match2.id === match.loser_to) {
-                                if (match2.team1 % 2 === 0) match2.team1 = match.team2;
-                                else match2.team2 = match.team2;
+                                if (match2.team1 === null) {
+                                    if (match.winner === 2) match2.team1 = match.team1;
+                                    else match2.team1 = match.team2;
+                                } else {
+                                    if (match.winner === 2) match2.team2 = match.team1;
+                                    else match2.team2 = match.team2;
+                                }
                             }
                         }
                     }

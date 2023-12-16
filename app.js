@@ -29,7 +29,7 @@ app.listen(3000, async () => {
 */
 
 try {
-    const id = '657dfba9c4cceec0f3c50d0a';
+    const id = '657e110d1d76891eaebb69db';
     const event = await getEvent(id);
     //const matches = await generateSwissRound(event, true);
     //const standings = await getStandings(event);
