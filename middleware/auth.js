@@ -15,7 +15,8 @@ export const authenticateAdmin = async(req, res, next) => {
 // Admin should be able to register anyone 
 export const checkPlayerIdAgainstRequestBody  = async(req, res, next) => {
     if(!req.session) return res.redirect("/login");
-    if(req.session.player.role !== "admin"){
+    if(req.session?.player?.role !== "admin"){
+        if(!req.body?.playerId) req.session?.player?._id;
         if(req.body.playerId !== req.session.player._id) return res.redirect("/forbidden");
     }
     return next();
