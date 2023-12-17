@@ -38,15 +38,17 @@
 -->
 
 <h1>Epic Bracket</h1>
+{{log this}}
 <main id="tournament">
-    {{#each bracket}}
+    {{#each matches}}
         <ul class="round round-{{@index}}">
         <li class="spacer">&nbsp;</li>
         {{#each this}}
-            <li class="game game-top {{#if winner}}winner{{/if}}">{{name}} <span>{{score}}</span></li>
+            <li class="game game-top {{#if this.winner1}}winner{{/if}}">{{this.name1}} <span>{{this.score1}}</span></li>
             <li class="game game-spacer">&nbsp;</li>
-            <li class="game game-bottom {{#if winner}}winner{{/if}}">{{name}} <span>{{score}}</span></li>
+            <li class="game game-bottom {{#if this.winner2}}winner{{/if}}">{{this.name2}} <span>{{this.score2}}</span></li>
         {{/each}}
         <li class="spacer">&nbsp;</li>
+        </ul>
     {{/each}}
 </main>

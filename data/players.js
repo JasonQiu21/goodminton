@@ -1,6 +1,7 @@
 import { players, events } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import * as helperFunctions from "../typecheck.js";
+import { getAllEvents, getEvent } from "./events.js";
 import bcrypt from "bcrypt";
 const saltRounds = 16;
 
@@ -233,7 +234,7 @@ const getReservations = async (playerId) => {
       error: `Error while getting reservations for player ${id}`,
     };
   }
-  try{
+  try {
     helperFunctions.isNonEmptyArray(reservations)
   } catch (e) {
     throw { status: 404, error: "No reservations" };
@@ -242,12 +243,53 @@ const getReservations = async (playerId) => {
     let time = 0;
     event.reservations.forEach(res => {
       res.players.forEach(player => {
-        if(player._id.toString() === playerId.trim()) time = res.time
+        if (player._id.toString() === playerId.trim()) time = res.time
       })
     })
     return { _id: event._id.toString(), name: event.name, time: time };
   });
 };
+
+const getAllMatches = async (id) => {
+  id = helperFunctions.isValidId(id);
+  const playerCollection = await players();
+  let player;
+  try {
+    player = await playerCollection.findOne({ _id: new ObjectId(id) }, { projection: { password: 0 } });
+  } catch (e) {
+    console.log(`Error on getPlayer: ${e}`);
+    throw { status: 500, error: `Error while getting player ${id}` };
+  }
+  if (player === null) throw { status: 404, error: "No player with id" };
+  player._id = player._id.toString();
+
+  const allEvents = await getAllEvents();
+
+  let playerMatches = [];
+
+  id = helperFunctions.stringToOid(id);
+
+  for (let i = 0; i < allEvents.length; i++) {
+    let event = await getEvent(allEvents[i]._id.toString());
+
+    for (let round in event.matches) {
+      for (let match of event.matches[round]) {
+        if ((match.team1 !== null || match.team2 !== null) && !match.byeround) {
+          if (match.team1 !== null && (match.team1[0]._id.equals(id) || (match.team1.length > 1 && match.team1[1]._id.equals(id))) && match.winner !== 0) {
+            match.eventId = event._id.toString(); //so that you can reference back to the match
+            playerMatches.push(match);
+          }
+          if (match.team2 !== null && (match.team2[0]._id.equals(id) || (match.team2.length > 1 && match.team2[1]._id.equals(id))) && match.winner !== 0) {
+            match.eventId = event._id.toString(); //so that you can reference back to the match
+            playerMatches.push(match);
+          }
+        }
+      }
+    }
+  }
+
+  return playerMatches;
+}
 
 export {
   getAllPlayers,
@@ -257,4 +299,5 @@ export {
   removePlayer,
   authenticatePlayer,
   getReservations,
+  getAllMatches
 };

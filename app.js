@@ -50,7 +50,7 @@ app.use(
     secret: "Goodminton",
     saveUninitialized: false,
     resave: false,
-    cookie: { maxAge: 60000 },
+    cookie: { maxAge: 604800000 }, // 1 week
   })
 );
 

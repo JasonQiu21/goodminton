@@ -1,21 +1,77 @@
 import { Router } from "express";
 import * as playerFunctions from "../data/players.js";
+import * as eventFunctions from "../data/events.js";
 import * as typecheck from "../typecheck.js";
+
 const router = Router();
 
 router.route("/:playerid").get(async (req, res) => {
   try {
     let id = typecheck.isValidId(req.params.playerid);
     let player = await playerFunctions.getPlayer(id);
+    const matchData = await playerFunctions.getAllMatches(id);
+    /*
+        eventName
+        who versus who
+        scores
+
+        [
+          {
+            id: 1,
+            team1: [ [Object] ],
+            team2: [ [Object] ],
+            score: [ 21, 19 ],
+            winner: 1,
+            byeround: false,
+            winner_to: null,
+            loser_to: null,
+            eventId: '657f70298b7d46ec5d3c96a3'
+          }
+        ]
+    */
+    for (let i = 0; i < matchData.length; i++) {
+      let team1 = matchData[i].team1;
+      let team2 = matchData[i].team2;
+      let team1Name = "";
+      let team2Name = "";
+      for (let j = 0; j < team1.length; j++) {
+        matchData[i].team1[j]._id = matchData[i].team1[j]._id.toString();
+        team1Name += team1[j].playerName + " and ";
+      }
+      for (let j = 0; j < team2.length; j++) {
+        matchData[i].team2[j]._id = matchData[i].team2[j]._id.toString();
+        team2Name += team2[j].playerName + " and ";
+      }
+      team1Name = team1Name.slice(0, -5);
+      team2Name = team2Name.slice(0, -5);
+      matchData[i].team1 = team1Name;
+      matchData[i].team2 = team2Name;
+      matchData[i].team1Score = matchData[i].score[0];
+      matchData[i].team2Score = matchData[i].score[1];
+      const event = await eventFunctions.getEvent(matchData[i].eventId);
+      matchData[i].eventName = event.name;
+      matchData[i].eventTime = new Date(event.date * 1000).toUTCString();
+      // check what team the user is on
+      let userTeam = 1;
+      for (let j = 0; j < team2.length; j++) {
+        if (team2[j]._id === id) {
+          userTeam = 2;
+          break;
+        }
+      }
+      matchData[i].didWin = matchData[i].winner === userTeam;
+    }
+    
     return res.render("profile", {
       player: player,
       owner: req.session?.player?._id == id,
       user: req.session?.player,
       id: req.session?.player?._id,
-      isAdmin: req.session?.player?.role === "admin"
+      isAdmin: req.session?.player?.role === "admin",
+      matches: matchData
     });
   } catch (e) {
-    return res.render("forbidden", {
+    return res.render("error", {
       user: req.session?.player,
       id: req.session?.player?._id,
       isAdmin: req.session?.player?.role === "admin"

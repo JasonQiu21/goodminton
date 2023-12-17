@@ -19,6 +19,7 @@ export const checkPlayerIdAgainstRequestBody  = async(req, res, next) => {
         if(!req.body?.playerId) req.body.playerId = req.session?.player?._id;
         if(req.body.playerId !== req.session?.player?._id) return res.redirect("/forbidden");
     }
+    else if(!req.body?.playerId) req.body.playerId = req.session?.player?._id;
     return next();
 }
 
