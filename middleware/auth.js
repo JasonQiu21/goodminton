@@ -16,9 +16,10 @@ export const authenticateAdmin = async(req, res, next) => {
 export const checkPlayerIdAgainstRequestBody  = async(req, res, next) => {
     if(!req.session?.player) return res.redirect("/login");
     if(req.session?.player?.role !== "admin"){
+        if(!req.body?.playerId) req.body.playerId = req.session?.player?._id;
         if(req.body.playerId !== req.session?.player?._id) return res.redirect("/forbidden");
     }
-    if(!req.body?.playerId) req.body.playerId = req.session?.player?._id;
+    else if(!req.body?.playerId) req.body.playerId = req.session?.player?._id;
     return next();
 }
 
