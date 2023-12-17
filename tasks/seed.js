@@ -35,7 +35,7 @@ const player2 = await playersCol.insertOne({
   phone: "8484682000",
   role: "user",
   singlesRating: 800,
-  doublesRating: 800
+  doublesRating: 800,
 });
 
 let player3Pass = await bcrypt.hash("password123", saltRounds);
@@ -47,7 +47,7 @@ const player3 = await playersCol.insertOne({
   phone: null,
   role: "admin",
   singlesRating: 500,
-  doublesRating: 500
+  doublesRating: 500,
 });
 
 let player4Pass = await bcrypt.hash("password1234", saltRounds);
@@ -59,7 +59,7 @@ const player4 = await playersCol.insertOne({
   phone: "7322518976",
   role: "admin",
   singlesRating: 1200,
-  doublesRating: 1200
+  doublesRating: 1200,
 });
 
 let player5Pass = await bcrypt.hash("password12345", saltRounds);
@@ -71,7 +71,7 @@ const player5 = await playersCol.insertOne({
   phone: "8484688222",
   role: "user",
   singlesRating: 800,
-  doublesRating: 800
+  doublesRating: 800,
 });
 
 let player6Pass = await bcrypt.hash("password6", saltRounds);
@@ -83,7 +83,7 @@ const player6 = await playersCol.insertOne({
   phone: null,
   role: "admin",
   singlesRating: 200,
-  doublesRating: 200
+  doublesRating: 200,
 });
 
 let player7Pass = await bcrypt.hash("password67", saltRounds);
@@ -95,7 +95,7 @@ const player7 = await playersCol.insertOne({
   phone: "1111111111",
   role: "user",
   singlesRating: 230,
-  doublesRating: 500
+  doublesRating: 500,
 });
 
 let player8Pass = await bcrypt.hash("password67890", saltRounds);
@@ -136,36 +136,72 @@ const event1 = await eventsCol.insertOne({
         { _id: player3.insertedId, playerName: "Jackey Yang" },
         { _id: player4.insertedId, playerName: "Eddison So" },
       ],
-      max: 12
+      max: 12,
     },
     {
       time: 1701207000,
-      players: [
-        { _id: player6.insertedId, playerName: "Britney Yang" },
-      ],
-      max: 12
+      players: [{ _id: player6.insertedId, playerName: "Britney Yang" }],
+      max: 12,
     },
     {
       time: 1701208800,
-      players: [
-        { _id: player8.insertedId, playerName: "Aidan Haberman" },
-      ],
-      max: 4
+      players: [{ _id: player8.insertedId, playerName: "Aidan Haberman" }],
+      max: 4,
     },
     {
       time: 1703633400,
       players: [],
-      max: 4
-    }
-  ]
-})
+      max: 4,
+    },
+  ],
+});
 
 const event2 = await eventsCol.insertOne({
+<<<<<<< HEAD
   name: "Christmas Singles Tournament!",
   date: 1703530800, //December 8th, 2023 at 2PM
   eventType: "singles tournament",
   tournamentType: "double elim",
   matches: {},
+=======
+  name: "12/08/2023 Practice",
+  date: 1702062000, //December 8th, 2023 at 2PM
+  eventType: "Single Elimination Tournament",
+  teamType: "singles",
+  matches: [
+    [
+      // in order of bracket:
+
+      {
+        name1: "Yihan",
+        score1: 79,
+        winner1: true,
+        name2: "Aidan",
+        score2: 48,
+        winner2: false,
+      },
+
+      {
+        name1: "Britney",
+        score1: 84,
+        winner1: true,
+        name2: "Bryan",
+        score2: 72,
+        winner2: false,
+      },
+    ],
+    [
+      {
+        name1: "",
+        score1: 0,
+        winner1: false,
+        name2: "",
+        score2: 0,
+        winner2: false,
+      },
+    ],
+  ],
+>>>>>>> frontend
   reservations: [
     {
       time: 1703530800,
@@ -178,12 +214,12 @@ const event2 = await eventsCol.insertOne({
         { _id: player6.insertedId, playerName: "Britney Yang" },
         { _id: player7.insertedId, playerName: "Jing Ngo" },
         { _id: player8.insertedId, playerName: "Aidan Haberman" },
-        { _id: player9.insertedId, playerName: "John Doe" }
+        { _id: player9.insertedId, playerName: "John Doe" },
       ],
-      max: 20
-    }
-  ]
-})
+      max: 20,
+    },
+  ],
+});
 
 const event3 = await eventsCol.insertOne({
   name: "2024 New Year's Round Robin",
@@ -216,7 +252,11 @@ const event4 = await eventsCol.insertOne({
         { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
         { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" },
       ],
+<<<<<<< HEAD
       max: 5,
+=======
+      max: 20,
+>>>>>>> frontend
     },
   ],
 });
