@@ -52,7 +52,16 @@ router
       let playerName = typecheck.isValidString(req.body.playerName);
       let email = typecheck.checkEmail(req.body.email);
       let password = typecheck.isValidString(req.body.password);
-      let player = await createNewPlayer(playerName, email, password);
+      let phoneNumber = null;
+      if (req.body.phoneNumber != "") {
+        phoneNumber = typecheck.isValidString(req.body.phoneNumber);
+      }
+      let player = await createNewPlayer(
+        playerName,
+        email,
+        password,
+        phoneNumber
+      );
       req.session.player = player;
       return res.redirect("/players/" + player._id.toString());
     } catch (e) {
