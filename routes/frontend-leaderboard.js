@@ -12,6 +12,7 @@ router.route("/").get(async (req, res) => {
     return b.singlesRating - a.singlesRating;
   });
   return res.render("leaderboard", {
+    title: "Leaderboard",
     user: req.session?.player,
     players: players,
     id: req.session?.player?._id,

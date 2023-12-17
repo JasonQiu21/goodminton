@@ -383,7 +383,7 @@ li.game-bottom{
     padding: 10px;
 }
 
-.nested-grid-container > span {
+.nested-grid-container > div {
     background-color: #FFFFFF;
     stroke: #111111;
     text-align: center;
