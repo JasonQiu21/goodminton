@@ -2,10 +2,9 @@ $(".join-button").click(function (e) {
     console.log("button pressed");
     e.preventDefault();
     const eventId = window.location.pathname.split('/').at(-1);
-    var timeStamp = $(this).attr("data-id")
+    var timeStamp = $(this).data("id")
     console.log(timeStamp);
     try {
-      timeStamp = isValidString(timeStamp);
       $.ajax({
         url: `/api/events/reserve/${eventId}`,
         type: "POST",
