@@ -118,6 +118,38 @@ p.success {
     padding: 5px;
 }
 
+.matchHistory {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.matchHistory thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.matchHistory th,
+.matchHistory td {
+    padding: 12px 15px;
+}
+
+.matchHistory tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.matchHistory tbody tr.winner-false {
+    background-color: lightcoral;
+}
+
+.matchHistory tbody tr.winner-true {
+    background-color: lightgreen;
+}
+
 /*
 *  Login / Register styles
 */
