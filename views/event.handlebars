@@ -13,7 +13,13 @@
                     {{#if isFull}}
                         <p>Full</p>
                     {{else}}
-                        <button class="join-button" data-id="{{timeStamp}}">Join</button>
+                        {{#if inEvent}}
+                            {{#if inTimeslot}}
+                                <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
+                            {{/if}}
+                        {{else}}
+                            <button class="join-button" data-id="{{timeStamp}}">Join</button>
+                        {{/if}}
                     {{/if}}
                     <span class="nested-grid-container">
                         {{#each players}}
