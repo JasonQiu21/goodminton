@@ -155,6 +155,18 @@ export const createReservation = async (playerId, eventId, time) => {
   } catch (e) {
     throw { status: 404, error: "Player not found" };
   }
+
+  try {
+    let existingReservations = await playerFunctions.getReservations(playerId);
+    console.log(existingReservations);
+    existingReservations.forEach((reservation) => {
+      if (reservation._id === eventId)
+        throw { status: 400, error: "Already reserved for this event" };
+    });
+  } catch (e) {
+    if (e?.status !== 404) throw e;
+  }
+
   try {
     eventInfo = typecheck.isNonEmptyObject(eventInfo);
   } catch (e) {
@@ -170,7 +182,7 @@ export const createReservation = async (playerId, eventId, time) => {
       { _id: eventOid, "reservations.time": time },
       { projection: { _id: 0, "reservations.$": 1 } }
     );
-    console.log(reservations);
+    // console.log(reservations);
   } catch (e) {
     console.log(e);
     throw { status: 500, error: "Internal Server Error" };

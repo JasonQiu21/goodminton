@@ -233,9 +233,11 @@ const getReservations = async (playerId) => {
       error: `Error while getting reservations for player ${id}`,
     };
   }
-  if (!helperFunctions.isNonEmptyArray(reservations))
+  try{
+    helperFunctions.isNonEmptyArray(reservations)
+  } catch (e) {
     throw { status: 404, error: "No reservations" };
-
+  }
   return reservations.map((event) => {
     let time = 0;
     event.reservations.forEach(res => {
