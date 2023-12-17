@@ -252,7 +252,7 @@ export const createSwissRound = async (event, seeded = false) => {
         round.push({
             id: matchnumber,
             team1: team1,
-            team2: (teams[counter] === "bye") ? null : teams[counter],
+            team2: (teams[counter] === "bye") ? "bye" : teams[counter],
             score: [0, 0],
             winner: (teams[counter] == "bye") ? 1 : 0,
             byeround: (teams[counter] === "bye")
@@ -320,7 +320,7 @@ export const generateElimTournament = async (event, seeded = false) => {
     //at this point, each index of players is a string (either "Person1" or "Person1 & Person2")
     let teamlength = Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)));
 
-    let matchcounter = 1 + Object.keys(event.matches).length * ((event.tournamentType === "swiss") ? event.matches["swissround-1"].length : 0); //this multiplication is to allocate space for previously made swiss rounds if they have been made.
+    let matchcounter = 1 + Object.keys(event.matches).length * ((event.tournamentType === "swiss") ? event.matches["swissround - 1"].length : 0); //this multiplication is to allocate space for previously made swiss rounds if they have been made.
     let roundcounter;
     let roundnumber = 1;
 

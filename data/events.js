@@ -299,7 +299,8 @@ export const generateSwissRound = async (eventId) => {
 
 export const topCut = async (eventId, cut) => {
 	const eventOID = typecheck.stringToOid(eventId);
-	cut = typecheck.isInt(cut);
+	cut = parseInt(cut);
+	cut = typecheck.isValidNumber(cut);
 	let event = await getEvent(eventId);
 	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
 	if (event.tournamentType !== "swiss") throw { status: 400, error: "Event is not a Swiss Tournament." };
