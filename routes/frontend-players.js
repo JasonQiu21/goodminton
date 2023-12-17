@@ -9,7 +9,7 @@ router.route("/:playerid").get(async (req, res) => {
     let id = typecheck.isValidId(req.params.playerid);
     let player = await playerFunctions.getPlayer(id);
     try {
-      const matchData = playerFunctions.getAllMatches(id);
+      const matchData = await playerFunctions.getAllMatches(id);
       console.log(matchData);
     } catch (e) {
       console.log(e);
