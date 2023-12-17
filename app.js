@@ -57,8 +57,8 @@ if (debug) {
   app.use("/", (req, res, next) => {
     console.log(
       `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${
-        req.session.user ? "User is authenticated as" : "User not authenticated"
-      } ${req.session.user ? req.session.user.role : ""})`
+        req.session.player ? "User is authenticated as" : "User not authenticated"
+      } ${req.session.player ? req.session.player.role : ""})`
     );
     return next();
   });
