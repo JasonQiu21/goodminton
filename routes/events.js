@@ -213,7 +213,7 @@ router
       if (!req.params.id) throw { status: 400, error: "No event ID provided." };
       if (!req.params.matchId) throw { status: 400, error: "No match ID provided." };
       let event = await getEvent(req.params.id);
-      let match = await getMatch(event, matchId);
+      let match = await getMatch(event, req.params.matchId);
       return res.json(match);
     } catch (e) {
       if (!e.status) {

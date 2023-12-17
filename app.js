@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 const app = express();
 import configRoutes from "./routes/index.js";
 import session from "express-session";
@@ -20,12 +20,7 @@ import path from "path";
 TODO:
 - Build out routes
 */
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const staticDir = express.static(__dirname + "/public");
-app.use("/public", staticDir);
 
-// app.use("/public", express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
