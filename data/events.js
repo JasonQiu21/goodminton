@@ -62,7 +62,6 @@ export const getEvent = async (eventId) => {
 	try {
 		res = await eventsCol.findOne({ _id: eventId });
 		for (let i in res.reservations) {
-			console.log(i);
 			for (let j in res.reservations[i].players) {
 				playerName = await playerFunctions.getPlayer(res.reservations[i].players[j]._id.toString());
 				if (!playerName.playerName) throw { status: 404, error: "Error getting player name" };
@@ -326,8 +325,8 @@ export const getStandings = async (eventId) => {
 }
 
 export const getMatch = async (event, matchId) => {
-	console.log(matchId);
-	matchId = typecheck.isValidNumber(matchId);
+	matchId = parseInt(matchId);
+	matchId = typecheck.isFiniteNumber(matchId);
 
 	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
 	if (Object.keys(event.matches) == 0) throw { status: 400, error: "Event has not started. No matches can be fetched." };
@@ -338,12 +337,15 @@ export const getMatch = async (event, matchId) => {
 
 export const submitScores = async (eventId, matchId, scores, winner) => {
 	const eventOID = typecheck.stringToOid(eventId);
+	matchId = parseInt(matchId);
 	matchId = typecheck.isValidNumber(matchId);
 	scores = typecheck.isNonEmptyArray(scores);
 	winner = typecheck.isValidNumber(winner);
 
 	if (winner < 1 || winner > 2) throw { status: 400, error: "Invalid winner." };
 	if (scores.length < 2) throw { status: 400, error: "Invalid scores." };
+	scores[0] = typecheck.isValidNumber(scores[0]);
+	scores[1] = typecheck.isValidNumber(scores[1]);
 	if (scores[0] < 0 || scores[1] < 0) throw { status: 400, error: "Invalid scores." };
 
 	let event = await getEvent(eventId);

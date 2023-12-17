@@ -296,4 +296,5 @@ export {
   removePlayer,
   authenticatePlayer,
   getReservations,
+  getAllMatches
 };
