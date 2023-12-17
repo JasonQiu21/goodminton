@@ -23,7 +23,6 @@ router.route("/").get(async (req, res) => {
 router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id)
-    console.log(event);
     const eventDate = new Date(event.date * 1000);
     event.date = eventDate.toDateString();
     event.time = eventDate.toTimeString();
@@ -32,7 +31,7 @@ router.route("/:id").get(async (req, res) => {
       event.reservations[i].timeStamp = event.reservations[i].time;
       event.reservations[i].date = reservationTime.toDateString();
       event.reservations[i].time = reservationTime.toTimeString();
-      event.reservations[i].isFull = event.reservations[i].players.length===event.reservations[i].max;
+      event.reservations[i].isFull = event.reservations[i].players.length === event.reservations[i].max;
     }
     event.user = req.session?.player;
     event.id = req.session?.player?._id;
@@ -50,7 +49,6 @@ router.route("/:id").get(async (req, res) => {
 router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id)
-    console.log(event);
     const eventDate = new Date(event.date * 1000);
     event.date = eventDate.toDateString();
     event.time = eventDate.toTimeString();
@@ -59,7 +57,7 @@ router.route("/:id").get(async (req, res) => {
       event.reservations[i].timeStamp = event.reservations[i].time;
       event.reservations[i].date = reservationTime.toDateString();
       event.reservations[i].time = reservationTime.toTimeString();
-      event.reservations[i].isFull = event.reservations[i].players.length===event.reservations[i].max;
+      event.reservations[i].isFull = event.reservations[i].players.length === event.reservations[i].max;
     }
     event.user = req.session?.player;
     event.id = req.session?.player?._id;

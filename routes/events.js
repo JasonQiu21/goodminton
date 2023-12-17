@@ -106,6 +106,7 @@ router
       return res.status(e.status).json(e);
     }
   });
+
 router
   .route("/reserve/:id")
   .post(async (req, res) => {
@@ -147,5 +148,121 @@ router
         .json({ status: 500, error: "An Internal Server Error Occurred" });
     }
   });
+
+router
+  .route("/:id/generateBracket")
+  .post(async (req, res) => {
+    try {
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
+      if (!req.body.seeded) throw { status: 400, error: "Seeded value not provided." };
+      let matches = await startTournament(req.params.id, req.body.seeded);
+      return res.json(matches);
+
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on POST events/:id/generateBracket]: ${e.stack}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+
+router
+  .route("/:id/generateSwissRound")
+  .post(async (req, res) => {
+    try {
+      if (!req.body.id) throw { status: 400, error: "No event ID provided." };
+      let matches = await generateSwissRound(req.params.id);
+      return res.json(matches);
+
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on POST events/:id/generateSwissRound]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+
+router
+  .route("/:id/topCut")
+  .post(async (req, res) => {
+    try {
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
+      if (!req.body.topCut) throw { status: 400, error: "No top cut provided." };
+
+      let matches = await topCut(req.params.id, req.body.topCut);
+      return res.json(matches);
+
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on POST events/:id/topCut]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+
+router
+  .route("/:id/standings")
+  .get(async (req, res) => {
+    try {
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
+      let standings = await getStandings(req.params.id);
+      return res.json(standings);
+
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on GET events/:id/standings]: ${e.stack}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+
+router
+  .route("/:id/matches/:matchId")
+  .get(async (req, res) => {
+    try {
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
+      if (!req.params.matchId) throw { status: 400, error: "No match ID provided." };
+      let event = await getEvent(req.params.id);
+      let match = await getMatch(event, req.params.matchId);
+      return res.json(match);
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on GET events/:id/matches/:matchId]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  }).post(async (req, res) => {
+    try {
+      if (!req.body.winner && typeof (req.body.winner) !== "boolean") throw { status: 400, error: "No winner provided." };
+      if (!req.body.scores) throw { status: 400, error: "No score provided." };
+      let match = await submitScores(req.params.id, parseInt(req.params.matchId), req.body.scores, req.body.winner);
+      return res.json(match);
+    } catch (e) {
+      if (!e.status) {
+        console.log(`[Error on POST events/:id/matches/:matchId]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
+      }
+      return res.status(e.status).json(e);
+    }
+  })
+
+
 
 export default router;

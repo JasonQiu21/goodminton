@@ -60,7 +60,6 @@ export const getEvent = async (eventId) => {
 	let res, playerName;
 	try {
 		res = await eventsCol.findOne({ _id: eventId });
-		console.log(res);
 		for (let i in res.reservations) {
 			console.log(i);
 			for (let j in res.reservations[i].players) {
@@ -70,7 +69,6 @@ export const getEvent = async (eventId) => {
 				res.reservations[i].players[j].playerName = playerName.playerName;
 			}
 		}
-		console.log(res);
 	} catch (e) {
 		console.log(e);
 		throw { status: 500, error: `Error while getting event ${eventId}` };
@@ -169,14 +167,12 @@ export const createReservation = async (playerId, eventId, time) => {
 
 	try {
 		playerInfo = typecheck.isNonEmptyObject(playerInfo);
-		console.log(playerInfo);
 	} catch (e) {
 		throw { status: 404, error: "Player not found" };
 	}
 
 	try {
 		let existingReservations = await playerFunctions.getReservations(playerId);
-		console.log(existingReservations);
 		existingReservations.forEach((reservation) => {
 			if (reservation._id === eventId)
 				throw { status: 400, error: "Already reserved for this event" };
@@ -368,7 +364,6 @@ export const translateBracket = async (eventId) => {
 	let info;
 	try {
 		info = await eventCollection.findOne({ _id: eventOID });
-		console.log(info);
 		info = await eventCollection.updateOne({ _id: eventOID, 'reservations.players._id': playerOID }, { $pull: { 'reservations.$.players': { _id: playerOID } } });
 	} catch (e) {
 		console.log(e);
