@@ -39,8 +39,8 @@ router
 
       typecheck.isValidString(req.body.eventName, "Event Name");
       typecheck.isValidUnix(req.body.eventDate);
-      const eventTypes = ["doublestournament", "singlestournament", "practice"]; 
-  
+      const eventTypes = ["doublestournament", "singlestournament", "practice"];
+
       typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
       if (!eventTypes.includes(req.body.eventType))
         throw { status: 400, error: "Invalid event type." };
