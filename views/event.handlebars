@@ -6,6 +6,7 @@
         <p>Time: {{time}}</p>
         <div class="grid-container">
             {{#each reservations}}
+                <div>
                     <h3>{{date}}</h3>
                     <h4>{{time}}</h3>
                     <p>Capacity: {{players.length}}/{{max}}</p>
@@ -13,7 +14,7 @@
                         <p>Full</p>
                     {{else}}
                         <button class="join-button" data-id="{{timeStamp}}">Join</button>
-                    {{/if}
+                    {{/if}}
                     <span class="nested-grid-container">
                         {{#each players}}
                             <span>
