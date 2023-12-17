@@ -263,12 +263,12 @@ export const startTournament = async (eventId, seeded) => {
 	seeded = typecheck.isBool(seeded);
 	let event = await getEvent(eventId);
 
-	if (!event.eventType.includes("Tournament")) throw { status: 400, error: "Event is not a tournament." };
+	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
 
 	if (Object.keys(event.matches) > 0 && event.eventType !== "Swiss Tournament") throw { status: 400, error: "Tournament has already been generated." };
 	//now we actually generate the brackets!
 	if (event.eventType === "Single Elimination Tournament" || event.eventType === "Double Elimination Tournament") event.matches = await generateElimTournament(event, seeded);
-	else if (event.eventType === "Round Robin Tournament") event.matches = await generateRoundRobinTournament(event, seeded);
+	else if (event.tournamentType === "round robin") event.matches = await generateRoundRobinTournament(event, seeded);
 	else throw { status: 400, error: "Invalid tournament type." };
 
 	return event;

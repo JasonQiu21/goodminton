@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as typecheck from "../typecheck.js";
-import { getEvent } from "../data/events.js";
+import { getEvent, startTournament} from "../data/events.js";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
@@ -41,20 +41,31 @@ router.route("/:id").get(async (req, res) => {
   } catch (e) {
     return res.render("error", {
       user: req.session?.player,
-      id: req.sesion?.player?._id,
+      id: req.session?.player?._id,
       error: e.error,
     });
   }
 });
 
 
-router.route("/:id/bracket").get(async (req, res) => {
+router.route("/:id/bracket")
+.get(async (req, res) => {
+  let id;
   try {
-    let id = typecheck.isValidId(req.params.id);
-    let bracket = await translateBracket(id);
-    return res.render("bracket", { user: req.session?.player, bracket: bracket });
+    id = typecheck.isValidId(req.params.id);
+    let bracket = await startTournament(id, true);
+    return res.render("roundrobin", { 
+      user: req.session?.player,
+      id: req.session?.player?._id,
+      isAdmin: req.session?.player?.role === "admin",
+      eventId: id});
   } catch (e) {
-    return res.render("error", { user: req.session?.player, error: e.error });
+    return res.render("error", {       
+      user: req.session?.player,
+      id: req.session?.player?._id,
+      error: e.error,
+      isAdmin: req.session?.player?.role === "admin"
+    });
   }
 });
 
