@@ -37,14 +37,10 @@ router.route("/:id").get(async (req, res) => {
     const event = await getEvent(req.params.id);
     var playerReservations = [];
     const isLoggedIn = req.session?.player;
-    try {
+    if(req.session?.player){
       playerReservations = await getReservations(req.session?.player?._id);
-    } catch (e) {
-      console.log(e);
     }
-    const inEvent = playerReservations.some(
-      (event) => event._id === req.params.id
-    );
+    let inEvent = playerReservations.some((event) => event._id === req.params.id);
     var inEventTime = -1;
     if (inEvent) {
       inEventTime = playerReservations.filter(
@@ -84,7 +80,7 @@ router.route("/:id").get(async (req, res) => {
   } catch (e) {
     return res.render("error", {
       user: req.session?.player,
-      id: req.sesion?.player?._id,
+      id: req.session?.player?._id,
       error: e.error,
     });
   }
