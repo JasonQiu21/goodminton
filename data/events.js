@@ -64,7 +64,6 @@ export const getEvent = async (eventId) => {
 		for (let i in res.reservations) {
 			console.log(i);
 			for (let j in res.reservations[i].players) {
-				console.log(j);
 				playerName = await playerFunctions.getPlayer(res.reservations[i].players[j]._id.toString());
 				if (!playerName.playerName) throw { status: 404, error: "Error getting player name" };
 				res.reservations[i].players[j].playerName = playerName.playerName;
@@ -326,10 +325,9 @@ export const getStandings = async (eventId) => {
 
 }
 
-export const getMatch = async (eventId, matchId) => {
-	const eventOID = typecheck.stringToOid(eventId);
+export const getMatch = async (event, matchId) => {
+	console.log(matchId);
 	matchId = typecheck.isValidNumber(matchId);
-	let event = await getEvent(eventId);
 
 	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
 	if (Object.keys(event.matches) == 0) throw { status: 400, error: "Event has not started. No matches can be fetched." };
