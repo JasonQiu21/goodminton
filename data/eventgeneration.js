@@ -252,7 +252,7 @@ export const createSwissRound = async (event, seeded = false) => {
         round.push({
             id: matchnumber,
             team1: team1,
-            team2: (teams[counter] === "bye") ? null : teams[counter],
+            team2: (teams[counter] === "bye") ? "bye" : teams[counter],
             score: [0, 0],
             winner: (teams[counter] == "bye") ? 1 : 0,
             byeround: (teams[counter] === "bye")
@@ -320,7 +320,7 @@ export const generateElimTournament = async (event, seeded = false) => {
     //at this point, each index of players is a string (either "Person1" or "Person1 & Person2")
     let teamlength = Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)));
 
-    let matchcounter = 1 + Object.keys(event.matches).length * ((event.tournamentType === "swiss") ? event.matches["swissround-1"].length : 0); //this multiplication is to allocate space for previously made swiss rounds if they have been made.
+    let matchcounter = 1 + Object.keys(event.matches).length * ((event.tournamentType === "swiss") ? event.matches["swissround - 1"].length : 0); //this multiplication is to allocate space for previously made swiss rounds if they have been made.
     let roundcounter;
     let roundnumber = 1;
 
@@ -441,7 +441,7 @@ export const generateElimTournament = async (event, seeded = false) => {
         for (let match of matches[round]) {
             if ((match.team1 === "bye" || match.team2 === "bye") && !match.byeround) {
                 match.byeround = true;
-                let result = await submitScoresForMatch(event, match.id, [0, 0], (match.team1 === "bye") ? 2 : 1);
+                let result = await submitScoresForMatch(event, match.id, [0, 0], (match.team1 === "bye") ? 2 : 1, true);
             }
         }
     }
@@ -482,7 +482,7 @@ export const translationElimBracketLayer = async (event) => {
 
 }
 
-export const submitScoresForMatch = async (event, matchId, score, winner) => {
+export const submitScoresForMatch = async (event, matchId, score, winner, onGeneration = false) => {
     /*
     This function takes in the event ID, the match ID, the score, and the winner and updates the match with the score and winner.
     */
@@ -498,6 +498,9 @@ export const submitScoresForMatch = async (event, matchId, score, winner) => {
             if (match.id === matchId) {
                 match.score = score;
                 match.winner = winner;
+
+                if (match.winner !== 0 && !onGeneration) throw { status: 400, error: "Match is already recorded." };
+                if (match.byeround && !onGeneration) throw { status: 400, error: "You cannot record a score for a bye round." };
 
                 //update elos
                 if (match.team1 !== null && match.team2 !== null && !match.byeround) {
