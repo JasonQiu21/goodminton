@@ -6,6 +6,7 @@ import {
   authenticateAdmin,
   authenticatePlayer,
   checkPlayerIdAgainstRequestBody,
+  checkLoggedOut
 } from "./middleware/auth.js";
 
 const port = 3000;
@@ -64,16 +65,23 @@ if (debug) {
   });
 }
 
-const adminRoutes = [];
+const adminRoutes = ["/createEvent"];
 adminRoutes.forEach((route) => app.use(route, authenticateAdmin));
 
-const playerRoutes = [];
+const adminRoutesPost = ["/api/events/", "/api/events/:id"]
+adminRoutesPost.forEach(route => app.post(route, authenticateAdmin));
+
+const playerRoutes = ["/logout" ];
 playerRoutes.forEach((route) => app.use(route, authenticatePlayer));
+
+const playerRoutesPoast = ["/api/events/reserve/*"];
 
 const samePlayerIdRoutes = ["/api/events/reserve/*"];
 samePlayerIdRoutes.forEach((route) =>
   app.use(route, checkPlayerIdAgainstRequestBody)
 );
+
+app.use("/login", checkLoggedOut);
 
 configRoutes(app);
 

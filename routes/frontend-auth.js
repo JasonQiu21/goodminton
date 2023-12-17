@@ -15,7 +15,7 @@ router
     return res.render("login", {
       user: req.session?.player,
       id: req.session?.player?._id,
-      isAdmin: req.session?.player?.role === "admin"
+      isAdmin: req.session?.player?.role === "admin",
     });
   })
   .post(async (req, res) => {
@@ -31,7 +31,7 @@ router
         user: req.session?.player,
         error: e.error,
         id: req.session?.player?._id,
-        isAdmin: req.session?.player?.role === "admin"
+        isAdmin: req.session?.player?.role === "admin",
       });
     }
   });
@@ -47,7 +47,7 @@ router
     return res.render("register", {
       user: req.session?.player,
       id: req.session?.player?._id,
-      isAdmin: req.session?.player?.role === "admin"
+      isAdmin: req.session?.player?.role === "admin",
     });
   })
   .post(async (req, res) => {
@@ -71,9 +71,17 @@ router
         user: req.session?.player,
         error: e.error,
         id: req.session?.player?._id,
-        isAdmin: req.session?.player?.role === "admin"
+        isAdmin: req.session?.player?.role === "admin",
       });
     }
   });
+
+router.route("/forbidden").get((req, res) => {
+  res.status(403).render("error", {
+    error: "Forbidden",
+    user: req.session?.player,
+    id: req.session?.player?._id,
+  });
+});
 
 export default router;

@@ -1,11 +1,11 @@
 export const authenticatePlayer = async (req, res, next) => {
-    if(!req.session) return res.redirect("/login");
+    if(!req.session?.player) return res.redirect("/login");
     return next();
 };
 
 export const authenticateAdmin = async(req, res, next) => {
-    if(!req.session) return res.redirect("/login");
-    if(req.session.player.role !== "admin") return res.redirect("/forbidden");
+    if(!req.session?.player) return res.redirect("/login");
+    if(req.session?.player?.role !== "admin") return res.redirect("/forbidden");
     return next();
 }
 
@@ -14,10 +14,16 @@ export const authenticateAdmin = async(req, res, next) => {
 // Or edit their profile but not others.
 // Admin should be able to register anyone 
 export const checkPlayerIdAgainstRequestBody  = async(req, res, next) => {
-    if(!req.session) return res.redirect("/login");
+    if(!req.session?.player) return res.redirect("/login");
     if(req.session?.player?.role !== "admin"){
         if(!req.body?.playerId) req.body.playerId = req.session?.player?._id;
         if(req.body.playerId !== req.session?.player?._id) return res.redirect("/forbidden");
     }
     return next();
+}
+
+// If you are logged in, redirect to profile; if you're logged out, continue
+export const checkLoggedOut = async (req, res, next) => {
+    if(!req.session?.player) return next();
+    return res.redirect(`/players/${req.session?.player?._id}`);
 }
