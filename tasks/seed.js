@@ -209,13 +209,46 @@ const event4 = await eventsCol.insertOne({
     {
       time: 1706814000,
       players: [
-        { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
-        { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" },
+        { _id: player1.insertedId, playerName: "Jason Qiu" },
+        { _id: player2.insertedId, playerName: "Patrick Hill" },
+        { _id: player3.insertedId, playerName: "Jackey Yang" },
+        { _id: player4.insertedId, playerName: "Eddison So" },
+        { _id: player5.insertedId, playerName: "Bryan Chan" },
+        { _id: player6.insertedId, playerName: "Britney Yang" },
+        { _id: player7.insertedId, playerName: "Jing Ngo" },
+        { _id: player8.insertedId, playerName: "Aidan Haberman" },
+        { _id: player9.insertedId, playerName: "John Doe" },
       ],
       max: 20,
     },
   ],
 });
+
+const event5 = await eventsCol.insertOne({
+  name: "02/01/2024 Singles Tournament",
+  date: 1706814000, //November 28th, 2023 at 6PM
+  eventType: "singles tournament",
+  tournamentType: "single elim",
+  matches: {},
+  reservations: [
+    {
+      time: 1706814000,
+      players: [
+        { _id: player1.insertedId, playerName: "Jason Qiu" },
+        { _id: player2.insertedId, playerName: "Patrick Hill" },
+        { _id: player3.insertedId, playerName: "Jackey Yang" },
+        { _id: player4.insertedId, playerName: "Eddison So" },
+        { _id: player5.insertedId, playerName: "Bryan Chan" },
+        { _id: player6.insertedId, playerName: "Britney Yang" },
+        { _id: player7.insertedId, playerName: "Jing Ngo" },
+        { _id: player8.insertedId, playerName: "Aidan Haberman" },
+        { _id: player9.insertedId, playerName: "John Doe" },
+      ],
+      max: 20,
+    },
+  ],
+});
+
 
 console.log("Seeding successful!");
 await closeConnection();

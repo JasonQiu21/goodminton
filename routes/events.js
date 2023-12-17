@@ -179,7 +179,7 @@ router
   .route("/:id/generateSwissRound")
   .post(async (req, res) => {
     try {
-      if (!req.body.id) throw { status: 400, error: "No event ID provided." };
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
       let matches = await generateSwissRound(req.params.id);
       return res.json(matches);
 
