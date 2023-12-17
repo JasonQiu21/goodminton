@@ -2,12 +2,11 @@
     <main>
         <div class="grid-container">
             {{#each reservations}}
-                <a href="/events/{{id}}">
-                    <div>
-                        <h3>{{event}}</h3>
-                        <p>{{time}}</p>
-                    </div>
-                </a>
+                <div>
+                    <h3>{{name}}</h3>
+                    <p>{{time}}</p>
+                    <a href="/events/{{_id}}">More Info</a>
+                </div>
             {{/each}}
         </div>
     </main>

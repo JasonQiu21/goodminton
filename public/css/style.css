@@ -168,6 +168,11 @@ p.success {
     background-color: #dddddd;
 }
 
+.loginForm button:hover, .registerForm button:hover{
+    background-color: #111111;
+    color: white;
+}
+
 /*
 *  Bracket specific styles
 */
@@ -258,7 +263,17 @@ li.game-bottom{
     background-color: #dddddd;
 
 }
+.homeInfo p {
+    font-size: 20px;
+    padding: 10px;
+    text-align: center;
+}
 
+.homeInfo h1 {
+    font-size: 40px;
+    padding: 10px;
+    text-align: center;
+}
 .homeButton:hover{
     background-color: #111111;
     color: white;
