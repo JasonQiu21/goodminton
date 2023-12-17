@@ -1,5 +1,11 @@
-import playerRoutes from './players.js';
-import eventRoutes from './events.js';
+import eventRoutes from "./events.js";
+import playerRoutes from "./players.js";
+import frontendPlayerRoutes from "./frontend-players.js";
+import frontendLeaderboardRoutes from "./frontend-leaderboard.js";
+import frontendAuthRoutes from "./frontend-auth.js";
+import frontendEventRoutes from "./frontend-events.js";
+import frontendCreateEventRoutes from "./frontend-createEvent.js";
+// import * as playerRoutes from './players.js';
 
 const constructorMethod = (app) => {
   // app.use('/players', playerRoutes);
@@ -17,4 +23,5 @@ const constructorMethod = (app) => {
     res.status(404).render("error", { error: "Not Found", user: req.session?.user, id: req.session?.id });
   });
 };
+
 export default constructorMethod;

@@ -21,6 +21,7 @@ const createNewPlayer = async (
   const playerCollection = await players();
   try {
     playerName = helperFunctions.isValidString(playerName);
+    email = helperFunctions.isValidString(email);
     password = helperFunctions.isValidString(password);
     email = helperFunctions.checkEmail(email);
   } catch (e) {
