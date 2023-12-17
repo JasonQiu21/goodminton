@@ -1,8 +1,7 @@
 import * as typecheck from './typecheck.js'
-import { get } from './players.js';
-import { events } from "../config/mongoCollections.js";
+import { events, players } from "../config/mongoCollections.js";
+import { getPlayer, updatePlayer } from "./players.js";
 import { getEvent } from "./events.js";
-import { group } from 'console';
 import { ObjectId } from 'mongodb';
 
 /*
@@ -11,6 +10,7 @@ HELPER FUNCTIONS GO HERE!
 function seeding(numPlayers) {
     /*
     NOTE: THIS FUNCTION WAS NOT WRITTEN BY US. IT WAS TAKEN FROM https://stackoverflow.com/questions/8355264/tournament-bracket-placement-algorithm
+    (Just to credit who took this from online so that no one else gets blamed for this - Bryan was in charge of this)
     */
     var rounds = Math.log(numPlayers) / Math.log(2) - 1;
     var pls = [1, 2];
@@ -35,7 +35,7 @@ function nextLayer(pls) {
 export const createTeams = async (event, seeded = false) => {
     let players = event.reservations[0].players;
 
-    for (let i = 0; i < players.length; i++) players[i] = [await get(players[i]._id.toString())];
+    for (let i = 0; i < players.length; i++) players[i] = [await getPlayer(players[i]._id.toString())];
 
     if (event.teamType == "singles") {
         if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
@@ -53,7 +53,7 @@ export const createTeams = async (event, seeded = false) => {
     if (seeded) {
         //now we sort!
         let seededList = seeding(Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)))); //generates the proper seeding order
-        for (let i = 0; i <= seededList.length - players.length + 1; i++) players.push("bye");
+        while(players.length < seededList.length) players.push("bye"); //add byes to the end of the list
 
         let playersCopy = []
         for (let i = 0; i < players.length; i++) playersCopy.push(players[i]);
@@ -71,7 +71,7 @@ export const createTeams = async (event, seeded = false) => {
         for (let i = 0; i < players.length; i++) {
             if (players[i] !== "bye") {
                 reservation.push({ _id: new ObjectId(players[i][0]._id.toString()), playerName: players[i][0].playerName });
-                if (players[i][1]) reservation({ _id: new ObjectId(players[i][1]._id.toString()), playerName: players[i][1].playerName });
+                if (players[i][1]) reservation.push({ _id: new ObjectId(players[i][1]._id.toString()), playerName: players[i][1].playerName });
             }
         }
 
@@ -171,7 +171,7 @@ export const getStandings = async (event) => {
 TOURNAMENT GENERATION FUNCTIONS GO HERE!
 */
 
-export const generateRoundRobinTournament = async (event) => {
+export const generateRoundRobinTournament = async (event, seeded = false) => {
 
     let players = await createTeams(event);
 
@@ -203,10 +203,10 @@ export const generateRoundRobinTournament = async (event) => {
     const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
 
     if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
-    return returnedUpdate;
+    return matches;
 }
 
-export const generateSwissRound = async (event, seeded = false) => {
+export const createSwissRound = async (event, seeded = false) => {
     //this swiss round generation follows the start.gg algorithm.
     let teams = await createTeams(event, seeded);
 
@@ -267,7 +267,7 @@ export const generateSwissRound = async (event, seeded = false) => {
 
     if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
 
-    return returnedUpdate;
+    return matches;
 }
 
 export const swissTopCut = async (event, topCut = 4) => {
@@ -302,6 +302,7 @@ export const swissTopCut = async (event, topCut = 4) => {
 
     generateElimTournament(fakeEvent, true);
 
+    return event.matches;
 }
 
 export const generateElimTournament = async (event, seeded = false) => {
@@ -354,6 +355,7 @@ export const generateElimTournament = async (event, seeded = false) => {
         //Generate the first round. This has to be uniquely done due to the nature of bye rounds.
         let roundnumber = 1;
         let roundcounter = matchcounter + teamlength / 2 - 1;
+        let bonuscounter = 0;
 
         while (teamlength > 1) {
             let roundTitle = `winners - ${roundnumber}`;
@@ -370,13 +372,15 @@ export const generateElimTournament = async (event, seeded = false) => {
                     winner: ((players[i] === "bye") ? 2 : (players[i + 1] === "bye") && roundnumber === 1) ? 1 : 0,
                     byeround: false,
                     winner_to: (teamlength === 2) ? Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2 : roundcounter,
-                    loser_to: (roundnumber == 1) ? roundcounter - teamlength / 2 - 1 + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) : (matchcounter) - 3 - (roundnumber === 1) + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) + roundnumber
+                    loser_to: (roundnumber == 1) ? roundcounter - teamlength / 2 - 1 + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) : i + bonuscounter + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)))
                 });
 
                 matchcounter++;
             }
-
+            //16 17 18 19 --> 0 --> 20 21 22 23 --> 3 --> 26 27 --> 1 --> 28 --> 1 --> 29
             matches[roundTitle] = round;
+            bonuscounter += (roundnumber === 1) ? teamlength / 4 : teamlength / 2 + teamlength / 4;
+            console.log(bonuscounter);
             teamlength /= 2;
             roundnumber++;
         }
@@ -403,7 +407,7 @@ export const generateElimTournament = async (event, seeded = false) => {
                     score: [0, 0],
                     winner: 0,
                     byeround: false,
-                    winner_to: (roundnumber % 2 == 1) ? roundcounter + i : roundcounter,
+                    winner_to: (teamlength === 2) ? Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2 : (roundnumber % 2 == 1) ? roundcounter + i: roundcounter,
                     loser_to: null
                 });
                 matchcounter++;
@@ -416,7 +420,14 @@ export const generateElimTournament = async (event, seeded = false) => {
         }
     }
 
-
+    matches["finals"] = [{
+        id: Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2,
+        team1: null,
+        team2: null,
+        score: [0, 0],
+        winner: 0,
+        byeround: false
+    }]
     //now we update bye rounds
 
     for (let round in matches) {
@@ -433,7 +444,7 @@ export const generateElimTournament = async (event, seeded = false) => {
     const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id.toString()) }, { $set: { matches: matches } });
     if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
 
-    return returnedUpdate;
+    return matches;
 }
 
 export const translationElimBracketLayer = async (event) => {
@@ -474,6 +485,8 @@ export const submitScores = async (event, matchId, score, winner) => {
 
     const matches = event.matches;
 
+
+    //hoooooly crap now we have to UPDATE THIS SHIT
     for (let round in matches) {
         for (let match of matches[round]) {
             if (match.id === matchId) {
@@ -524,3 +537,18 @@ export const submitScores = async (event, matchId, score, winner) => {
     return returnedUpdate;
 }
 
+export const getMatchFromTournament = async(event, matchId) => {
+    const matches = event.matches;
+
+    for (let round in matches) {
+        for (let match of matches[round]) {
+            if (match.id === matchId) {
+                let clonedMatch = JSON.parse(JSON.stringify(match));
+                clonedMatch.in_round = round;
+                return clonedMatch;
+            }
+        }
+    }
+
+    throw {status: 404, error: "No match with that ID found."};
+}
