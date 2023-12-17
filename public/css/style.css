@@ -328,7 +328,7 @@ li.game-bottom{
 
 .grid-container {
     display: grid;
-    height: 400px;
+    height: auto;
     align-content: center;
     grid-template-columns: auto auto auto;
     gap: 10px;
@@ -344,3 +344,20 @@ li.game-bottom{
     font-size: 30px;
 }
 
+.nested-grid-container {
+    display: grid;
+    height: auto;
+    align-content: left;
+    grid-template-columns: auto auto auto;
+    gap: 10px;
+    background-color: #999999;
+    padding: 10px;
+}
+
+.nested-grid-container > span {
+    background-color: #FFFFFF;
+    stroke: #111111;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 15px;
+}
