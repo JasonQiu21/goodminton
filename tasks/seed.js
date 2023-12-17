@@ -157,51 +157,11 @@ const event1 = await eventsCol.insertOne({
 });
 
 const event2 = await eventsCol.insertOne({
-<<<<<<< HEAD
   name: "Christmas Singles Tournament!",
   date: 1703530800, //December 8th, 2023 at 2PM
   eventType: "singles tournament",
   tournamentType: "double elim",
   matches: {},
-=======
-  name: "12/08/2023 Practice",
-  date: 1702062000, //December 8th, 2023 at 2PM
-  eventType: "Single Elimination Tournament",
-  teamType: "singles",
-  matches: [
-    [
-      // in order of bracket:
-
-      {
-        name1: "Yihan",
-        score1: 79,
-        winner1: true,
-        name2: "Aidan",
-        score2: 48,
-        winner2: false,
-      },
-
-      {
-        name1: "Britney",
-        score1: 84,
-        winner1: true,
-        name2: "Bryan",
-        score2: 72,
-        winner2: false,
-      },
-    ],
-    [
-      {
-        name1: "",
-        score1: 0,
-        winner1: false,
-        name2: "",
-        score2: 0,
-        winner2: false,
-      },
-    ],
-  ],
->>>>>>> frontend
   reservations: [
     {
       time: 1703530800,
@@ -252,11 +212,7 @@ const event4 = await eventsCol.insertOne({
         { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
         { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" },
       ],
-<<<<<<< HEAD
-      max: 5,
-=======
       max: 20,
->>>>>>> frontend
     },
   ],
 });
