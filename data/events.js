@@ -1,6 +1,7 @@
 import * as typecheck from "../typecheck.js";
 import { events, players } from "../config/mongoCollections.js";
 import * as playerFunctions from "./players.js";
+import { generateElimTournament, submitScoresForMatch, swissTopCut, createSwissRound, generateRoundRobinTournament, getTournamentStandings, getMatchFromTournament } from "./eventgeneration.js";
 
 const eventTypes = ["singlestournament", "doublestournament", "practice"];
 
@@ -279,7 +280,7 @@ export const startTournament = async (eventId, seeded) => {
 
 	if (Object.keys(event.matches) > 0 && event.tournamentType !== "swiss") throw { status: 400, error: "Tournament has already been generated." };
 	//now we actually generate the brackets!
-	if (event.tournamentType === "single elim" || event.tournamentType === "doubele elim") event.matches = await generateElimTournament(event, seeded);
+	if (event.tournamentType === "single elim" || event.tournamentType === "double elim") event.matches = await generateElimTournament(event, seeded);
 	else if (event.tournamentType === "round robin") event.matches = await generateRoundRobinTournament(event, seeded);
 	else throw { status: 400, error: "Invalid tournament type." };
 
@@ -309,7 +310,7 @@ export const topCut = async (eventId, cut) => {
 
 	//now we actually generate the cut!
 
-	event.matches = await topCut(event, cut);
+	event.matches = await swissTopCut(event, cut);
 	return event;
 }
 

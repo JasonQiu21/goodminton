@@ -1,4 +1,4 @@
-import * as typecheck from './typecheck.js'
+import * as typecheck from '../typecheck.js'
 import { events, players } from "../config/mongoCollections.js";
 import { getPlayer, updatePlayer } from "./players.js";
 import { getEvent } from "./events.js";

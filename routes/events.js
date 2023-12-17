@@ -7,6 +7,11 @@ import {
   deleteEvent,
   createReservation,
   deleteReservation,
+  startTournament,
+  generateSwissRound,
+  topCut,
+  getMatch,
+  submitScores
 } from "../data/events.js";
 import * as typecheck from "../typecheck.js";
 const router = Router();
