@@ -273,3 +273,107 @@ export const deleteReservation = async (playerId, eventId) => {
 		throw { status: 500, error: `Error while updating ${eventId}` };
 	return info;
 };
+
+export const startTournament = async (eventId, seeded) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	seeded = typecheck.isBool(seeded);
+	let event = await getEvent(eventId);
+
+	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
+
+	if (Object.keys(event.matches) > 0 && event.tournamentType !== "swiss") throw { status: 400, error: "Tournament has already been generated." };
+	//now we actually generate the brackets!
+	if (event.tournamentType === "single elim" || event.tournamentType === "doubele elim") event.matches = await generateElimTournament(event, seeded);
+	else if (event.tournamentType === "round robin") event.matches = await generateRoundRobinTournament(event, seeded);
+	else throw { status: 400, error: "Invalid tournament type." };
+
+	return event;
+
+}
+
+export const generateSwissRound = async (eventId) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	let event = await getEvent(eventId);
+	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
+	if (event.tournamentType !== "swiss") throw { status: 400, error: "Event is not a Swiss Tournament." };
+
+	//now we actually generate the brackets!
+	event.matches = await createSwissRound(event);
+	return event;
+}
+
+export const topCut = async (eventId, cut) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	cut = typecheck.isInt(cut);
+	let event = await getEvent(eventId);
+	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
+	if (event.tournamentType !== "swiss") throw { status: 400, error: "Event is not a Swiss Tournament." };
+
+	if (Object.keys(event.matches) == 0) throw { status: 400, error: "Event has not started. No top cuts can be made." };
+
+	//now we actually generate the cut!
+
+	event.matches = await topCut(event, cut);
+	return event;
+}
+
+export const getStandings = async (eventId) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	let event = await getEvent(eventId);
+
+	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
+	if (Object.keys(event.matches) == 0) throw { status: 400, error: "Event has not started. No standings can be generated." };
+
+	let standings = await getTournamentStandings(event);
+	return standings;
+
+}
+
+export const getMatch = async (eventId, matchId) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	matchId = typecheck.isValidNumber(matchId);
+	let event = await getEvent(eventId);
+
+	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
+	if (Object.keys(event.matches) == 0) throw { status: 400, error: "Event has not started. No matches can be fetched." };
+	let match = await getMatchFromTournament(event, matchId);
+	return match;
+
+}
+
+export const submitScores = async (eventId, matchId, scores, winner) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	matchId = typecheck.isValidNumber(matchId);
+	scores = typecheck.isNonEmptyArray(scores);
+	winner = typecheck.isValidNumber(winner);
+
+	if (winner < 1 || winner > 2) throw { status: 400, error: "Invalid winner." };
+	if (scores.length < 2) throw { status: 400, error: "Invalid scores." };
+	if (scores[0] < 0 || scores[1] < 0) throw { status: 400, error: "Invalid scores." };
+
+	let event = await getEvent(eventId);
+	if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
+
+	let verification = await submitScoresForMatch(event, matchId, scores, winner);
+	return event;
+}
+
+
+export const translateBracket = async (eventId) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	const playerOID = typecheck.stringToOid(playerId);
+	const eventCollection = await events();
+	let playerInfo = await playerFunctions.getPlayer(playerId);
+	if (!playerInfo) throw { status: 404, error: 'Could not find player' };
+	let info;
+	try {
+		info = await eventCollection.findOne({ _id: eventOID });
+		console.log(info);
+		info = await eventCollection.updateOne({ _id: eventOID, 'reservations.players._id': playerOID }, { $pull: { 'reservations.$.players': { _id: playerOID } } });
+	} catch (e) {
+		console.log(e);
+		throw { status: 500, error: "An Internal Server Error Occurred" };
+	}
+	if (!info) throw { status: 500, error: 'Could not delete reservation' };
+	return info;
+};
