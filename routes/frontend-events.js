@@ -36,6 +36,7 @@ router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id)
     var playerReservations = [];
+    const isLoggedIn = req.session?.player;
     try {
       playerReservations = await getReservations(req.session?.player?._id);
     }
@@ -46,6 +47,9 @@ router.route("/:id").get(async (req, res) => {
     var inEventTime = -1;
     if (inEvent) {
       inEventTime = playerReservations.filter((event) => event._id === req.params.id)[0].time;
+    }
+    if (!isLoggedIn) {
+      inEvent = true;
     }
     const eventDate = new Date(event.date * 1000);
     event.date = eventDate.toDateString();

@@ -4,14 +4,14 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/JasonQiu21/goodminton">
+    <img src="public/images/cat.jpg" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Goodminton</h3>
 
   <p align="center">
-    project_description
+    Welcome to Goodminton your go-to destination for hassle-free badminton experiences! Easily book courts at top venues, participate in thrilling tournaments, and connect with a vibrant badminton community. Enjoy the convenience of anytime, anywhere access to elevate your game. Goodminton where convenience meets competition for the ultimate badminton bliss!
   </p>
 </div>
 
@@ -19,31 +19,33 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
 * npm
   ```sh
   npm install npm@latest -g
   ```
+* MongoDB
+<a href="https://www.mongodb.com/docs/manual/administration/install-community/">
+  - Follow the instructions on the MongoDB website for installing the community edition
+</a>
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
+1. Start up the MongoDB server on port 27017
 2. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/JasonQiu21/goodminton.git
    ```
 3. Install NPM packages
    ```sh
    npm install
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+4. Seed some sample data into the database.
+   ```sh
+   npm run seed
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
