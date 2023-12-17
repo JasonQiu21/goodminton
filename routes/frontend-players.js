@@ -1,12 +1,20 @@
 import { Router } from "express";
 import * as playerFunctions from "../data/players.js";
 import * as typecheck from "../typecheck.js";
+
 const router = Router();
 
 router.route("/:playerid").get(async (req, res) => {
   try {
     let id = typecheck.isValidId(req.params.playerid);
     let player = await playerFunctions.getPlayer(id);
+    try {
+      const matchData = playerFunctions.getAllMatches(id);
+      console.log(matchData);
+    } catch (e) {
+      console.log(e);
+    }
+    
     return res.render("profile", {
       player: player,
       owner: req.session?.player?._id == id,
@@ -15,7 +23,7 @@ router.route("/:playerid").get(async (req, res) => {
       isAdmin: req.session?.player?.role === "admin"
     });
   } catch (e) {
-    return res.render("forbidden", {
+    return res.render("error", {
       user: req.session?.player,
       id: req.session?.player?._id,
       isAdmin: req.session?.player?.role === "admin"
