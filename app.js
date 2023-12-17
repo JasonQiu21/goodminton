@@ -70,7 +70,7 @@ adminRoutes.forEach((route) => app.use(route, authenticateAdmin));
 const playerRoutes = [];
 playerRoutes.forEach((route) => app.use(route, authenticatePlayer));
 
-const samePlayerIdRoutes = [];
+const samePlayerIdRoutes = ["/api/events/reserve/*"];
 samePlayerIdRoutes.forEach((route) =>
   app.use(route, checkPlayerIdAgainstRequestBody)
 );
