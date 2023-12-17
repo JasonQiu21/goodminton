@@ -15,6 +15,7 @@ $(".join-button").click(function (e) {
         }),
         success: function (result) {
           console.log(result);
+          location.reload(true);
         //   $("#playerName").attr("placeholder", result.playerName);
         //   $("#playerName").val("");
         //   success("Player name updated!");
@@ -29,7 +30,8 @@ $(".leave-button").click(function (e) {
     console.log("button pressed");
     e.preventDefault();
     const eventId = window.location.pathname.split('/').at(-1);
-    console.log(timeStamp);
+    // var timeStamp = $(this).data("id")
+    // console.log(timeStamp);
     try {
       $.ajax({
         url: `/api/events/reserve/${eventId}`,
@@ -40,6 +42,7 @@ $(".leave-button").click(function (e) {
         }),
         success: function (result) {
           console.log(result);
+          location.reload(true);
         //   $("#playerName").attr("placeholder", result.playerName);
         //   $("#playerName").val("");
         //   success("Player name updated!");
