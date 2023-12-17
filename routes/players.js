@@ -2,6 +2,7 @@ import { Router } from "express";
 const router = Router();
 import * as playerFunctions from "../data/players.js";
 import * as helperFunctions from "../typecheck.js";
+import xss from "xss";
 
 router
   .route("/")
@@ -24,6 +25,13 @@ router
       if (!body.playerName) throw { status: 400, error: "Missing playerName" };
       if (!body.email) throw { status: 400, error: "Missing email" };
       if (!body.password) throw { status: 400, error: "Missing password" };
+      if(body.phone){
+          body.phone = helperFunctions.isValidString(phone);
+          if (
+            !/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(phone)
+          )
+            throw { status: 400, error: "Bad phone number" };
+      }
     } catch (e) {
       if (e.status) {
         return res.status(e.status).json(e);
@@ -35,9 +43,10 @@ router
     }
     try {
       await playerFunctions.createNewPlayer(
-        body.playerName,
-        body.email,
-        body.password
+        xss(body.playerName),
+        xss(body.email),
+        xss(body.password),
+        body.phone ? body.phone : null
       );
       res.json({ status: 200, created: true });
     } catch (e) {
@@ -69,15 +78,17 @@ router
   })
   .patch(async (req, res) => {
     try {
+      Object.keys(body).forEach(key => {
+        if(typeof body[key] === "string")
+          body[key] = xss(body[key])
+      });
       const body = helperFunctions.isValidPlayer(req.body, true);
       const id = req.params.playerId;
 
-      console.log(req.session);
       if(req.session?.player?.role !== "admin"){
         delete body?.singlesRating;
         delete body?.doublesRating;
       }
-      console.log(body);
       let player = await playerFunctions.updatePlayer(id, body);
       return res.json(player);
     } catch (e) {
