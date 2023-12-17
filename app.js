@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 const app = express();
 import configRoutes from "./routes/index.js";
 import session from "express-session";
@@ -20,12 +20,7 @@ import path from "path";
 TODO:
 - Build out routes
 */
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const staticDir = express.static(__dirname + "/public");
-app.use("/public", staticDir);
 
-// app.use("/public", express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -41,8 +36,8 @@ app.engine(
   })
 );
 
+app.engine("handlebars", exphbs.engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "views"));
 
 app.use(
   session({
@@ -57,49 +52,26 @@ app.use(
 if (debug) {
   app.use("/", (req, res, next) => {
     console.log(
-      `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${
-        req.session.player
-          ? "User is authenticated as"
-          : "User not authenticated"
-      } ${req.session.player ? req.session.player.role : ""})`
+      `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.user ? "User is authenticated as" : "User not authenticated"
+      } ${req.session.user ? req.session.user.role : ""})`
     );
     return next();
   });
 }
 
-const adminRoutes = ["/createEvent"];
+const adminRoutes = [];
 adminRoutes.forEach((route) => app.use(route, authenticateAdmin));
 
-const adminRoutesNotGet = ["/api/events/", "/api/events/:id"];
-adminRoutesNotGet.forEach((route) => {
-  app.post(route, authenticateAdmin);
-  app.delete(route, authenticateAdmin);
-  app.patch(route, authenticateAdmin);
-});
-
-const playerRoutes = ["/logout", "/api/events/reserve/*"];
+const playerRoutes = [];
 playerRoutes.forEach((route) => app.use(route, authenticatePlayer));
 
-
-const samePlayerIdRoutes = ["/api/events/reserve/*"];
+const samePlayerIdRoutes = [];
 samePlayerIdRoutes.forEach((route) =>
-app.use(route, checkPlayerIdAgainstRequestBody)
+  app.use(route, checkPlayerIdAgainstRequestBody)
 );
-
-const samePlayerRoutesNotGet = ["/api/players/:playerId"];
-samePlayerRoutesNotGet.forEach((route) => {
-  app.post(route, checkPlayerIdAgainstRequestBody);
-  app.delete(route, checkPlayerIdAgainstRequestBody);
-  app.patch(route, checkPlayerIdAgainstRequestBody);
-});
-
-const loggedOutRoutes = ["/login", "/register"];
-loggedOutRoutes.forEach((route) => {
-  app.use(route, checkLoggedOut);
-});
 
 configRoutes(app);
 
-app.listen(port, () => {
-  console.log(`Goodminton server running on http://localhost:${port}`);
+app.listen(3000, async () => {
+  console.log("Goodminton server running on http://localhost:3000");
 });
