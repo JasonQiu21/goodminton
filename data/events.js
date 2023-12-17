@@ -1,6 +1,6 @@
 import * as typecheck from "../typecheck.js";
 import { events , players } from "../config/mongoCollections.js";
-import { generateElimTournament, createSwissRound, generateRoundRobinTournament } from "./eventgeneration.js";
+import { generateElimTournament, createSwissRound, generateRoundRobinTournament, getTournamentStandings, submitScoresForMatch, getMatchFromTournament} from "./eventgeneration.js";
 import * as playerFunctions from './players.js';
 
 
@@ -210,7 +210,7 @@ export const startTournament = async (eventId, seeded) => {
 
   if(!event.eventType.includes("Tournament")) throw {status: 400, error: "Event is not a tournament."};
 
-  //if(Object.keys(event.matches) > 0 && event.eventType !== "Swiss Tournament") throw {status: 400, error: "Tournament has already been generated."};
+  if(Object.keys(event.matches) > 0 && event.eventType !== "Swiss Tournament") throw {status: 400, error: "Tournament has already been generated."};
   //now we actually generate the brackets!
   if(event.eventType === "Single Elimination Tournament" || event.eventType === "Double Elimination Tournament") event.matches = await generateElimTournament(event, seeded);
   else if(event.eventType === "Round Robin Tournament") event.matches = await generateRoundRobinTournament(event, seeded);
@@ -227,7 +227,7 @@ export const generateSwissRound = async (eventId) => {
   if(event.eventType !== "Swiss Tournament") throw {status: 400, error: "Event is not a Swiss Tournament."};
 
   //now we actually generate the brackets!
-  event.matches = await generateSwissRound(event);
+  event.matches = await createSwissRound(event);
   return event;
 }
 
@@ -253,19 +253,36 @@ export const getStandings = async (eventId) => {
   if(!event.eventType.includes("Tournament")) throw {status: 400, error: "Event is not a tournament."};
   if(Object.keys(event.matches) == 0) throw {status: 400, error: "Event has not started. No standings can be generated."};
 
-  let standings = await getStandings(event);
+  let standings = await getTournamentStandings(event);
   return standings;
 
 }
 
 export const getMatch = async (eventId, matchId) => {
   const eventOID = typecheck.stringToOid(eventId);
-  matchId = typecheck.isValidNumber(eventId);
+  matchId = typecheck.isValidNumber(matchId);
   let event = await getEvent(eventId);
 
   if(!event.eventType.includes("Tournament")) throw {status: 400, error: "Event is not a tournament."};
   if(Object.keys(event.matches) == 0) throw {status: 400, error: "Event has not started. No matches can be fetched."};
-  let match = await getMatch(event, matchId);
+  let match = await getMatchFromTournament(event, matchId);
   return match;
   
+}
+
+export const submitScores = async (eventId, matchId, scores, winner) => {
+  const eventOID = typecheck.stringToOid(eventId);
+  matchId = typecheck.isValidNumber(matchId);
+  scores = typecheck.isNonEmptyArray(scores);
+  winner = typecheck.isValidNumber(winner);
+
+  if(winner < 1 || winner > 2) throw {status: 400, error: "Invalid winner."};
+  if(scores.length < 2) throw {status: 400, error: "Invalid scores."};
+  if(scores[0] < 0 || scores[1] < 0) throw {status: 400, error: "Invalid scores."};
+
+  let event = await getEvent(eventId);
+  if(!event.eventType.includes("Tournament")) throw {status: 400, error: "Event is not a tournament."};
+
+  let verification = await submitScoresForMatch(event, matchId, scores, winner);
+  return event;
 }

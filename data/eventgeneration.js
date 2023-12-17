@@ -86,7 +86,7 @@ export const getTeamWins = (event, team) => {
     let wins = 0;
     for (let round in event.matches) {
         for (let match of event.matches[round]) {
-            if (match.team1 !== null || match.team2 !== null) {
+            if ((match.team1 !== null || match.team2 !== null) && !match.byeround) {
                 if (match.team1 !== null && (match.team1[0]._id.equals(team[0]._id) || (team.length > 1 && match.team1[1]._id.equals(team[1]._id)))) {
                     if (match.winner === 1) wins++;
                 }
@@ -104,7 +104,7 @@ export const getTeamLosses = (event, team) => {
     let losses = 0;
     for (let round in event.matches) {
         for (let match of event.matches[round]) {
-            if (match.team1 !== null || match.team2 !== null) {
+            if ((match.team1 !== null || match.team2 !== null) && !match.byeround) {
                 if (match.team1 !== null && (match.team1[0]._id.equals(team[0]._id) || (team.length > 1 && match.team1[1]._id.equals(team[1]._id)))) {
                     if (match.winner === 2) losses++;
                 }
@@ -147,7 +147,7 @@ export const playedBefore = (event, team1, team2) => {
     return false;
 }
 
-export const getStandings = async (event) => {
+export const getTournamentStandings = async (event) => {
     let standings = [];
     //first, we get all the teams
     let teams = await createTeams(event);
@@ -174,6 +174,7 @@ TOURNAMENT GENERATION FUNCTIONS GO HERE!
 export const generateRoundRobinTournament = async (event, seeded = false) => {
 
     let players = await createTeams(event);
+    if(players.length < 2) throw { status: 400, error: "Not enough players to generate a round robin tournament."};
 
     const matches = {};
     const round = [];
@@ -209,6 +210,8 @@ export const generateRoundRobinTournament = async (event, seeded = false) => {
 export const createSwissRound = async (event, seeded = false) => {
     //this swiss round generation follows the start.gg algorithm.
     let teams = await createTeams(event, seeded);
+
+    if(teams.length < 2) throw { status: 400, error: "Not enough players to generate a swiss round."};
 
     for (let round in event.matches) {
         for (let match of event.matches[round]) {
@@ -326,6 +329,8 @@ export const generateElimTournament = async (event, seeded = false) => {
     if (event.eventType === "Single Elimination Tournament" || event.eventType === "Swiss Tournament") {
         //Generate the first round. This has to be uniquely done due to the nature of bye rounds.
         let roundnumber = 1;
+
+        if(players.length < 2) throw { status: 400, error: "Not enough players to generate a single elimination tournament."};
         //Generate subsequent rounds.
         while (teamlength > 1) {
             let roundTitle = `winners - ${roundnumber}`;
@@ -339,7 +344,7 @@ export const generateElimTournament = async (event, seeded = false) => {
                     team1: (roundnumber === 1) ? players[i * 2] : null,
                     team2: (roundnumber === 1) ? players[i * 2 + 1] : null,
                     score: [0, 0],
-                    winner: ((players[i] === "bye") ? 2 : (players[i + 1] === "bye") && roundnumber === 1) ? 1 : 0,
+                    winner: ((players[i * 2] === "bye") ? 2 : (players[i * 2 + 1] === "bye") && roundnumber === 1) ? 1 : 0,
                     byeround: false,
                     winner_to: (teamlength === 2) ? null : roundcounter,
                     loser_to: null
@@ -357,6 +362,8 @@ export const generateElimTournament = async (event, seeded = false) => {
         let roundcounter = matchcounter + teamlength / 2 - 1;
         let bonuscounter = 0;
 
+        if(players.length < 4) throw { status: 400, error: "Not enough players to generate a double elimination tournament."};
+
         while (teamlength > 1) {
             let roundTitle = `winners - ${roundnumber}`;
             let round = [];
@@ -369,7 +376,7 @@ export const generateElimTournament = async (event, seeded = false) => {
                     team1: (roundnumber === 1) ? players[i * 2] : null,
                     team2: (roundnumber === 1) ? players[i * 2 + 1] : null,
                     score: [0, 0],
-                    winner: ((players[i] === "bye") ? 2 : (players[i + 1] === "bye") && roundnumber === 1) ? 1 : 0,
+                    winner: (players[i * 2] === "bye") ? 2 : (players[i * 2 + 1] === "bye" && roundnumber === 1) ? 1 : 0,
                     byeround: false,
                     winner_to: (teamlength === 2) ? Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2 : roundcounter,
                     loser_to: (roundnumber == 1) ? roundcounter - teamlength / 2 - 1 + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) : i + bonuscounter + Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)))
@@ -380,7 +387,6 @@ export const generateElimTournament = async (event, seeded = false) => {
             //16 17 18 19 --> 0 --> 20 21 22 23 --> 3 --> 26 27 --> 1 --> 28 --> 1 --> 29
             matches[roundTitle] = round;
             bonuscounter += (roundnumber === 1) ? teamlength / 4 : teamlength / 2 + teamlength / 4;
-            console.log(bonuscounter);
             teamlength /= 2;
             roundnumber++;
         }
@@ -393,7 +399,6 @@ export const generateElimTournament = async (event, seeded = false) => {
             //now we create TWO rounds at a time, since it's n/2 --> n/2 --> n/4 --> n/4 -->  etc.
             let roundTitle = `losers - ${roundnumber}`;
             let round1 = [];
-            let round2 = [];
 
             let roundcounter = matchcounter + teamlength / 2 - 1;
 
@@ -405,7 +410,7 @@ export const generateElimTournament = async (event, seeded = false) => {
                     team1: null,
                     team2: null,
                     score: [0, 0],
-                    winner: 0,
+                    winner: (players[i] === "bye") ? 2 : (players[i + 1] === "bye") ? 1 : 0,
                     byeround: false,
                     winner_to: (teamlength === 2) ? Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2 : (roundnumber % 2 == 1) ? roundcounter + i: roundcounter,
                     loser_to: null
@@ -434,7 +439,8 @@ export const generateElimTournament = async (event, seeded = false) => {
         for (let match of matches[round]) {
             if ((match.team1 === "bye" || match.team2 === "bye") && !match.byeround) {
                 match.byeround = true;
-                let result = await submitScores(event, match.id, [0, 0], (match.team1 === "bye") ? 2 : 1);
+                console.log(match);
+                let result = await submitScoresForMatch(event, match.id, [0, 0], (match.team1 === "bye") ? 2 : 1);
             }
         }
     }
@@ -475,11 +481,10 @@ export const translationElimBracketLayer = async (event) => {
 
 }
 
-export const submitScores = async (event, matchId, score, winner) => {
+export const submitScoresForMatch = async (event, matchId, score, winner) => {
     /*
     This function takes in the event ID, the match ID, the score, and the winner and updates the match with the score and winner.
     */
-
 
     score = typecheck.isNonEmptyArray(score);
 
@@ -493,6 +498,50 @@ export const submitScores = async (event, matchId, score, winner) => {
                 match.score = score;
                 match.winner = winner;
 
+                //update elos
+                if(match.team1 !== null && match.team2 !== null && !match.byeround) {
+                    let elo1 = 0, elo2 = 0;
+
+                    if(event.teamType === "singles") {
+                        let player1 = await getPlayer(match.team1[0]._id.toString());
+                        let player2 = await getPlayer(match.team2[0]._id.toString());
+                        elo1 = player1.singlesRating;
+                        elo2 = player2.singlesRating;
+                    }  else {
+                        let player1 = await getPlayer(match.team1[0]._id.toString());
+                        let player2 = await getPlayer(match.team1[1]._id.toString());
+                        let player3 = await getPlayer(match.team2[0]._id.toString());
+                        let player4 = await getPlayer(match.team2[1]._id.toString());
+                        elo1 = (player1.doublesRating + player2.doublesRating) / 2;
+                        elo2 = (player3.doublesRating + player4.doublesRating) / 2;
+                    }
+
+                    let diff = Math.abs(12 * (1 - 1 / (1 + Math.pow(10, (elo2 - elo1) / 480)))); //ELO formula, k-score = 12
+                    diff = Math.round(diff * 100) / 100;
+
+                    if(match.winner === 1) {
+                        if(event.teamType === "singles") {
+                            await updatePlayer(match.team1[0]._id.toString(), {singlesRating: elo1 + diff});
+                            await updatePlayer(match.team2[0]._id.toString(), {singlesRating: elo2 - diff});
+                        } else {
+                            await updatePlayer(match.team1[0]._id.toString(), {doublesRating: elo1 + diff});
+                            await updatePlayer(match.team1[1]._id.toString(), {doublesRating: elo1 + diff});
+                            await updatePlayer(match.team2[0]._id.toString(), {doublesRating: elo2 - diff});
+                            await updatePlayer(match.team2[1]._id.toString(), {doublesRating: elo2 - diff});
+                        }
+                    } else {
+                        if(event.teamType === "singles") {
+                            await updatePlayer(match.team1[0]._id.toString(), {singlesRating: elo1 - diff});
+                            await updatePlayer(match.team2[0]._id.toString(), {singlesRating: elo2 + diff});
+                        } else {
+                            await updatePlayer(match.team1[0]._id.toString(), {doublesRating: elo1 - diff});
+                            await updatePlayer(match.team1[1]._id.toString(), {doublesRating: elo1 - diff});
+                            await updatePlayer(match.team2[0]._id.toString(), {doublesRating: elo2 + diff});
+                            await updatePlayer(match.team2[1]._id.toString(), {doublesRating: elo2 + diff});
+                        }
+                    }
+                }
+
                 //now we have to update the next match
                 if (match.winner_to !== null) {
                     for (let round2 in matches) {
@@ -505,6 +554,8 @@ export const submitScores = async (event, matchId, score, winner) => {
                                     if (match.winner === 1) match2.team2 = match.team1;
                                     else match2.team2 = match.team2;
                                 }
+
+                                if(match2.byeround) await submitScoresForMatch(event, match2.id, [0, 0], match2.winner);
                             }
                         }
                     }
@@ -521,6 +572,8 @@ export const submitScores = async (event, matchId, score, winner) => {
                                     if (match.winner === 2) match2.team2 = match.team1;
                                     else match2.team2 = match.team2;
                                 }
+
+                                if(match2.byeround) await submitScoresForMatch(event, match2.id, [0, 0], match2.winner);
                             }
                         }
                     }
@@ -529,12 +582,13 @@ export const submitScores = async (event, matchId, score, winner) => {
         }
     }
 
+    event.matches = matches;
     const eventsCol = await events();
     const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
 
 
     if (!returnedUpdate.acknowledged) throw { status: 500, error: "An error occurred while updating event." };
-    return returnedUpdate;
+    return event;
 }
 
 export const getMatchFromTournament = async(event, matchId) => {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent, createReservation, deleteReservation, startTournament, generateSwissRound, topCut, getStandings, getMatch } from "../data/events.js";
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent, createReservation, deleteReservation, startTournament, generateSwissRound, topCut, getStandings, getMatch, submitScores } from "../data/events.js";
 import * as typecheck from '../typecheck.js';
 const router = Router();
 
@@ -207,7 +207,7 @@ router
 
     } catch (e) {
       if (!e.status) {
-        console.log(`[Error on GET events/:id/standings]: ${e}`);
+        console.log(`[Error on GET events/:id/standings]: ${e.stack}`);
         return res
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
@@ -219,11 +219,11 @@ router
 router
   .route("/:id/matches/:matchId")
   .get(async (req, res) => {
-    if(!req.params.id) throw {status: 400, error: "No event ID provided."};
-    if(!req.params.matchId) throw {status: 400, error: "No match ID provided."};
     try{
+      if(!req.params.id) throw {status: 400, error: "No event ID provided."};
+      if(!req.params.matchId) throw {status: 400, error: "No match ID provided."};
       let event = await getEvent(req.params.id);
-      let match = getMatch(event, matchId);
+      let match = await getMatch(event, matchId);
       return res.json(match);
     } catch(e) {
       if (!e.status) {
@@ -234,7 +234,21 @@ router
       }
       return res.status(e.status).json(e);
     }
-
+  }).post(async (req, res) => {
+    try{
+      if(!req.body.winner && typeof(req.body.winner) !== "boolean") throw {status: 400, error: "No winner provided."};
+      if(!req.body.scores) throw {status: 400, error: "No score provided."};
+      let match = await submitScores(req.params.id, parseInt(req.params.matchId), req.body.scores, req.body.winner);
+      return res.json(match);
+    } catch(e) {
+      if (!e.status) {
+        console.log(`[Error on POST events/:id/matches/:matchId]: ${e}`);
+        return res
+          .status(500)
+          .json({ status: 500, error: "An Internal Server Error Occurred" }); 
+      }
+      return res.status(e.status).json(e);
+    }
   })
 
 
