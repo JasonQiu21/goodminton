@@ -8,9 +8,11 @@ $(".join-button").click(function (e) {
       $.ajax({
         url: `/api/events/reserve/${eventId}`,
         type: "POST",
-        data: {
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({
           time: timeStamp,
-        },
+        }),
         success: function (result) {
           console.log(result);
         //   $("#playerName").attr("placeholder", result.playerName);
