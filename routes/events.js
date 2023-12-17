@@ -64,7 +64,7 @@ router
   .get(async (req, res) => {
     try {
       let event = await getEvent(req.params.id);
-      return res.render("event", { event: event });
+      return res.json(event);
     } catch (e) {
       if (!e.status) {
         console.log(`[Error on GET events/:id]: ${e}`);
