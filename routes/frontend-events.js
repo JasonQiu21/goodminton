@@ -37,10 +37,12 @@ router.route("/:id").get(async (req, res) => {
     const event = await getEvent(req.params.id);
     var playerReservations = [];
     const isLoggedIn = req.session?.player;
-    if(req.session?.player){
+    if (req.session?.player) {
       playerReservations = await getReservations(req.session?.player?._id);
     }
-    let inEvent = playerReservations.some((event) => event._id === req.params.id);
+    let inEvent = playerReservations.some(
+      (event) => event._id === req.params.id
+    );
     var inEventTime = -1;
     if (inEvent) {
       inEventTime = playerReservations.filter(

@@ -164,37 +164,33 @@ const event2 = await eventsCol.insertOne({
   matches: [
     [
       // in order of bracket:
+
       {
-        name: "Yihan",
-        score: 79,
-        winner: true,
+        name1: "Yihan",
+        score1: 79,
+        winner1: true,
+        name2: "Aidan",
+        score2: 48,
+        winner2: false,
       },
+
       {
-        name: "Aidan",
-        score: 48,
-        winner: false,
-      },
-      {
-        name: "Britney",
-        score: 84,
-        winner: true,
-      },
-      {
-        name: "Bryan",
-        score: 72,
-        winner: false,
+        name1: "Britney",
+        score1: 84,
+        winner1: true,
+        name2: "Bryan",
+        score2: 72,
+        winner2: false,
       },
     ],
     [
       {
-        name: "Yihan",
-        score: 55,
-        winner: false,
-      },
-      {
-        name: "Britney",
-        score: 56,
-        winner: true,
+        name1: "",
+        score1: 0,
+        winner1: false,
+        name2: "",
+        score2: 0,
+        winner2: false,
       },
     ],
   ],
