@@ -1,0 +1,23 @@
+<section>
+    <div class = "leaderboardPage">
+        <h1>Leaderboard</h1>
+        <div class = "leaderboardTableDiv">
+            <table class = "leaderboardTable">
+                <tr>
+                    <th>Rank</th>
+                    <th>Player Name</th>
+                    <th>Singles Rating</th>
+                    <th>Doubles Rating</th>
+                </tr>
+                {{#each players}}
+                <tr>
+                    <td>{{inc @index}}</td>
+                    <td><a href = "/players/{{this._id}}">{{this.playerName}}</a></td>
+                    <td>{{this.singlesRating}}</td>
+                    <td>{{this.doublesRating}}</td>
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+    </div>
+</section>

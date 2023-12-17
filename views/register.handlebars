@@ -1,18 +1,20 @@
 <section>
     <div class = "registerPage">
-        <div class = "registerInfo">
-            <h1>Register</h1>
-            <h3>Username</h3>
-            <input type="text" id="username" name="username" placeholder="">
-            <h3>Email</h3>
+        <form action = "/register" method = "POST" class = "registerForm" id = "registerForm">
+            <h3>Register</h3>
+            <label>Player Name</label>
+            <input type="text" id="playerName" name="playerName" placeholder="">
+            <label>Email</label>
             <input type="text" id="email" name="email" placeholder="">
-            <h3>Password</h3>
+            <label>Password</label>
             <input type="password" id="password" name="password" placeholder="********">
-            <h3>Confirm Password</h3>
+            <label>Confirm Password</label>
             <input type="password" id="confirmPassword" name="confirmPassword" placeholder="********">
-            <h3>Phone Number</h3>
+            <label>Phone Number</label>
             <input type="text" id="phoneNumber" name="phoneNumber" placeholder="">
-            <button class="registerButton">Register</button>
+            <button class="registerButton" type="submit">Register</button>
+            <p id = "error">{{error}}</p>
             <p>Already have an account? <a href="/login">Login</a></p>
+         </form>
     </div>
 </section>

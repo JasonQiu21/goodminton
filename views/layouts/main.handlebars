@@ -6,6 +6,7 @@
         <title>{{ title }}</title>
         <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
         <link rel="stylesheet" href="/public/css/style.css">
+        <script type="module" src="../../public/js/validate_form.js"></script>
     </head>
 
     <body>
@@ -13,20 +14,28 @@
             <nav>
                 <ul class = "navbar">
                     <li class = "navlogo"><a href = "/">Goodminton</a></li>
-                    <li class = "navitem"><a href = "/profile">Profile</a></li>
-                    <li class = "navitem"><a href = "/">Tournaments</a></li>
+                    {{#if id}}
+                        <li class = "navitem"><a href = "/players/{{id}}">Profile</a></li>
+                    {{/if}}
+                    <li class = "navitem"><a href = "/events">Events</a></li>
                     <li class = "navitem"><a href = "/">Reservations</a></li>
+                    <li class = "navitem"><a href = "/leaderboard">Leaderboard</a></li>
                     {{#if isAdmin}}
                     <li class = "navitem"><a href = "/createEvents">Create Event</a></li>
                     {{/if}}
-                    <li class = "navitem"><a href = "/">Sign Out</a></li>
+                    {{#if user}}    
+                        <li class = "navitem"><a href = "/logout">Sign Out</a></li>
+                    {{else}}
+                        <li class = "navitem"><a href = "/login">Sign In</a></li>
+                    {{/if}}
                 </ul>
                 <br>
             </nav>
         </header>
 
         <main>
-            {{{body}}}
+            {{{ body }}}
         </main>
+
     </body>
 </html>

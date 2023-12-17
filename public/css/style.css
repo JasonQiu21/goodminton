@@ -1,8 +1,5 @@
 body {
-    font-family: 'sans-serif';
-    /* font-size:small;
-    padding:10px;
-    line-height:1.4em;  */
+    font-family: 'sans-serif', monospace;
 }
 
 .navbar {
@@ -22,7 +19,7 @@ body {
     border-right: 1px solid #bbb;
 }
 
-.navitem a {
+.navitem a { 
   color: black;
   text-align: center;
   padding: 20px;
@@ -104,14 +101,84 @@ body {
     align-content: center;
 }
 
+p.error {
+    color: red;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+p.success {
+    color: green;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+/*
+*  Login / Register styles
+*/
+
+
+.loginForm, .registerForm {
+    display: block;
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    transform: translate(-50%,-40%);
+    width: 36%;
+    padding: 24px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.loginForm h3, .registerForm h3 {
+    text-align: center;
+    margin-bottom: 50px;
+    font-size:50px;
+}
+
+.loginForm label, .registerForm label {
+    display: block;
+    text-align: left;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.loginForm input, .registerForm input {
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    font-size: 26px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.loginForm button, .registerForm button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+    font-size: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #dddddd;
+}
 
 /*
 *  Bracket specific styles
 */
 
+
 main.tournament{
     display:flex;
     flex-direction:row;
+    font-size:small;
+    padding:10px;
+    line-height:1.4em;
 }
 
 .round{
@@ -152,4 +219,98 @@ li.game-spacer{
 
 li.game-bottom{ 
     border-top:1px solid #aaa;
+}
+
+/*
+    CSS For Home Page
+*/
+
+.parentDiv {
+    display: flex;
+}
+
+.homeInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    flex: 1; 
+}
+
+.pictureInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-right: 50px;
+    column-gap: 20px;
+    flex: 1; 
+}
+
+.homeButton {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #dddddd;
+
+}
+
+.homeButton:hover{
+    background-color: #111111;
+    color: white;
+}
+
+/*
+    CSS For Leaderboard Page
+*/
+
+.leaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboardTable td, .leaderboardTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.leaderboardTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dddddd;
+    color: black;
+}
+
+.leaderboardTable tr:hover {background-color: #ddd;}
+
+.leaderboardPage h1 {
+    text-align: center;
+}
+
+/*
+    CSS For Reservations Page
+*/
+
+.grid-container {
+    display: grid;
+    height: 400px;
+    align-content: center;
+    grid-template-columns: auto auto auto;
+    gap: 10px;
+    background-color: #333333;
+    padding: 10px;
+}
+
+.grid-container > div {
+    background-color: #999999;
+    stroke: #111111;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 30px;
 }

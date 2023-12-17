@@ -53,10 +53,10 @@ router
   .route("/:playerId")
   .get(async (req, res) => {
     //GET
-    let id, answer;
     try {
-      id = helperFunctions.isValidId(req.params.playerId);
-      answer = await playerFunctions.getPlayer(id);
+      var id = helperFunctions.isValidId(req.params.playerId);
+      var player = await playerFunctions.getPlayer(id);
+      return res.json(player);
     } catch (e) {
       if (e.status) {
         return res.status(e.status).json(e);
@@ -66,30 +66,35 @@ router
         .status(500)
         .json({ status: 500, error: "An Internal Server Error Occurred" });
     }
-    return res.json(answer);
   })
   .patch(async (req, res) => {
-    const body = req.body;
-    const id = req.params.playerId;
-    let answer;
     try {
-      answer = await playerFunctions.updatePlayer(id, body);
+      const body = helperFunctions.isValidPlayer(req.body, true);
+      const id = req.params.playerId;
+
+      console.log(req.session);
+      if(req.session?.player?.role !== "admin"){
+        delete body?.singlesRating;
+        delete body?.doublesRating;
+      }
+      console.log(body);
+      let player = await playerFunctions.updatePlayer(id, body);
+      return res.json(player);
     } catch (e) {
       if (e.status) {
         return res.status(e.status).json(e);
       }
-      console.log(`[Error on POST players/:id]: ${e}`);
+      console.log(`[Error on PATCH players/:id]: ${e}`);
       return res
         .status(500)
         .json({ status: 500, error: "An Internal Server Error Occurred" });
     }
-    return res.json(answer);
   })
   .delete(async (req, res) => {
-    let id, answer;
     try {
-      id = helperFunctions.isValidId(req.params.playerId);
-      answer = await playerFunctions.removePlayer(id);
+      let id = helperFunctions.isValidId(req.params.playerId);
+      let player = await playerFunctions.removePlayer(id);
+      res.json(player);
     } catch (e) {
       if (e.status) {
         return res.status(e.status).json(e);
@@ -99,8 +104,23 @@ router
         .status(500)
         .json({ status: 500, error: "An Internal Server Error Occurred" });
     }
-    res.json(answer);
   });
+
+router.route("/reservations/:playerId").get(async (req, res) => {
+  try {
+    let id = helperFunctions.isValidId(req.params.playerId);
+    let events = await playerFunctions.getReservations(id);
+    return res.json(events);
+  } catch (e) {
+    if (e.status) {
+      return res.status(e.status).json(e);
+    }
+    console.log(`[Error on GET reservations/:id]: ${e}`);
+    return res
+      .status(500)
+      .json({ status: 500, error: "An Internal Server Error Occurred" });
+  }
+});
 
 export default router;
 
