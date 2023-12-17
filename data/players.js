@@ -267,6 +267,8 @@ const getAllMatches = async (id) => {
 
   let playerMatches = [];
 
+  id = helperFunctions.stringToOid(id);
+
   for (let i = 0; i < allEvents.length; i++) {
     let event = await getEvent(allEvents[i]._id.toString());
 
