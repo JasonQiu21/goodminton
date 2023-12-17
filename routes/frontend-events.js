@@ -35,6 +35,15 @@ router.route("/").get(async (req, res) => {
 router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id);
+
+    if(event?.tournamentType === "round robin"){
+      return res.render("roundrobin", { 
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        isAdmin: req.session?.player?.role === "admin"
+      });
+    }
+
     var playerReservations = [];
     const isLoggedIn = req.session?.player;
     if (req.session?.player) {
