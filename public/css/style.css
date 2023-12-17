@@ -192,12 +192,9 @@ p.success {
 */
 
 
-main.tournament{
+.tournament{
     display:flex;
     flex-direction:row;
-    font-size:small;
-    padding:10px;
-    line-height:1.4em;
 }
 
 .round{
