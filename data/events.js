@@ -50,9 +50,20 @@ export const getAllEvents = async () => {
 export const getEvent = async (eventId) => {
   eventId = typecheck.stringToOid(eventId);
   const eventsCol = await events();
-  let res;
+  let res, playerName;
   try {
     res = await eventsCol.findOne({ _id: eventId });
+	console.log(res);
+	for (let i in res.reservations) {
+		console.log(i);
+		for (let j in res.reservations[i].players) {
+			console.log(j);
+			playerName = await playerFunctions.getPlayer(res.reservations[i].players[j]._id.toString());
+			if (!playerName.playerName) throw {status: 404, error: "Error getting player name"};
+			res.reservations[i].players[j].playerName = playerName.playerName;
+		}
+	}
+	console.log(res);
   } catch (e) {
     console.log(e);
     throw { status: 500, error: `Error while getting event ${eventId}` };
