@@ -1,12 +1,20 @@
-import express from 'express';
+import express from "express";
 const app = express();
-import configRoutes from './routes/index.js';
+import configRoutes from "./routes/index.js";
 import session from "express-session";
-import { authenticateAdmin, authenticatePlayer, checkPlayerIdAgainstRequestBody } from './middleware/auth.js';
+import {
+  authenticateAdmin,
+  authenticatePlayer,
+  checkPlayerIdAgainstRequestBody,
+  checkLoggedOut,
+} from "./middleware/auth.js";
 
 const port = 3000;
 const debug = true;
 import exphbs from "express-handlebars";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import path from "path";
 
 /*
 TODO:

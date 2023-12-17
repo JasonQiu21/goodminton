@@ -134,6 +134,130 @@ export const deleteEvent = async (eventId) => {
 	return { event: res, deleted: true };
 };
 
+
+export const createReservation = async (playerId, eventId, time) => {
+	if (!playerId || !eventId)
+		throw { status: 400, error: "PlayerID or EventID missing" };
+	const eventCollection = await events();
+	let playerOid = typecheck.stringToOid(playerId);
+	let eventOid = typecheck.stringToOid(eventId);
+	if (!time) throw { status: 400, error: "Need time" };
+	time = typecheck.isValidUnix(time);
+
+	let player = await playerFunctions.getPlayer(playerId);
+	let playerInfo = {
+		_id: typecheck.stringToOid(player._id),
+		playerName: player.playerName,
+	};
+	let eventInfo = await getEvent(eventId);
+
+	try {
+		playerInfo = typecheck.isNonEmptyObject(playerInfo);
+		console.log(playerInfo);
+	} catch (e) {
+		throw { status: 404, error: "Player not found" };
+	}
+
+	try {
+		let existingReservations = await playerFunctions.getReservations(playerId);
+		console.log(existingReservations);
+		existingReservations.forEach((reservation) => {
+			if (reservation._id === eventId)
+				throw { status: 400, error: "Already reserved for this event" };
+		});
+	} catch (e) {
+		if (e?.status !== 404) throw e;
+	}
+
+	try {
+		eventInfo = typecheck.isNonEmptyObject(eventInfo);
+	} catch (e) {
+		throw { status: 404, error: "Event not found" };
+	}
+	const event = await eventCollection.findOne({
+		_id: eventOid,
+		"reservations.time": time,
+	});
+	if (!event) throw { status: 404, error: "No matching time and event" };
+	try {
+		var { reservations } = await eventCollection.findOne(
+			{ _id: eventOid, "reservations.time": time },
+			{ projection: { _id: 0, "reservations.$": 1 } }
+		);
+		// console.log(reservations);
+	} catch (e) {
+		console.log(e);
+		throw { status: 500, error: "Internal Server Error" };
+	}
+
+	if (reservations) {
+		if (reservations[0].players.length >= reservations[0].max)
+			throw { status: 500, error: "Courts are full for the provided time." };
+		let info;
+		info = await eventCollection
+			.find({ _id: eventOid, "reservations.players._id": playerOid })
+			.toArray();
+		if (!info) throw { status: 404, error: "Player already reserved" };
+		try {
+			info = await eventCollection.updateOne(
+				{ _id: eventOid },
+				{ $addToSet: { "reservations.$[timeslot].players": playerInfo } },
+				{ arrayFilters: [{ "timeslot.time": time }] }
+			);
+
+			//   db.events.updateOne({_id: ObjectId("657e1b338e10cb1db4fbee0c")}, {$push: {"reservations.$[timeslot].players": {_id: ObjectId("657e1b308e10cb1db4fbee0a")}}}, {arrayFilters: [ {"timeslot.time": 1701207000}]})
+		} catch (e) {
+			console.log(e);
+			throw { status: 500, error: "Internal Server Error" };
+		}
+
+		if (!info.acknowledged)
+			throw { status: 500, error: "Could not add reservation" };
+		if (info?.modifiedCount == 0)
+			throw { status: 400, error: "Event not updated - already reserved" };
+		if (info?.modifiedCount !== 1)
+			throw { status: 500, error: `Error while updating ${eventId}` };
+		return {
+			player: playerInfo.playerName,
+			event: eventInfo.name,
+			created: true,
+		};
+	} else {
+		throw {
+			error: 400,
+			status: "There is no slot matching the time and event given.",
+		};
+	}
+};
+
+export const deleteReservation = async (playerId, eventId) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	const playerOID = typecheck.stringToOid(playerId);
+	const eventCollection = await events();
+	let playerInfo = await playerFunctions.getPlayer(playerId);
+	if (!playerInfo) throw { status: 404, error: "Could not find player" };
+	let info;
+	try {
+		info = await eventCollection.findOne({ _id: eventOID });
+		// console.log(info);
+		info = await eventCollection.updateOne(
+			{ _id: eventOID, "reservations.players._id": playerOID },
+			{ $pull: { "reservations.$.players": { _id: playerOID } } }
+		);
+	} catch (e) {
+		console.log(e);
+		throw { status: 500, error: "An Internal Server Error Occurred" };
+	}
+	if (!info) throw { status: 500, error: "Could not delete reservation" };
+	if (!info.acknowledged)
+		throw { status: 500, error: "Could not delete reservation" };
+	if (info?.modifiedCount == 0)
+		throw { status: 400, error: "No reservation to delete" };
+	if (info?.modifiedCount !== 1)
+		throw { status: 500, error: `Error while updating ${eventId}` };
+	return info;
+};
+
 export const startTournament = async (eventId, seeded) => {
 	const eventOID = typecheck.stringToOid(eventId);
 	seeded = typecheck.isBool(seeded);

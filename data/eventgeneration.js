@@ -183,7 +183,7 @@ export const generateRoundRobinTournament = async (event, seeded = false) => {
     for (let i = 0; i < players.length; i++) {
         for (let j = i + 1; j < players.length; j++) {
             round.push({
-                id: matchcounter,
+                id: matchcounter + 1,
                 team1: players[i],
                 team2: players[j],
                 score: [0, 0],
@@ -423,16 +423,17 @@ export const generateElimTournament = async (event, seeded = false) => {
             roundnumber++;
             if (roundnumber % 2 == 1) teamlength /= 2;
         }
+
+        matches["finals"] = [{
+            id: Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2,
+            team1: null,
+            team2: null,
+            score: [0, 0],
+            winner: 0,
+            byeround: false
+        }]
     }
 
-    matches["finals"] = [{
-        id: Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2,
-        team1: null,
-        team2: null,
-        score: [0, 0],
-        winner: 0,
-        byeround: false
-    }]
     //now we update bye rounds
 
     for (let round in matches) {
