@@ -4,11 +4,13 @@ import frontendPlayerRoutes from "./frontend-players.js";
 import frontendLeaderboardRoutes from "./frontend-leaderboard.js";
 import frontendAuthRoutes from "./frontend-auth.js";
 import frontendEventRoutes from "./frontend-events.js";
+import frontendCreateEventRoutes from "./frontend-createEvent.js";
 // import * as playerRoutes from './players.js';
 
 const constructorMethod = (app) => {
   // app.use('/players', playerRoutes);
   app.use("/", frontendAuthRoutes);
+  app.use("/createEvent", frontendCreateEventRoutes);
   app.use("/leaderboard", frontendLeaderboardRoutes);
 
   app.use("/players", frontendPlayerRoutes);

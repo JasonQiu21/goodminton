@@ -12,8 +12,8 @@ const port = 3000;
 const debug = true;
 import exphbs from "express-handlebars";
 import { fileURLToPath } from "url";
-import { dirname } from 'path';
-import path from 'path';
+import { dirname } from "path";
+import path from "path";
 
 /*
 TODO:
