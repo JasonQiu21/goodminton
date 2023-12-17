@@ -8,12 +8,14 @@ const router = Router();
 router.route("/").get(async (req, res) => {
   try {
     return res.render("allEvents", {
+      title: "All Events",
       user: req.session?.player,
       id: req.session?.player?._id,
       isAdmin: req.session?.player?.role === "admin",
     });
   } catch (e) {
     return res.render("error", {
+      title: "Error",
       user: req.session?.player,
       id: req.session?.player?._id,
       error: e.error,
@@ -78,6 +80,7 @@ router.route("/:id").get(async (req, res) => {
       event.reservations[i].time = reservationTime.toTimeString();
       event.reservations[i].isFull = event.reservations[i].players.length === event.reservations[i].max;
     }
+    event.title = event.name;
     event.user = req.session?.player;
     event.id = req.session?.player?._id;
     event.isPractice = event.eventType == "practice";
@@ -89,6 +92,7 @@ router.route("/:id").get(async (req, res) => {
     }
   } catch (e) {
     return res.render("error", {
+      title: "Error",
       user: req.session?.player,
       id: req.session?.player?._id,
       error: e.error,

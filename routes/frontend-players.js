@@ -10,25 +10,6 @@ router.route("/:playerid").get(async (req, res) => {
     let id = typecheck.isValidId(req.params.playerid);
     let player = await playerFunctions.getPlayer(id);
     const matchData = await playerFunctions.getAllMatches(id);
-    /*
-        eventName
-        who versus who
-        scores
-
-        [
-          {
-            id: 1,
-            team1: [ [Object] ],
-            team2: [ [Object] ],
-            score: [ 21, 19 ],
-            winner: 1,
-            byeround: false,
-            winner_to: null,
-            loser_to: null,
-            eventId: '657f70298b7d46ec5d3c96a3'
-          }
-        ]
-    */
     for (let i = 0; i < matchData.length; i++) {
       let team1 = matchData[i].team1;
       let team2 = matchData[i].team2;
@@ -61,13 +42,14 @@ router.route("/:playerid").get(async (req, res) => {
       }
       matchData[i].didWin = matchData[i].winner === userTeam;
     }
-    
+    const playerName = player.playerName;
     return res.render("profile", {
       player: player,
       owner: req.session?.player?._id == id,
       user: req.session?.player,
       id: req.session?.player?._id,
       isAdmin: req.session?.player?.role === "admin",
+      title: playerName,
       matches: matchData
     });
   } catch (e) {

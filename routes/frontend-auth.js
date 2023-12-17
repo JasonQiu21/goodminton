@@ -5,6 +5,7 @@ const router = Router();
 
 router.route("/").get(async (req, res) => {
   return res.render("home", {
+    title: "Goodminton",
     user: req.session?.player,
     id: req.session?.player?._id,
   });
@@ -13,6 +14,7 @@ router
   .route("/login")
   .get(async (req, res) => {
     return res.render("login", {
+      title: "Login",
       user: req.session?.player,
       id: req.session?.player?._id,
       isAdmin: req.session?.player?.role === "admin",
@@ -28,6 +30,7 @@ router
       return res.redirect("/players/" + player._id.toString());
     } catch (e) {
       return res.render("login", {
+        title: "Login",
         user: req.session?.player,
         error: e.error,
         id: req.session?.player?._id,
@@ -45,6 +48,7 @@ router
   .route("/register")
   .get(async (req, res) => {
     return res.render("register", {
+      title: "Register",
       user: req.session?.player,
       id: req.session?.player?._id,
       isAdmin: req.session?.player?.role === "admin",
@@ -68,6 +72,7 @@ router
       return res.redirect("/login");
     } catch (e) {
       return res.render("register", {
+        title: "Register",
         user: req.session?.player,
         error: e.error,
         id: req.session?.player?._id,
