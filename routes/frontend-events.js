@@ -40,6 +40,7 @@ router.route("/:id").get(async (req, res) => {
 
     if(event?.tournamentType === "round robin"){
       return res.render("roundrobin", { 
+        title: event.name,
         user: req.session?.player,
         id: req.session?.player?._id,
         isAdmin: req.session?.player?.role === "admin"

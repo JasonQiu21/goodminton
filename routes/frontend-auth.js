@@ -8,6 +8,7 @@ router.route("/").get(async (req, res) => {
     title: "Goodminton",
     user: req.session?.player,
     id: req.session?.player?._id,
+    isAdmin: req.session?.player?.role === "admin",
   });
 });
 router
