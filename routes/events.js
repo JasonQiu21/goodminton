@@ -11,6 +11,7 @@ import {
   generateSwissRound,
   topCut,
   getMatch,
+  getStandings,
   submitScores
 } from "../data/events.js";
 import * as typecheck from "../typecheck.js";

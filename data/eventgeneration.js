@@ -37,7 +37,7 @@ export const createTeams = async (event, seeded = false) => {
 
     for (let i = 0; i < players.length; i++) players[i] = [await getPlayer(players[i]._id.toString())];
 
-    if (event.teamType == "singles") {
+    if (event.eventType == "singles tournament") {
         if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
         players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }] });
     } else {
@@ -363,6 +363,7 @@ export const generateElimTournament = async (event, seeded = false) => {
         let bonuscounter = 0;
 
         if (players.length < 4) throw { status: 400, error: "Not enough players to generate a double elimination tournament." };
+        if (players.length % 2 === 1) throw { status: 400, error: "Cannot generate a double elimination tournament with an odd number of players." };
 
         while (teamlength > 1) {
             let roundTitle = `winners - ${roundnumber}`;
@@ -440,7 +441,6 @@ export const generateElimTournament = async (event, seeded = false) => {
         for (let match of matches[round]) {
             if ((match.team1 === "bye" || match.team2 === "bye") && !match.byeround) {
                 match.byeround = true;
-                console.log(match);
                 let result = await submitScoresForMatch(event, match.id, [0, 0], (match.team1 === "bye") ? 2 : 1);
             }
         }
@@ -502,17 +502,18 @@ export const submitScoresForMatch = async (event, matchId, score, winner) => {
                 //update elos
                 if (match.team1 !== null && match.team2 !== null && !match.byeround) {
                     let elo1 = 0, elo2 = 0;
+                    let player1, player2, player3, player4;
 
-                    if (event.teamType === "singles") {
-                        let player1 = await getPlayer(match.team1[0]._id.toString());
-                        let player2 = await getPlayer(match.team2[0]._id.toString());
+                    if (event.eventType === "singles tournament") {
+                        player1 = await getPlayer(match.team1[0]._id.toString());
+                        player2 = await getPlayer(match.team2[0]._id.toString());
                         elo1 = player1.singlesRating;
                         elo2 = player2.singlesRating;
                     } else {
-                        let player1 = await getPlayer(match.team1[0]._id.toString());
-                        let player2 = await getPlayer(match.team1[1]._id.toString());
-                        let player3 = await getPlayer(match.team2[0]._id.toString());
-                        let player4 = await getPlayer(match.team2[1]._id.toString());
+                        player1 = await getPlayer(match.team1[0]._id.toString());
+                        player2 = await getPlayer(match.team1[1]._id.toString());
+                        player3 = await getPlayer(match.team2[0]._id.toString());
+                        player4 = await getPlayer(match.team2[1]._id.toString());
                         elo1 = (player1.doublesRating + player2.doublesRating) / 2;
                         elo2 = (player3.doublesRating + player4.doublesRating) / 2;
                     }
@@ -521,24 +522,24 @@ export const submitScoresForMatch = async (event, matchId, score, winner) => {
                     diff = Math.round(diff * 100) / 100;
 
                     if (match.winner === 1) {
-                        if (event.teamType === "singles") {
-                            await updatePlayer(match.team1[0]._id.toString(), { singlesRating: elo1 + diff });
-                            await updatePlayer(match.team2[0]._id.toString(), { singlesRating: elo2 - diff });
+                        if (event.eventType === "singles tournament") {
+                            await updatePlayer(match.team1[0]._id.toString(), { singlesRating: player1.singlesRating + diff });
+                            await updatePlayer(match.team2[0]._id.toString(), { singlesRating: player2.singlesRating - diff });
                         } else {
-                            await updatePlayer(match.team1[0]._id.toString(), { doublesRating: elo1 + diff });
-                            await updatePlayer(match.team1[1]._id.toString(), { doublesRating: elo1 + diff });
-                            await updatePlayer(match.team2[0]._id.toString(), { doublesRating: elo2 - diff });
-                            await updatePlayer(match.team2[1]._id.toString(), { doublesRating: elo2 - diff });
+                            await updatePlayer(match.team1[0]._id.toString(), { doublesRating: player1.doublesRating + diff });
+                            await updatePlayer(match.team1[1]._id.toString(), { doublesRating: player2.doublesRating + diff });
+                            await updatePlayer(match.team2[0]._id.toString(), { doublesRating: player3.doublesRating - diff });
+                            await updatePlayer(match.team2[1]._id.toString(), { doublesRating: player4.doublesRating - diff });
                         }
                     } else {
-                        if (event.teamType === "singles") {
-                            await updatePlayer(match.team1[0]._id.toString(), { singlesRating: elo1 - diff });
-                            await updatePlayer(match.team2[0]._id.toString(), { singlesRating: elo2 + diff });
+                        if (event.eventType === "singles tournament") {
+                            await updatePlayer(match.team1[0]._id.toString(), { singlesRating: player1.singlesRating - diff });
+                            await updatePlayer(match.team2[0]._id.toString(), { singlesRating: player2.singlesRating + diff });
                         } else {
-                            await updatePlayer(match.team1[0]._id.toString(), { doublesRating: elo1 - diff });
-                            await updatePlayer(match.team1[1]._id.toString(), { doublesRating: elo1 - diff });
-                            await updatePlayer(match.team2[0]._id.toString(), { doublesRating: elo2 + diff });
-                            await updatePlayer(match.team2[1]._id.toString(), { doublesRating: elo2 + diff });
+                            await updatePlayer(match.team1[0]._id.toString(), { doublesRating: player1.doublesRating - diff });
+                            await updatePlayer(match.team1[1]._id.toString(), { doublesRating: player2.doublesRating - diff });
+                            await updatePlayer(match.team2[0]._id.toString(), { doublesRating: player3.doublesRating + diff });
+                            await updatePlayer(match.team2[1]._id.toString(), { doublesRating: player4.doublesRating + diff });
                         }
                     }
                 }
