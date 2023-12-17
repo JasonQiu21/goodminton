@@ -10,14 +10,14 @@ router.route("/").get(async (req, res) => {
     return res.render("allEvents", {
       user: req.session?.player,
       id: req.session?.player?._id,
-      isAdmin: req.session?.player?.role === "admin"
+      isAdmin: req.session?.player?.role === "admin",
     });
   } catch (e) {
     return res.render("error", {
       user: req.session?.player,
       id: req.session?.player?._id,
       error: e.error,
-      isAdmin: req.session?.player?.role === "admin"
+      isAdmin: req.session?.player?.role === "admin",
     });
   }
 });
@@ -34,18 +34,21 @@ router.route("/").get(async (req, res) => {
 
 router.route("/:id").get(async (req, res) => {
   try {
-    const event = await getEvent(req.params.id)
+    const event = await getEvent(req.params.id);
     var playerReservations = [];
     try {
       playerReservations = await getReservations(req.session?.player?._id);
-    }
-    catch (e) {
+    } catch (e) {
       console.log(e);
     }
-    const inEvent = playerReservations.some((event) => event._id === req.params.id);
+    const inEvent = playerReservations.some(
+      (event) => event._id === req.params.id
+    );
     var inEventTime = -1;
     if (inEvent) {
-      inEventTime = playerReservations.filter((event) => event._id === req.params.id)[0].time;
+      inEventTime = playerReservations.filter(
+        (event) => event._id === req.params.id
+      )[0].time;
     }
     const eventDate = new Date(event.date * 1000);
     event.date = eventDate.toDateString();
@@ -54,19 +57,26 @@ router.route("/:id").get(async (req, res) => {
       const reservationTime = new Date(event.reservations[i].time * 1000);
       event.reservations[i].timeStamp = event.reservations[i].time;
       event.reservations[i].inEvent = inEvent;
-      if (event.reservations[i].time === inEventTime) { // might need to multiply by 1000
+      if (event.reservations[i].time === inEventTime) {
+        // might need to multiply by 1000
         event.reservations[i].inTimeslot = true;
       } else {
         event.reservations[i].inTimeslot = false;
       }
       event.reservations[i].date = reservationTime.toDateString();
       event.reservations[i].time = reservationTime.toTimeString();
-      event.reservations[i].isFull = event.reservations[i].players.length===event.reservations[i].max;
+      event.reservations[i].isFull =
+        event.reservations[i].players.length === event.reservations[i].max;
     }
     event.user = req.session?.player;
     event.id = req.session?.player?._id;
     event.isPractice = event.eventType == "practice";
-    return res.render("event", event);
+    event.isSingleElim = event.eventType == "Single Elimination Tournament";
+    if (event.isPractice) {
+      return res.render("event", event);
+    } else if (event.isSingleElim) {
+      return res.render("bracket", event);
+    }
   } catch (e) {
     return res.render("error", {
       user: req.session?.player,
