@@ -138,12 +138,12 @@ router
   })
 
 router
-  .route("/generateBracket")
+  .route("/:id/generateBracket")
   .post(async (req, res) => {
     try {
-      if (!req.body.id) throw { status: 400, error: "No event ID provided." };
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
       if (!req.body.seeded) throw { status: 400, error: "Seeded value not provided." };
-      let matches = await startTournament(req.body.id, req.body.seeded);
+      let matches = await startTournament(req.params.id, req.body.seeded);
       return res.json(matches);
 
     } catch (e) {
@@ -177,10 +177,10 @@ router
   })
 
 router
-  .route("/topCut")
+  .route("/:id/topCut")
   .post(async (req, res) => {
     try {
-      if (!req.body.id) throw { status: 400, error: "No event ID provided." };
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
       if(!req.body.topCut) throw {status: 400, error: "No top cut provided."};
 
       let matches = await topCut(req.params.id, req.body.topCut);

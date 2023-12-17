@@ -1,6 +1,6 @@
 import * as typecheck from "../typecheck.js";
 import { events , players } from "../config/mongoCollections.js";
-import { generateElimTournament, createSwissRound, generateRoundRobinTournament, getTournamentStandings, submitScoresForMatch, getMatchFromTournament} from "./eventgeneration.js";
+import { generateElimTournament, createSwissRound, generateRoundRobinTournament, getTournamentStandings, submitScoresForMatch, getMatchFromTournament, translationElimBracketLayer} from "./eventgeneration.js";
 import * as playerFunctions from './players.js';
 
 
@@ -285,4 +285,14 @@ export const submitScores = async (eventId, matchId, scores, winner) => {
 
   let verification = await submitScoresForMatch(event, matchId, scores, winner);
   return event;
+}
+
+
+export const translateBracket = async (eventId) => {
+	const eventOID = typecheck.stringToOid(eventId);
+	let event = await getEvent(eventId);
+	if(!event.eventType.includes("Tournament")) throw {status: 400, error: "Event is not a tournament."};
+	if(Object.keys(event.matches) == 0) throw {status: 400, error: "Event has not started. No standings can be generated."};
+	let translated = await translationElimBracketLayer(event);
+  	return translated;
 }
