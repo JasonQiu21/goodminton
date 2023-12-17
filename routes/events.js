@@ -39,8 +39,8 @@ router
 
       typecheck.isValidString(req.body.eventName, "Event Name");
       typecheck.isValidUnix(req.body.eventDate);
-      const eventTypes = ["tournament", "leaguenight", "practice"];
-
+      const eventTypes = ["doublestournament", "singlestournament", "practice"]; 
+  
       typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
       if (!eventTypes.includes(req.body.eventType))
         throw { status: 400, error: "Invalid event type." };
@@ -48,6 +48,7 @@ router
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
     } catch (e) {
+      console.log(e);
       if (!e.status) {
         console.log(`[Error on POST events/]: ${e}`);
         return res

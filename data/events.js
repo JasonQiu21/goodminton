@@ -3,7 +3,7 @@ import { events , players } from "../config/mongoCollections.js";
 import * as playerFunctions from './players.js';
 
 
-const eventTypes = ["tournament", "leaguenight", "practice"];
+const eventTypes = ["singlestournament", "doublestournament", "practice"];
 
 export const createEvent = async (eventName, eventDate, eventType) => {
 	const eventsCol = await events();

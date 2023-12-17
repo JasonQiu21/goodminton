@@ -12,11 +12,13 @@ router.route("/:playerid").get(async (req, res) => {
       owner: req.session?.player?._id == id,
       user: req.session?.player,
       id: req.session?.player?._id,
+      isAdmin: req.session?.player?.role === "admin"
     });
   } catch (e) {
     return res.render("forbidden", {
       user: req.session?.player,
       id: req.session?.player?._id,
+      isAdmin: req.session?.player?.role === "admin"
     });
   }
 });
@@ -36,6 +38,7 @@ router.route("/reservations/:playerid").get(async (req, res) => {
       title: "Reservations",
       id: req.session?.player?._id,
       reservations: events,
+      isAdmin: req.session?.player?.role === "admin"
     });
   } catch (e) {
     return res.render("error", {
@@ -43,6 +46,7 @@ router.route("/reservations/:playerid").get(async (req, res) => {
       title: "Error",
       id: req.session?.player?._id,
       error: e.error,
+      
     });
   }
 });
