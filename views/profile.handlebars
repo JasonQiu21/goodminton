@@ -15,7 +15,7 @@
                 <div class = "formItem">
                     <label class = "formTitle" for="playerName">Player Name</label>
                     <input class = "formInput" type="text" id="playerName" name="playerName" placeholder="{{player.playerName}}">
-                    <button class = "profileChangeButton" id = "usernameChangeButton">Change</button>     
+                    <button class = "profileChangeButton" id = "playerNameChangeButton">Change</button>     
                 </div> 
                 <div class = "formItem">
                     <label class = "formTitle" for="email">Email</label>
@@ -32,11 +32,12 @@
                     <button class = "profileChangeButton" id = "passwordChangeButton">Change</button>      
                 </div>
                 <div class = "formItem">
-                    <label class = "formTitle" for="phoneNumber">Phone Number</label>
-                    <input class = "formInput" type="text" id="phoneNumber" name="phoneNumber" placeholder="{{player.phone}}">
+                    <label class = "formTitle" for="phone">Phone Number</label>
+                    <input class = "formInput" type="text" id="phone" name="phone" placeholder="{{player.phone}}">
                     <button class = "profileChangeButton" id = "phoneChangeButton">Change</button>      
                 </div>
-                <p id = "error"></p>
+                <p id = "error" class="error"></p>
+                <p id = "success" class="success"></p>
             </form>
             <div class = "profileRating">
             <div class = "ratingBox">

@@ -9,12 +9,15 @@ router.route("/:playerid").get(async (req, res) => {
     let player = await playerFunctions.getPlayer(id);
     return res.render("profile", {
       player: player,
-      owner: req.session?.player._id == id,
+      owner: req.session?.player?._id == id,
       user: req.session?.player,
-      id: req.session?.player._id,
+      id: req.session?.player?._id,
     });
   } catch (e) {
-    return res.render("forbidden", { user: req.session?.player });
+    return res.render("forbidden", {
+      user: req.session?.player,
+      id: req.session?.player?._id,
+    });
   }
 });
 

@@ -67,12 +67,12 @@ if (registerForm) {
     let errorList = [];
     e.preventDefault();
     try {
-      isValidString(document.getElementById("playerName").value, "playerName");
+      isValidString(document.getElementById("playerName").value, "Player Name");
     } catch (e) {
       errorList.push(e.error);
     }
     try {
-      checkEmail(document.getElementById("email").value);
+      checkEmail(document.getElementById("email").value, "Email");
     } catch (e) {
       errorList.push(e.error);
     }
@@ -94,7 +94,7 @@ if (registerForm) {
     } catch (e) {
       errorList.push(e.error);
     }
-    if (password != confirmPassword) errorList.push("Passwords don't match");
+    if (password !== confirmPassword) errorList.push("Passwords don't match");
     if (errorList.length > 0) {
       error.innerHTML = errorList.join("<br>");
       return;

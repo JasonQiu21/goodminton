@@ -20,7 +20,7 @@ router
   })
   .post(async (req, res) => {
     try {
-      const expectedKeys = ["eventName", "eventDate", "eventType"];
+      const expectedKeys = ["eventName", "eventName", "eventType"];
       const params = [];
       expectedKeys.forEach((key) => {
         if (!Object.keys(req.body).includes(key))
@@ -28,13 +28,6 @@ router
         params.push(req.body[key]);
       });
 
-      typecheck.isValidString(req.body.eventName, "Event Name");
-      typecheck.isValidUnix(req.body.eventDate);
-      const eventTypes = ["tournament", "leaguenight", "practice"]; 
-  
-      typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
-      if (!eventTypes.includes(req.body.eventType))throw { status: 400, error: "Invalid event type." };
-      
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
     } catch (e) {
@@ -44,7 +37,6 @@ router
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
-      return res.status(e.status).json(e);
     }
   });
 
@@ -80,9 +72,8 @@ router
       return res.status(e.status).json(e);
     }
   })
-  .delete(async(req, res) => {
-    try{
-      if (!req.params.id) throw { status: 400, error: "No id" };
+  .delete(async (req, res) => {
+    try {
       let deletedEvent = await deleteEvent(req.params.id);
       return res.json(deletedEvent);
     } catch (e) {
@@ -97,46 +88,45 @@ router
   });
 router
   .route("/reserve/:id")
-  .post(async(req, res) => {
+  .post(async (req, res) => {
     const playerId = req.body?.playerId;
     const eventId = req.params.id;
     const time = req.body?.time;
     // const court = body.court;
     try {
-      if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
+      if (!playerId || !eventId) throw { status: 400, error: "PlayerID or EventID missing" };
       typecheck.stringToOid(playerId);
       typecheck.stringToOid(eventId);
       const info = await createReservation(playerId, eventId, time);
       return res.json(info);
-    } catch(e) {
-      if(e.status)
+    } catch (e) {
+      if (e.status)
         return res
           .status(e.status)
           .json(e);
       console.log(e);
-      return res.status(500).json({status: 500, error: "An Internal Server Error Occurred"});
+      return res.status(500).json({ status: 500, error: "An Internal Server Error Occurred" });
     }
   })
-  .delete(async(req, res) => {
+  .delete(async (req, res) => {
     const playerId = req.body?.playerId;
     const eventId = req.params.id;
     try {
-      if (!playerId || !eventId) throw {status: 400, error: "PlayerID or EventID missing"};
+      if (!playerId || !eventId) throw { status: 400, error: "PlayerID or EventID missing" };
       typecheck.stringToOid(playerId);
       typecheck.stringToOid(eventId);
       const info = await deleteReservation(playerId, eventId);
-      if (!info) throw {status: 500, error: 'Could not delete reservation'};
+      if (!info) throw { status: 500, error: 'Could not delete reservation' };
       return res.json(info);
-    } catch(e) {
-      if(e.status)
+    } catch (e) {
+      if (e.status)
         return res
           .status(e.status)
           .json(e);
       console.log(e);
-      return res.status(500).json({status: 500, error: "An Internal Server Error Occurred"});
+      return res.status(500).json({ status: 500, error: "An Internal Server Error Occurred" });
     }
   })
-
 router
   .route("/:id/generateBracket")
   .post(async (req, res) => {
@@ -181,7 +171,7 @@ router
   .post(async (req, res) => {
     try {
       if (!req.params.id) throw { status: 400, error: "No event ID provided." };
-      if(!req.body.topCut) throw {status: 400, error: "No top cut provided."};
+      if (!req.body.topCut) throw { status: 400, error: "No top cut provided." };
 
       let matches = await topCut(req.params.id, req.body.topCut);
       return res.json(matches);
@@ -219,38 +209,37 @@ router
 router
   .route("/:id/matches/:matchId")
   .get(async (req, res) => {
-    try{
-      if(!req.params.id) throw {status: 400, error: "No event ID provided."};
-      if(!req.params.matchId) throw {status: 400, error: "No match ID provided."};
+    try {
+      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
+      if (!req.params.matchId) throw { status: 400, error: "No match ID provided." };
       let event = await getEvent(req.params.id);
       let match = await getMatch(event, matchId);
       return res.json(match);
-    } catch(e) {
+    } catch (e) {
       if (!e.status) {
         console.log(`[Error on GET events/:id/matches/:matchId]: ${e}`);
         return res
           .status(500)
-          .json({ status: 500, error: "An Internal Server Error Occurred" }); 
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
       return res.status(e.status).json(e);
     }
   }).post(async (req, res) => {
-    try{
-      if(!req.body.winner && typeof(req.body.winner) !== "boolean") throw {status: 400, error: "No winner provided."};
-      if(!req.body.scores) throw {status: 400, error: "No score provided."};
+    try {
+      if (!req.body.winner && typeof (req.body.winner) !== "boolean") throw { status: 400, error: "No winner provided." };
+      if (!req.body.scores) throw { status: 400, error: "No score provided." };
       let match = await submitScores(req.params.id, parseInt(req.params.matchId), req.body.scores, req.body.winner);
       return res.json(match);
-    } catch(e) {
+    } catch (e) {
       if (!e.status) {
         console.log(`[Error on POST events/:id/matches/:matchId]: ${e}`);
         return res
           .status(500)
-          .json({ status: 500, error: "An Internal Server Error Occurred" }); 
+          .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
       return res.status(e.status).json(e);
     }
   })
-
 
 
 export default router;

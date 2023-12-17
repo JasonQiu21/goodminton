@@ -101,6 +101,20 @@ body {
     align-content: center;
 }
 
+p.error {
+    color: red;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+p.success {
+    color: green;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+}
+
 /*
 *  Login / Register styles
 */
@@ -248,4 +262,55 @@ li.game-bottom{
 .homeButton:hover{
     background-color: #111111;
     color: white;
+}
+
+/*
+    CSS For Leaderboard Page
+*/
+
+.leaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboardTable td, .leaderboardTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.leaderboardTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #dddddd;
+    color: black;
+}
+
+.leaderboardTable tr:hover {background-color: #ddd;}
+
+.leaderboardPage h1 {
+    text-align: center;
+}
+
+/*
+    CSS For Reservations Page
+*/
+
+.grid-container {
+    display: grid;
+    height: 400px;
+    align-content: center;
+    grid-template-columns: auto auto auto;
+    gap: 10px;
+    background-color: #333333;
+    padding: 10px;
+}
+
+.grid-container > div {
+    background-color: #999999;
+    stroke: #111111;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 30px;
 }

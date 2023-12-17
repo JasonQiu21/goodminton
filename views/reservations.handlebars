@@ -1,0 +1,14 @@
+<section>
+    <main>
+        <div class="grid-container">
+            {{#each reservations}}
+                <a href="/events/{{id}}">
+                    <div>
+                        <h3>{{event}}</h3>
+                        <p>{{time}}</p>
+                    </div>
+                </a>
+            {{/each}}
+        </div>
+    </main>
+</section>
