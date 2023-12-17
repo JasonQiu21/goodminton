@@ -125,7 +125,7 @@ const player9 = await playersCol.insertOne({
 const event1 = await eventsCol.insertOne({
   name: "11/28/2023 Practice",
   date: 1701205200, //November 24th, 2023 at 4PM
-  eventType: "Practice",
+  eventType: "practice",
   matches: null,
   reservations: [
     {
