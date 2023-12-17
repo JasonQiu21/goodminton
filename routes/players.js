@@ -94,7 +94,7 @@ router
     try {
       let id = helperFunctions.isValidId(req.params.playerId);
       let player = await playerFunctions.removePlayer(id);
-      res.json(player);
+      return res.json(player);
     } catch (e) {
       if (e.status) {
         return res.status(e.status).json(e);

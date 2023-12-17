@@ -225,7 +225,7 @@ export const deleteReservation = async (playerId, eventId) => {
   let info;
   try {
     info = await eventCollection.findOne({ _id: eventOID });
-    console.log(info);
+    // console.log(info);
     info = await eventCollection.updateOne(
       { _id: eventOID, "reservations.players._id": playerOID },
       { $pull: { "reservations.$.players": { _id: playerOID } } }
@@ -235,5 +235,11 @@ export const deleteReservation = async (playerId, eventId) => {
     throw { status: 500, error: "An Internal Server Error Occurred" };
   }
   if (!info) throw { status: 500, error: "Could not delete reservation" };
+  if (!info.acknowledged)
+    throw { status: 500, error: "Could not delete reservation" };
+  if (info?.modifiedCount == 0)
+    throw { status: 400, error: "No reservation to delete" };
+  if (info?.modifiedCount !== 1)
+    throw { status: 500, error: `Error while updating ${eventId}` };
   return info;
 };

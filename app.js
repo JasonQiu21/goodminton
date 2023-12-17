@@ -6,7 +6,7 @@ import {
   authenticateAdmin,
   authenticatePlayer,
   checkPlayerIdAgainstRequestBody,
-  checkLoggedOut
+  checkLoggedOut,
 } from "./middleware/auth.js";
 
 const port = 3000;
@@ -58,7 +58,9 @@ if (debug) {
   app.use("/", (req, res, next) => {
     console.log(
       `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${
-        req.session.player ? "User is authenticated as" : "User not authenticated"
+        req.session.player
+          ? "User is authenticated as"
+          : "User not authenticated"
       } ${req.session.player ? req.session.player.role : ""})`
     );
     return next();
@@ -68,20 +70,33 @@ if (debug) {
 const adminRoutes = ["/createEvent"];
 adminRoutes.forEach((route) => app.use(route, authenticateAdmin));
 
-const adminRoutesPost = ["/api/events/", "/api/events/:id"]
-adminRoutesPost.forEach(route => app.post(route, authenticateAdmin));
+const adminRoutesNotGet = ["/api/events/", "/api/events/:id"];
+adminRoutesNotGet.forEach((route) => {
+  app.post(route, authenticateAdmin);
+  app.delete(route, authenticateAdmin);
+  app.patch(route, authenticateAdmin);
+});
 
-const playerRoutes = ["/logout" ];
+const playerRoutes = ["/logout", "/api/events/reserve/*"];
 playerRoutes.forEach((route) => app.use(route, authenticatePlayer));
 
-const playerRoutesPoast = ["/api/events/reserve/*"];
 
 const samePlayerIdRoutes = ["/api/events/reserve/*"];
 samePlayerIdRoutes.forEach((route) =>
-  app.use(route, checkPlayerIdAgainstRequestBody)
+app.use(route, checkPlayerIdAgainstRequestBody)
 );
 
-app.use("/login", checkLoggedOut);
+const samePlayerRoutesNotGet = ["/api/players/:playerId"];
+samePlayerRoutesNotGet.forEach((route) => {
+  app.post(route, checkPlayerIdAgainstRequestBody);
+  app.delete(route, checkPlayerIdAgainstRequestBody);
+  app.patch(route, checkPlayerIdAgainstRequestBody);
+});
+
+const loggedOutRoutes = ["/login", "/register"];
+loggedOutRoutes.forEach((route) => {
+  app.use(route, checkLoggedOut);
+});
 
 configRoutes(app);
 
