@@ -62,8 +62,7 @@ router
         password,
         phoneNumber
       );
-      req.session.player = player;
-      return res.redirect("/players/" + player._id.toString());
+      return res.redirect("/login");
     } catch (e) {
       return res.render("register", {
         user: req.session?.player,
