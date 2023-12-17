@@ -123,13 +123,13 @@ const player9 = await playersCol.insertOne({
 });
 
 const event1 = await eventsCol.insertOne({
-  name: "11/28/2023 Practice",
-  date: 1701205200, //November 24th, 2023 at 4PM
+  name: "12/26/2023 Practice",
+  date: 1703628000, //November 24th, 2023 at 4PM
   eventType: "practice",
   matches: null,
   reservations: [
     {
-      time: 1700859600,
+      time: 1703628000,
       players: [
         { _id: player1.insertedId, playerName: "Jason Qiu" },
         { _id: player2.insertedId, playerName: "Patrick Hill" },
@@ -149,7 +149,7 @@ const event1 = await eventsCol.insertOne({
       max: 4,
     },
     {
-      time: 1701210600,
+      time: 1703633400,
       players: [],
       max: 4,
     },
@@ -157,46 +157,14 @@ const event1 = await eventsCol.insertOne({
 });
 
 const event2 = await eventsCol.insertOne({
-  name: "12/08/2023 Practice",
-  date: 1702062000, //December 8th, 2023 at 2PM
-  eventType: "Single Elimination Tournament",
-  teamType: "singles",
-  matches: [
-    [
-      // in order of bracket:
-
-      {
-        name1: "Yihan",
-        score1: 79,
-        winner1: true,
-        name2: "Aidan",
-        score2: 48,
-        winner2: false,
-      },
-
-      {
-        name1: "Britney",
-        score1: 84,
-        winner1: true,
-        name2: "Bryan",
-        score2: 72,
-        winner2: false,
-      },
-    ],
-    [
-      {
-        name1: "",
-        score1: 0,
-        winner1: false,
-        name2: "",
-        score2: 0,
-        winner2: false,
-      },
-    ],
-  ],
+  name: "Christmas Singles Tournament!",
+  date: 1703530800, //December 8th, 2023 at 2PM
+  eventType: "singles tournament",
+  tournamentType: "double elim",
+  matches: {},
   reservations: [
     {
-      time: 1702062000,
+      time: 1703530800,
       players: [
         { _id: player1.insertedId, playerName: "Jason Qiu" },
         { _id: player2.insertedId, playerName: "Patrick Hill" },
@@ -214,14 +182,14 @@ const event2 = await eventsCol.insertOne({
 });
 
 const event3 = await eventsCol.insertOne({
-  name: "11/28/2023 League Night",
-  date: 1701208800, //November 28th, 2023 at 6PM
-  eventType: "Round Robin Tournament",
-  teamType: "singles",
+  name: "2024 New Year's Round Robin",
+  date: 1704135600, //November 28th, 2023 at 6PM
+  eventType: "singles tournament",
+  tournamentType: "round robin",
   matches: {},
   reservations: [
     {
-      time: 1701208800,
+      time: 1704135600,
       players: [
         { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
         { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" },
@@ -232,20 +200,17 @@ const event3 = await eventsCol.insertOne({
 });
 
 const event4 = await eventsCol.insertOne({
-  name: "Test Tournament!",
-  date: 1702062000, //December 8th, 2023 at 2PM
-  eventType: "Double Elimination Tournament",
-  teamType: "singles",
+  name: "02/01/2024 Swiss Tournament",
+  date: 1706814000, //November 28th, 2023 at 6PM
+  eventType: "singles tournament",
+  tournamentType: "swiss",
   matches: {},
   reservations: [
     {
-      time: 1702062000,
+      time: 1706814000,
       players: [
-        { _id: player1.insertedId, playerName: "Jason Qiu" },
-        { _id: player2.insertedId, playerName: "Patrick Hill" },
-        { _id: player3.insertedId, playerName: "Jackey Yang" },
-        { _id: player4.insertedId, playerName: "Eddison So" },
-        { _id: player5.insertedId, playerName: "Bryan Chan" },
+        { _id: new ObjectId(player1.insertedId), playerName: "Jason Qiu" },
+        { _id: new ObjectId(player4.insertedId), playerName: "Eddison So" },
       ],
       max: 20,
     },

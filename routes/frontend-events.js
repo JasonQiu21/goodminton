@@ -67,8 +67,7 @@ router.route("/:id").get(async (req, res) => {
       }
       event.reservations[i].date = reservationTime.toDateString();
       event.reservations[i].time = reservationTime.toTimeString();
-      event.reservations[i].isFull =
-        event.reservations[i].players.length === event.reservations[i].max;
+      event.reservations[i].isFull = event.reservations[i].players.length === event.reservations[i].max;
     }
     event.user = req.session?.player;
     event.id = req.session?.player?._id;
