@@ -23,7 +23,32 @@ $(".join-button").click(function (e) {
     } catch (e) {
       console.log(e);
     }
-  });
+});
+
+$(".leave-button").click(function (e) {
+    console.log("button pressed");
+    e.preventDefault();
+    const eventId = window.location.pathname.split('/').at(-1);
+    console.log(timeStamp);
+    try {
+      $.ajax({
+        url: `/api/events/reserve/${eventId}`,
+        type: "DELETE",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({
+        }),
+        success: function (result) {
+          console.log(result);
+        //   $("#playerName").attr("placeholder", result.playerName);
+        //   $("#playerName").val("");
+        //   success("Player name updated!");
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+});
 
 const isValidString = (
     input,
