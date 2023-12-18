@@ -42,7 +42,7 @@ export const createTeams = async (event, seeded = false) => {
         players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }] });
     } else {
         if (players.length % 2 === 1) throw { status: 400, error: "Cannot generate a double elimination tournament with an odd number of players." };
-        let playerCopy = players
+        let playerCopy = structuredClone(players)
         for (let i = 0; i < playerCopy.length - 1; i += 2) {
             players[i / 2] = [playerCopy[i][0], playerCopy[i + 1][0]];
         }
@@ -374,8 +374,8 @@ export const generateElimTournament = async (event, seeded = false) => {
                 if (matchcounter % 2 === 1) roundcounter++;
                 round.push({
                     id: matchcounter,
-                    team1: (roundnumber === 1) ? players[i * 2] : "bye",
-                    team2: (roundnumber === 1) ? players[i * 2 + 1] : "bye",
+                    team1: (roundnumber === 1) ? players[i * 2] : null,
+                    team2: (roundnumber === 1) ? players[i * 2 + 1] : null,
                     score: [0, 0],
                     winner: (players[i * 2] === "bye") ? 2 : (players[i * 2 + 1] === "bye" && roundnumber === 1) ? 1 : 0,
                     byeround: false,

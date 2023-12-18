@@ -58,10 +58,9 @@ app.use(
 if (debug) {
   app.use("/", (req, res, next) => {
     console.log(
-      `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${
-        req.session.player
-          ? "User is authenticated as"
-          : "User not authenticated"
+      `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.player
+        ? "User is authenticated as"
+        : "User not authenticated"
       } ${req.session.player ? req.session.player.role : ""})`
     );
     return next();
@@ -81,7 +80,7 @@ adminRoutesNotGet.forEach((route) => {
 const playerRoutes = ["/logout", "/api/events/reserve/*"];
 playerRoutes.forEach((route) => app.use(route, authenticatePlayer));
 
-const playerRoutesNotGet  = ["/api/players/:playerId"];
+const playerRoutesNotGet = ["/api/players/:playerId"];
 playerRoutesNotGet.forEach((route) => {
   app.post(route, authenticatePlayer);
   app.patch(route, authenticatePlayer);
@@ -91,7 +90,7 @@ playerRoutesNotGet.forEach((route) => {
 
 const addPlayerIdRoutes = ["/api/events/reserve/*"];
 addPlayerIdRoutes.forEach((route) =>
-app.use(route, addPlayerId)
+  app.use(route, addPlayerId)
 );
 
 const loggedOutRoutes = ["/login", "/register"];

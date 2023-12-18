@@ -289,18 +289,19 @@ router.route("/:id/scoreSubmissions")
       if (req.body.elimBracket) {
         let id2 = req.body.id2;
         let bracket = await startTournament(id2);
-        res.redirect("/events/" + id2);
+        console.log(bracket);
+        return res.redirect("/events/" + id2);
       } else if (req.body.swissRound) {
         let id3 = req.body.id3;
         let bracket = await generateSwissRound(id3);
-        res.redirect("/events/" + id3);
+        return res.redirect("/events/" + id3);
       } else if (req.body.topCut) {
         let id4 = req.body.id4;
         let bracket = await topCut(id4);
         return res.redirect("/events/" + id4);
       } else {
         let match = await submitScores(id, matchId, scores, winner);
-        res.redirect("/events/" + id);
+        return res.redirect("/events/" + id);
       }
 
     } catch (e) {
