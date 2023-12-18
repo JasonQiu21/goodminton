@@ -38,14 +38,18 @@
 -->
 <h1>{{title}}</h1>
 {{#if displayJoinButton}}
-    {{#if loggedIn}}
-        {{#if inTimeslot}}
-            <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
-        {{else}}
-            <button class="join-button" data-id="{{timeStamp}}">Join</button>
+        <p>Event has not started yet! Here are the current list of participants:</p>
+        {{#each reservation.players}}
+            <p>{{playerName}}</p>
+        {{/each}}
+        {{#if loggedIn}}
+            {{#if inTimeslot}}
+                <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
+            {{else}}
+                <button class="join-button" data-id="{{timeStamp}}">Join</button>
+            {{/if}}
         {{/if}}
     {{/if}}
-{{/if}}
 
 <section class = "tournament" id="tournament">
     {{#each event.matches}}
@@ -64,6 +68,38 @@
 </section>
 
 {{#if isAdmin}}
-    <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
+    {{#if matchData}}
+        <form action="/events/{{eventId}}/scoreSubmissions" method="POST" class="scoreSubmissionForm" id="scoreSubmissionForm">
+            <select name="matchId" id="matchId">
+                {{#each matchData}}
+                    <option value="{{id}}">{{team1}} vs. {{team2}} ({{in_round}})</option>
+                {{/each}}
+            </select> 
+
+            <label for="team1score">Team 1 Score</label>
+            <input type="number" name="team1score" id="team1score" min="0" max="99" required>
+
+            <label for="team2score">Team 2 Score</label>
+            <input type="number" name="team2score" id="team2score" min="0" max="99" required>
+
+            <select name="winner" id="winner">
+                <option value="1">Team 1 (Left Team)</option>
+                <option value="2">Team 2 (Right Team)</option>
+            </select>
+            
+            <input type="hidden" id="id" name="id" value="{{eventId}}">
+            <input type="submit" value="Submit">
+        </form>
+    {{/if}}
+
+    {{#if displayJoinButton}}
+        <form action="/events/{{eventId}}/scoreSubmissions" method="POST" class="generateBracketForm" id="generateBracketForm">
+            <input type="hidden" id="id2" name="id2" value="{{eventId}}">
+            <input type="hidden" id="elimBracket" name="elimBracket" value="elimBracket">
+            <input type="submit" value="Generate Bracket">
+        </form>
+    {{/if}}
 {{/if}}
+
+
 

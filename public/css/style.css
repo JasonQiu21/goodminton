@@ -391,3 +391,24 @@ li.game-bottom{
     padding: 5px 0;
     font-size: 15px;
 }
+
+/*
+    Events CSS
+*/
+
+.allEvents {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.allEvents a {
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #dddddd;
+    width: 100%;
+}
