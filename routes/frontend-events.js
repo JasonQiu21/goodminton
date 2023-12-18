@@ -96,7 +96,7 @@ router.route("/:id").get(async (req, res) => {
           if (matchIndex.winner == 1) {
             matchIndex.winner1 = true;
             matchIndex.winner2 = false;
-          } else {
+          } else if (matchIndex.winner == 2) {
             matchIndex.winner1 = false;
             matchIndex.winner2 = true;
           }
@@ -117,7 +117,7 @@ router.route("/:id").get(async (req, res) => {
           if (matchIndex.winner == 1) {
             matchIndex.winner1 = true;
             matchIndex.winner2 = false;
-          } else {
+          } else if (matchIndex.winner == 2) {
             matchIndex.winner1 = false;
             matchIndex.winner2 = true;
           }
