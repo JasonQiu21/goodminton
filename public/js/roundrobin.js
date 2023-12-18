@@ -7,7 +7,7 @@
     let eventId = getEventId();
     let requestRoundRobin = {
         method: 'POST',
-        url: `/api/events/${eventId}/generateBracket`,
+        url: `/api/events/${eventId}`,
         contentType: 'application/json',
         data: JSON.stringify({
             seeded: true
