@@ -41,8 +41,6 @@ router.route("/:id").get(async (req, res) => {
     const isLoggedIn = req.session?.player ? true : false;
     if (event?.tournamentType === "round robin") {
 
-      // check if logged in
-      
       // get timeSlot
       const timeStamp = event.reservations[0].time;
       // check if user is in timeSlot
@@ -67,10 +65,27 @@ router.route("/:id").get(async (req, res) => {
       });
     }
     else if (event?.tournamentType === "swiss"){
+      // get timeSlot
+      const timeStamp = event.reservations[0].time;
+      // check if user is in timeSlot
+      let inTimeslot = false;
+
+      if (isLoggedIn) {
+        event.reservations[0].players.forEach((player) => {
+          if (player._id.toString() === req.session?.player?._id) {
+            inTimeslot = true;
+          }
+        });
+      }
+
       return res.render("swiss", {
+        title: event.name,
         user: req.session?.player,
         id: req.session?.player?._id,
-        isAdmin: req.session?.player?.role === "admin"
+        isAdmin: req.session?.player?.role === "admin",
+        loggedIn: isLoggedIn,
+        timeStamp: timeStamp,
+        inTimeslot: inTimeslot,
       });
     }
 
