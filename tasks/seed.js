@@ -168,7 +168,7 @@ const event2 = await eventsCol.insertOne({
         id: 1,
         team1: [
           {
-            _id: "657f70b1bdd520024d394d59",
+            _id: new ObjectId("657f70b1bdd520024d394d59"),
             playerName: "John Doe",
           },
         ],
@@ -183,13 +183,13 @@ const event2 = await eventsCol.insertOne({
         id: 2,
         team1: [
           {
-            _id: "657f70a9bdd520024d394d57",
+            _id: new ObjectId("657f70a9bdd520024d394d57"),
             playerName: "Jing Ngo",
           },
         ],
         team2: [
           {
-            _id: "657f70a6bdd520024d394d56",
+            _id: new ObjectId("657f70a6bdd520024d394d56"),
             playerName: "Britney Yang",
           },
         ],
@@ -203,7 +203,7 @@ const event2 = await eventsCol.insertOne({
         id: 3,
         team1: [
           {
-            _id: "657f7097bdd520024d394d52",
+            _id: new ObjectId("657f7097bdd520024d394d52"),
             playerName: "Patrick Hill",
           },
         ],
@@ -218,7 +218,7 @@ const event2 = await eventsCol.insertOne({
         id: 4,
         team1: [
           {
-            _id: "657f70a2bdd520024d394d55",
+            _id: new ObjectId("657f70a2bdd520024d394d55"),
             playerName: "Bryan Chan",
           },
         ],
@@ -233,7 +233,7 @@ const event2 = await eventsCol.insertOne({
         id: 5,
         team1: [
           {
-            _id: "657f70adbdd520024d394d58",
+            _id: new ObjectId("657f70adbdd520024d394d58"),
             playerName: "Aidan Haberman",
           },
         ],
@@ -248,7 +248,7 @@ const event2 = await eventsCol.insertOne({
         id: 6,
         team1: [
           {
-            _id: "657f7094bdd520024d394d51",
+            _id: new ObjectId("657f7094bdd520024d394d51"),
             playerName: "Jason Qiu",
           },
         ],
@@ -263,7 +263,7 @@ const event2 = await eventsCol.insertOne({
         id: 7,
         team1: [
           {
-            _id: "657f709fbdd520024d394d54",
+            _id: new ObjectId("657f709fbdd520024d394d54"),
             playerName: "Eddison So",
           },
         ],
@@ -278,7 +278,7 @@ const event2 = await eventsCol.insertOne({
         id: 8,
         team1: [
           {
-            _id: "657f709bbdd520024d394d53",
+            _id: new ObjectId("657f709bbdd520024d394d53"),
             playerName: "Jackey Yang",
           },
         ],
@@ -295,13 +295,13 @@ const event2 = await eventsCol.insertOne({
         id: 9,
         team1: [
           {
-            _id: "657f70b1bdd520024d394d59",
+            _id: new ObjectId("657f70b1bdd520024d394d59"),
             playerName: "John Doe",
           },
         ],
         team2: [
           {
-            _id: "657f70a9bdd520024d394d57",
+            _id: new ObjectId("657f70a9bdd520024d394d57"),
             playerName: "Jing Ngo",
           },
         ],
@@ -315,13 +315,13 @@ const event2 = await eventsCol.insertOne({
         id: 10,
         team1: [
           {
-            _id: "657f7097bdd520024d394d52",
+            _id: new ObjectId("657f7097bdd520024d394d52"),
             playerName: "Patrick Hill",
           },
         ],
         team2: [
           {
-            _id: "657f70a2bdd520024d394d55",
+            _id: new ObjectId("657f70a2bdd520024d394d55"),
             playerName: "Bryan Chan",
           },
         ],
@@ -335,13 +335,13 @@ const event2 = await eventsCol.insertOne({
         id: 11,
         team1: [
           {
-            _id: "657f70adbdd520024d394d58",
+            _id: new ObjectId("657f70adbdd520024d394d58"),
             playerName: "Aidan Haberman",
           },
         ],
         team2: [
           {
-            _id: "657f7094bdd520024d394d51",
+            _id: new ObjectId("657f7094bdd520024d394d51"),
             playerName: "Jason Qiu",
           },
         ],
@@ -355,13 +355,13 @@ const event2 = await eventsCol.insertOne({
         id: 12,
         team1: [
           {
-            _id: "657f709fbdd520024d394d54",
+            _id: new ObjectId("657f709fbdd520024d394d54"),
             playerName: "Eddison So",
           },
         ],
         team2: [
           {
-            _id: "657f709bbdd520024d394d53",
+            _id: new ObjectId("657f709bbdd520024d394d53"),
             playerName: "Jackey Yang",
           },
         ],
@@ -377,7 +377,7 @@ const event2 = await eventsCol.insertOne({
         id: 13,
         team1: [
           {
-            _id: "657f7097bdd520024d394d52",
+            _id: new ObjectId("657f7097bdd520024d394d52"),
             playerName: "Patrick Hill",
           },
         ],
@@ -417,7 +417,7 @@ const event2 = await eventsCol.insertOne({
         team1: "bye",
         team2: [
           {
-            _id: "657f70a6bdd520024d394d56",
+            _id: new ObjectId("657f70a6bdd520024d394d56"),
             playerName: "Britney Yang",
           },
         ],
@@ -463,7 +463,7 @@ const event2 = await eventsCol.insertOne({
         id: 20,
         team1: [
           {
-            _id: "657f70a6bdd520024d394d56",
+            _id: new ObjectId("657f70a6bdd520024d394d56"),
             playerName: "Britney Yang",
           },
         ],
@@ -479,7 +479,7 @@ const event2 = await eventsCol.insertOne({
         team1: "bye",
         team2: [
           {
-            _id: "657f70a2bdd520024d394d55",
+            _id: new ObjectId("657f70a2bdd520024d394d55"),
             playerName: "Bryan Chan",
           },
         ],
@@ -516,7 +516,7 @@ const event2 = await eventsCol.insertOne({
         team1: "bye",
         team2: [
           {
-            _id: "657f70a2bdd520024d394d55",
+            _id: new ObjectId("657f70a2bdd520024d394d55"),
             playerName: "Bryan Chan",
           },
         ],
@@ -542,7 +542,7 @@ const event2 = await eventsCol.insertOne({
         id: 26,
         team1: [
           {
-            _id: "657f70a2bdd520024d394d55",
+            _id: new ObjectId("657f70a2bdd520024d394d55"),
             playerName: "Bryan Chan",
           },
         ],

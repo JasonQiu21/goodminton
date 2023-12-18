@@ -36,7 +36,12 @@ router
   })
   .post(async (req, res) => {
     try {
-      const expectedKeys = ["eventName", "eventDate", "eventType"];
+      const expectedKeys = [
+        "eventName",
+        "eventDate",
+        "eventType",
+        "tournamentType",
+      ];
       const params = [];
       expectedKeys.forEach((key) => {
         if (!Object.keys(req.body).includes(key))
@@ -48,16 +53,19 @@ router
 
       typecheck.isValidString(req.body.eventName, "Event Name");
       typecheck.isValidUnix(req.body.eventDate);
-      const eventTypes = [
-        "doubles tournament",
-        "singles tournament",
-        "practice",
+      const eventTypes = ["doublestournament", "singlestournament", "practice"];
+      const tournamentTypes = [
+        "none",
+        "single elim",
+        "double elim",
+        "round robin",
+        "swiss",
       ];
-
       typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
       if (!eventTypes.includes(req.body.eventType))
         throw { status: 400, error: "Invalid event type." };
-
+      if (!tournamentTypes.includes(req.body.tournamentType))
+        throw { status: 400, error: "Invalid tournament type." };
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
     } catch (e) {
