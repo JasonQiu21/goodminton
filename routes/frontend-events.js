@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as typecheck from "../typecheck.js";
 import { getEvent } from "../data/events.js";
 import { getReservations } from "../data/players.js";
+import { time } from "console";
 
 const router = Router();
 
@@ -39,11 +40,30 @@ router.route("/:id").get(async (req, res) => {
     const event = await getEvent(req.params.id);
 
     if (event?.tournamentType === "round robin") {
+
+      // check if logged in
+      const isLoggedIn = req.session?.player ? true : false;
+      // get timeSlot
+      const timeStamp = event.reservations[0].time;
+      // check if user is in timeSlot
+      let inTimeslot = false;
+
+      if (isLoggedIn) {
+        event.reservations[0].players.forEach((player) => {
+          if (player._id.toString() === req.session?.player?._id) {
+            inTimeslot = true;
+          }
+        });
+      }
+
       return res.render("roundrobin", {
         title: event.name,
         user: req.session?.player,
         id: req.session?.player?._id,
         isAdmin: req.session?.player?.role === "admin",
+        loggedIn: isLoggedIn,
+        timeStamp: timeStamp,
+        inTimeslot: inTimeslot,
       });
     }
 
