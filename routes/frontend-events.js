@@ -38,44 +38,43 @@ router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id);
 
-    if (event?.tournamentType === "round robin") {
-      return res.render("roundrobin", {
+    if(event?.tournamentType === "round robin"){
+      var playerId = req.session?.player?._id;
+      const loggedIn = req.session?.player;
+      // check for player in event
+      var inEvent = false;
+      event.reservations[0].players.forEach(player => {
+        if(player._id.toString() === playerId){
+          inEvent = true;
+        }
+      });
+      const timeStamp = event.reservations[0].time;
+
+      return res.render("roundrobin", { 
         title: event.name,
         user: req.session?.player,
         id: req.session?.player?._id,
-        isAdmin: req.session?.player?.role === "admin",
+        inTimeslot: inEvent,
+        timeStamp: timeStamp,
+        loggedIn: loggedIn,
+        isAdmin: req.session?.player?.role === "admin"
       });
     }
 
-    var playerReservations = [];
-    const isLoggedIn = req.session?.player;
-    if (req.session?.player) {
-      playerReservations = await getReservations(req.session?.player?._id);
-    }
-    let inEvent = playerReservations.some(
-      (event) => event._id === req.params.id
-    );
-    var inEventTime = -1;
-    if (inEvent) {
-      inEventTime = playerReservations.filter(
+    else { 
+      var playerReservations = [];
+      const isLoggedIn = req.session?.player;
+      if (req.session?.player) {
+        playerReservations = await getReservations(req.session?.player?._id);
+      }
+      let inEvent = playerReservations.some(
         (event) => event._id === req.params.id
-      )[0].time;
-    }
-    if (!isLoggedIn) {
-      inEvent = true;
-    }
-    const eventDate = new Date(event.date * 1000);
-    event.date = eventDate.toDateString();
-    event.time = eventDate.toTimeString();
-    for (let i = 0; i < event.reservations.length; i++) {
-      const reservationTime = new Date(event.reservations[i].time * 1000);
-      event.reservations[i].timeStamp = event.reservations[i].time;
-      event.reservations[i].inEvent = inEvent;
-      if (event.reservations[i].time === inEventTime) {
-        // might need to multiply by 1000
-        event.reservations[i].inTimeslot = true;
-      } else {
-        event.reservations[i].inTimeslot = false;
+      );
+      var inEventTime = -1;
+      if (inEvent) {
+        inEventTime = playerReservations.filter(
+          (event) => event._id === req.params.id
+        )[0].time;
       }
       event.reservations[i].date = reservationTime.toDateString();
       event.reservations[i].time = reservationTime.toTimeString();
