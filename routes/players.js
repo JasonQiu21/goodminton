@@ -78,12 +78,13 @@ router
   })
   .patch(async (req, res) => {
     try {
+      const body = helperFunctions.isValidPlayer(req.body, true);
+      const id = req.params.playerId;
+      if(req.session?.player._id !== id) return res.redirect("/forbidden");
       Object.keys(body).forEach(key => {
         if(typeof body[key] === "string")
           body[key] = xss(body[key])
       });
-      const body = helperFunctions.isValidPlayer(req.body, true);
-      const id = req.params.playerId;
 
       if(req.session?.player?.role !== "admin"){
         delete body?.singlesRating;
@@ -104,6 +105,7 @@ router
   .delete(async (req, res) => {
     try {
       let id = helperFunctions.isValidId(req.params.playerId);
+      if(req.session?.player._id !== id) return res.redirect("/forbidden");
       let player = await playerFunctions.removePlayer(id);
       return res.json(player);
     } catch (e) {
