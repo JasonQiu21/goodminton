@@ -38,12 +38,12 @@ router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id);
 
-    if(event?.tournamentType === "round robin"){
-      return res.render("roundrobin", { 
+    if (event?.tournamentType === "round robin") {
+      return res.render("roundrobin", {
         title: event.name,
         user: req.session?.player,
         id: req.session?.player?._id,
-        isAdmin: req.session?.player?.role === "admin"
+        isAdmin: req.session?.player?.role === "admin",
       });
     }
 
@@ -79,17 +79,54 @@ router.route("/:id").get(async (req, res) => {
       }
       event.reservations[i].date = reservationTime.toDateString();
       event.reservations[i].time = reservationTime.toTimeString();
-      event.reservations[i].isFull = event.reservations[i].players.length === event.reservations[i].max;
+      event.reservations[i].isFull =
+        event.reservations[i].players.length === event.reservations[i].max;
     }
     event.title = event.name;
     event.user = req.session?.player;
     event.id = req.session?.player?._id;
     event.isPractice = event.eventType == "practice";
-    event.isSingleElim = event.eventType == "Single Elimination Tournament";
-    if (event.isPractice) {
-      return res.render("event", event);
-    } else if (event.isSingleElim) {
+    event.isSingleElim = event.tournamentType == "single elim";
+    event.isDoubleElim = event.tournamentType == "double elim";
+    event.isAdmin = req.session?.player?.role === "admin";
+    if (event.isPractice) return res.render("event", event);
+    if (event.isSingleElim) {
+      for (let round in event.matches) {
+        for (let matchIndex of event.matches[round]) {
+          if (matchIndex.winner == 1) {
+            matchIndex.winner1 = true;
+            matchIndex.winner2 = false;
+          } else {
+            matchIndex.winner1 = false;
+            matchIndex.winner2 = true;
+          }
+        }
+      }
       return res.render("bracket", event);
+    }
+    if (event.isDoubleElim) {
+      let winnerBracket = {};
+      let loserBracket = {};
+      for (let round in event.matches) {
+        if (round.includes("winners") || round.includes("finals")) {
+          winnerBracket[round] = event.matches[round];
+        } else {
+          loserBracket[round] = event.matches[round];
+        }
+        for (let matchIndex of event.matches[round]) {
+          if (matchIndex.winner == 1) {
+            matchIndex.winner1 = true;
+            matchIndex.winner2 = false;
+          } else {
+            matchIndex.winner1 = false;
+            matchIndex.winner2 = true;
+          }
+        }
+      }
+      event.winnerBracket = winnerBracket;
+      event.loserBracket = loserBracket;
+      console.log(event);
+      return res.render("doubleElim", event);
     }
   } catch (e) {
     return res.render("error", {
