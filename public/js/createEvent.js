@@ -7,6 +7,15 @@ function isValidDate(dateString) {
   if (!dNum && dNum !== 0) return false; // NaN value, Invalid date
   return d.toISOString().slice(0, 10) === dateString;
 }
+const isValidNumber = (num, name = "Number input") => {
+  if (typeof num !== "number")
+    throw { status: 400, error: `${name} is not a number.` };
+  if (!(!!num || num === 0))
+    throw { status: 400, error: `${name} is not a valid number.` };
+
+  return num;
+};
+
 const validateFormSubmission = () => {
   let eventNameInput = document.getElementById("eventNameInput").value.trim();
   let eventDateInput = document.getElementById("eventDateInput").value.trim();
@@ -18,16 +27,22 @@ const validateFormSubmission = () => {
     .getElementById("tournamentTypeInput")
     .value.trim()
     .toLowerCase();
+  let eventCapInput = parseInt(
+    document.getElementById("eventCapInput").value.trim()
+  );
 
   if (!isNonEmptyString(eventNameInput)) return "Invalid event name";
   if (!isNonEmptyString(eventDateInput)) return "Invalid event date";
   if (!isNonEmptyString(eventTypeInput)) return "Invalid event type";
   if (!isNonEmptyString(tournamentTypeInput)) return "Invalid tournament type";
+
   const validDate = isValidDate(eventDateInput);
+  const validNum = isValidNumber(eventCapInput);
   if (!validDate) return "Invalid event date";
   eventDateInput = new Date(eventDateInput).getTime() / 1000;
+  if (!validNum) return "Invalid event capacity";
   if (
-    !["doublestournament", "singlestournament", "practice"].includes(
+    !["doubles tournament", "singles tournament", "practice"].includes(
       eventTypeInput.toLowerCase()
     )
   )
@@ -38,7 +53,13 @@ const validateFormSubmission = () => {
     )
   )
     return "Invalid tournament type";
-  return [eventNameInput, eventDateInput, eventTypeInput, tournamentTypeInput];
+  return [
+    eventNameInput,
+    eventDateInput,
+    eventTypeInput,
+    tournamentTypeInput,
+    eventCapInput,
+  ];
 };
 // document.addEventListener("submit", (event) => {
 //     let output = document.getElementById('output-error');
@@ -58,8 +79,13 @@ $("form").on("submit", function (event) {
   if (typeof result === "string") {
     output.innerText = result;
   } else {
-    let [eventNameInput, eventDateInput, eventTypeInput, tournamentTypeInput] =
-      result;
+    let [
+      eventNameInput,
+      eventDateInput,
+      eventTypeInput,
+      tournamentTypeInput,
+      eventCapInput,
+    ] = result;
     const createEvent = {
       method: "POST",
       url: "/api/events",
@@ -69,6 +95,7 @@ $("form").on("submit", function (event) {
         eventDate: eventDateInput,
         eventType: eventTypeInput,
         tournamentType: tournamentTypeInput,
+        eventCap: eventCapInput,
       }),
     };
     $.ajax(createEvent).then(function (responseMessage) {

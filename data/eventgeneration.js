@@ -41,8 +41,7 @@ export const createTeams = async (event, seeded = false) => {
         if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
         players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }] });
     } else {
-        if (players.length % 2 === 1) throw { status: 400, error: "Cannot generate a double elimination tournament with an odd number of players." };
-        let playerCopy = structuredClone(players)
+        let playerCopy = players
         for (let i = 0; i < playerCopy.length - 1; i += 2) {
             players[i / 2] = [playerCopy[i][0], playerCopy[i + 1][0]];
         }
@@ -364,6 +363,7 @@ export const generateElimTournament = async (event, seeded = false) => {
         let bonuscounter = 0;
 
         if (players.length < 4) throw { status: 400, error: "Not enough players to generate a double elimination tournament." };
+        if (players.length % 2 === 1) throw { status: 400, error: "Cannot generate a double elimination tournament with an odd number of players." };
 
         while (teamlength > 1) {
             let roundTitle = `winners - ${roundnumber}`;

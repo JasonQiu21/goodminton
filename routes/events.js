@@ -41,6 +41,7 @@ router
         "eventDate",
         "eventType",
         "tournamentType",
+        "eventCap"
       ];
       const params = [];
       expectedKeys.forEach((key) => {
@@ -53,7 +54,7 @@ router
 
       typecheck.isValidString(req.body.eventName, "Event Name");
       typecheck.isValidUnix(req.body.eventDate);
-      const eventTypes = ["doublestournament", "singlestournament", "practice"];
+      const eventTypes = ["doubles tournament", "singles tournament", "practice"];
       const tournamentTypes = [
         "none",
         "single elim",
@@ -66,16 +67,19 @@ router
         throw { status: 400, error: "Invalid event type." };
       if (!tournamentTypes.includes(req.body.tournamentType))
         throw { status: 400, error: "Invalid tournament type." };
+
+      typecheck.isFiniteNumber(req.body.eventCap, "Event Cap");
+
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
     } catch (e) {
-      console.log(e);
       if (!e.status) {
         console.log(`[Error on POST events/]: ${e}`);
         return res
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
+      console.log(e);
       return res.status(e.status).json(e);
     }
   });

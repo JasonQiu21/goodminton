@@ -11,19 +11,22 @@ import {
 	getMatchFromTournament,
 } from "./eventgeneration.js";
 
-const eventTypes = ["singlestournament", "doublestournament", "practice"];
+const eventTypes = ["singles tournament", "doubles tournament", "practice"];
 
 export const createEvent = async (
 	eventName,
 	eventDate,
 	eventType,
-	tournamentType = null
+	tournamentType = null,
+	eventCap = 30
 ) => {
 	const eventsCol = await events();
 	//input validation
 	eventName = typecheck.isValidString(eventName, "Event Name");
 	eventDate = typecheck.isValidUnix(eventDate);
 	eventType = typecheck.isValidString(eventType, "Event Type").toLowerCase();
+	eventCap = typecheck.isFiniteNumber(eventCap, "Reservation Max");
+
 	if (!eventTypes.includes(eventType))
 		throw { status: 400, error: "Invalid event type." };
 
@@ -46,7 +49,7 @@ export const createEvent = async (
 			eventType: eventType,
 			tournamentType: tournamentType,
 			matches: eventType === "practice" ? null : {},
-			reservations: [],
+			reservations: [{ time: eventDate, players: [], max: eventCap }],
 		});
 		if (!acknowledged)
 			throw { status: 500, error: "An error occurred while creating event" };
@@ -305,9 +308,9 @@ export const startTournament = async (eventId, seeded) => {
 		event.tournamentType === "single elim" ||
 		event.tournamentType === "double elim"
 	)
-		event.matches = await generateElimTournament(event, (seeded !== null ? seeded : false));
+		event.matches = await generateElimTournament(event, (seeded) ? seeded : true);
 	else if (event.tournamentType === "round robin")
-		event.matches = await generateRoundRobinTournament(event, (seeded !== null ? seeded : false));
+		event.matches = await generateRoundRobinTournament(event, (seeded) ? seeded : true);
 	else throw { status: 400, error: "Invalid tournament type." };
 
 	return event;

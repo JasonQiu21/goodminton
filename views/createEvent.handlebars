@@ -9,8 +9,8 @@
     <br>
     <label for="eventTypeInput">Event Type</label>
     <select name="eventTypeInput" id="eventTypeInput">
-        <option value="doublesTournament">Doubles Tournament</option>
-        <option value="singlesTournament">Singles Tournament</option>
+        <option value="doubles tournament">Doubles Tournament</option>
+        <option value="singles tournament">Singles Tournament</option>
         <option value="practice">Practice</option>
     </select>
     <br>
@@ -23,11 +23,14 @@
         <option value = "swiss">Swiss Bracket</option>
     </select>
     <br>
+    <label for="eventCap">Event Capacity</label>
+    <input type="number" name = "eventCapInput" id = "eventCapInput">
+    <br>
     <button type="submit">Submit</button>
     <div id="output-error"></div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
     integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="../public/js/createEvent.js"></script>
+    <script src="/public/js/createEvent.js"></script>
 </section>
 {{!-- 
 Event name
