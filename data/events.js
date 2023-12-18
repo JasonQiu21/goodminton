@@ -11,7 +11,7 @@ import {
   getMatchFromTournament,
 } from "./eventgeneration.js";
 
-const eventTypes = ["singles tournament", "double stournament", "practice"];
+const eventTypes = ["singles tournament", "doubles tournament", "practice"];
 
 export const createEvent = async (
   eventName,
@@ -49,7 +49,7 @@ export const createEvent = async (
       eventType: eventType,
       tournamentType: tournamentType,
       matches: eventType === "practice" ? null : {},
-      reservations: [{time: eventDate, players: [], max: eventCap}],
+      reservations: [{ time: eventDate, players: [], max: eventCap }],
     });
     if (!acknowledged)
       throw { status: 500, error: "An error occurred while creating event" };

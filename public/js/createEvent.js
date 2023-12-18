@@ -1,5 +1,3 @@
-import { isValidNumber } from "../../typecheck";
-
 const isNonEmptyString = (str) => typeof str === "string" && !!str.trim();
 function isValidDate(dateString) {
   var regEx = /^\d{4}-\d{2}-\d{2}$/;
@@ -9,6 +7,15 @@ function isValidDate(dateString) {
   if (!dNum && dNum !== 0) return false; // NaN value, Invalid date
   return d.toISOString().slice(0, 10) === dateString;
 }
+const isValidNumber = (num, name = "Number input") => {
+  if (typeof num !== "number")
+    throw { status: 400, error: `${name} is not a number.` };
+  if (!(!!num || num === 0))
+    throw { status: 400, error: `${name} is not a valid number.` };
+
+  return num;
+};
+
 const validateFormSubmission = () => {
   let eventNameInput = document.getElementById("eventNameInput").value.trim();
   let eventDateInput = document.getElementById("eventDateInput").value.trim();
@@ -20,7 +27,9 @@ const validateFormSubmission = () => {
     .getElementById("tournamentTypeInput")
     .value.trim()
     .toLowerCase();
-  let eventCapInput = document.getElementById("eventCapInput");
+  let eventCapInput = parseInt(
+    document.getElementById("eventCapInput").value.trim()
+  );
 
   if (!isNonEmptyString(eventNameInput)) return "Invalid event name";
   if (!isNonEmptyString(eventDateInput)) return "Invalid event date";
@@ -70,8 +79,13 @@ $("form").on("submit", function (event) {
   if (typeof result === "string") {
     output.innerText = result;
   } else {
-    let [eventNameInput, eventDateInput, eventTypeInput, tournamentTypeInput] =
-      result;
+    let [
+      eventNameInput,
+      eventDateInput,
+      eventTypeInput,
+      tournamentTypeInput,
+      eventCapInput,
+    ] = result;
     const createEvent = {
       method: "POST",
       url: "/api/events",
@@ -81,6 +95,7 @@ $("form").on("submit", function (event) {
         eventDate: eventDateInput,
         eventType: eventTypeInput,
         tournamentType: tournamentTypeInput,
+        eventCap: eventCapInput,
       }),
     };
     $.ajax(createEvent).then(function (responseMessage) {
