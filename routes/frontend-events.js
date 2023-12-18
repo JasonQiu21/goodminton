@@ -64,7 +64,7 @@ router.route("/:id").get(async (req, res) => {
         inTimeslot: inTimeslot,
       });
     }
-    else if (event?.tournamentType === "swiss"){
+    else if (event?.tournamentType === "swiss") {
       // get timeSlot
       const timeStamp = event.reservations[0].time;
       // check if user is in timeSlot
@@ -88,7 +88,7 @@ router.route("/:id").get(async (req, res) => {
         inTimeslot: inTimeslot,
       });
     }
-    else if (event?.tournamentType === "swiss"){
+    else if (event?.tournamentType === "swiss") {
       return res.render("swiss", {
         user: req.session?.player,
         id: req.session?.player?._id,
@@ -138,7 +138,7 @@ router.route("/:id").get(async (req, res) => {
     event.isDoubleElim = event.tournamentType == "double elim";
     event.isAdmin = req.session?.player?.role === "admin";
     if (event.isPractice) return res.render("event", event);
-    
+
     const timeStamp = event.reservations[0].time;
     // check if user is in timeSlot
     let inTimeslot = false;
@@ -166,7 +166,7 @@ router.route("/:id").get(async (req, res) => {
           }
         }
       }
-      
+
 
       return res.render("bracket", event);
     }
@@ -210,11 +210,7 @@ router.route("/:id/scoreSubmissions")
       const event = await getEvent(req.params.id)
       const isLoggedIn = req.session?.player;
       if (!isLoggedIn) {
-        return res.render("error", {
-          user: req.session?.player,
-          id: req.session?.player?._id,
-          error: "You must be logged in to submit scores.",
-        });
+        return res.redirect("/login");
       }
 
       //get the event matches
