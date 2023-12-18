@@ -498,6 +498,7 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
             if (match.id === matchId) {
                 if (match.winner !== 0 && !onGeneration) throw { status: 400, error: "Match is already recorded." };
                 if (match.byeround && !onGeneration) throw { status: 400, error: "You cannot record a score for a bye round." };
+
                 match.score = score;
                 match.winner = winner;
 
@@ -560,7 +561,7 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
                                     else match2.team2 = match.team2;
                                 }
 
-                                if (match2.byeround) await submitScoresForMatch(event, match2.id, [0, 0], match2.winner);
+                                if (match2.byeround) await submitScoresForMatch(event, match2.id, [0, 0], match2.winner, true);
                             }
                         }
                     }
@@ -578,7 +579,7 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
                                     else match2.team2 = match.team2;
                                 }
 
-                                if (match2.byeround) await submitScoresForMatch(event, match2.id, [0, 0], match2.winner);
+                                if (match2.byeround) await submitScoresForMatch(event, match2.id, [0, 0], match2.winner, true);
                             }
                         }
                     }
