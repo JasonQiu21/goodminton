@@ -56,15 +56,23 @@ To get a local copy up and running follow these steps.
 ## Usage
 
 Register an account here: http://localhost:3000/register
+<br />
 Or sign-in with some of the sample accounts:
+<br />
 Admin username: `jqiu21@stevens.edu`
+<br />
 Admin password: `password1`
+<br />
 (admin accounts can create events)
+<br />
 
 Normal username:  `phill@stevens.edu`
+<br />
 Normal password:  `password12`
+<br />
 
 All features can be accessed through the navigation bar at the top.
+<br />
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
