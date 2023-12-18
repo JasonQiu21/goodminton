@@ -1,4 +1,4 @@
-(function($) {
+(function ($) {
     let div = $('#roundrobin-div');
     function getEventId() {
         const url = window.location.pathname.split('/');
@@ -6,15 +6,14 @@
     }
     let eventId = getEventId();
     let requestRoundRobin = {
-        method: 'POST',
-        url: `/api/events/${eventId}/generateBracket`,
+        method: 'GET',
+        url: `/api/events/${eventId}/`,
         contentType: 'application/json',
         data: JSON.stringify({
             seeded: true
         })
     };
-    $.ajax(requestRoundRobin).then(function(responseMessage) {
-        console.log(responseMessage);
+    $.ajax(requestRoundRobin).then(function (responseMessage) {
         let table = $(
             `<table>
                 <tr>
@@ -26,7 +25,7 @@
             `
         );
         let row;
-        for (let match of responseMessage.matches.round){
+        for (let match of responseMessage.matches.round) {
             if (responseMessage.eventType === "singles tournament") {
                 // singles
                 row = $(

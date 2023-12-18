@@ -590,6 +590,7 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
 
     event.matches = matches;
     const eventsCol = await events();
+
     const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });
 
 

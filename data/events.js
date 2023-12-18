@@ -30,44 +30,44 @@ export const createEvent = async (
 	if (!eventTypes.includes(eventType))
 		throw { status: 400, error: "Invalid event type." };
 
-  if (eventType.toLowerCase().includes("tournament")) {
-    tournamentType = typecheck.isValidString(tournamentType, "Tournament Type");
-    if (
-      tournamentType.toLowerCase() !== "none" &&
-      tournamentType.toLowerCase() !== "single elim" &&
-      tournamentType.toLowerCase() !== "double elim" &&
-      tournamentType.toLowerCase() !== "round robin" &&
-      tournamentType.toLowerCase() !== "swiss"
-    )
-      throw { status: 400, error: "Invalid tournament type." };
-  }
-  //in this case, reservations need to be made
-  let reservations = [];
-  if(eventType === "practice"){
-    for(let i = 0; i < 4; i++){
-      reservations.push({ time: eventDate + 1800 * i, players: [], max: eventCap })
-    }
-  } else {
-    reservations.push({ time: eventDate, players: [], max: eventCap });
-  }
-  try {
-    var { acknowledged, insertedId } = await eventsCol.insertOne({
-      name: eventName,
-      date: eventDate,
-      eventType: eventType,
-      tournamentType: tournamentType,
-      matches: eventType === "practice" ? null : {},
-      reservations: reservations,
-    });
-    if (!acknowledged)
-      throw { status: 500, error: "An error occurred while creating event" };
-  } catch (e) {
-    console.log(e);
-    throw { status: 500, error: "An error occurred while creating event" };
-  }
-  if (!acknowledged || !insertedId)
-    throw { status: 500, error: "Error while creating event" };
-  return await getEvent(insertedId.toString());
+	if (eventType.toLowerCase().includes("tournament")) {
+		tournamentType = typecheck.isValidString(tournamentType, "Tournament Type");
+		if (
+			tournamentType.toLowerCase() !== "none" &&
+			tournamentType.toLowerCase() !== "single elim" &&
+			tournamentType.toLowerCase() !== "double elim" &&
+			tournamentType.toLowerCase() !== "round robin" &&
+			tournamentType.toLowerCase() !== "swiss"
+		)
+			throw { status: 400, error: "Invalid tournament type." };
+	}
+	//in this case, reservations need to be made
+	let reservations = [];
+	if (eventType === "practice") {
+		for (let i = 0; i < 4; i++) {
+			reservations.push({ time: eventDate + 1800 * i, players: [], max: eventCap })
+		}
+	} else {
+		reservations.push({ time: eventDate, players: [], max: eventCap });
+	}
+	try {
+		var { acknowledged, insertedId } = await eventsCol.insertOne({
+			name: eventName,
+			date: eventDate,
+			eventType: eventType,
+			tournamentType: tournamentType,
+			matches: eventType === "practice" ? null : {},
+			reservations: reservations,
+		});
+		if (!acknowledged)
+			throw { status: 500, error: "An error occurred while creating event" };
+	} catch (e) {
+		console.log(e);
+		throw { status: 500, error: "An error occurred while creating event" };
+	}
+	if (!acknowledged || !insertedId)
+		throw { status: 500, error: "Error while creating event" };
+	return await getEvent(insertedId.toString());
 };
 
 export const getAllEvents = async () => {
