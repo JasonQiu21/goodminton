@@ -187,7 +187,6 @@ router.route("/:id").get(async (req, res) => {
         }
       }
 
-      console.log(event.matches);
       return res.render("bracket", {
         event: event,
         title: event.name,
@@ -268,7 +267,11 @@ router.route("/:id/scoreSubmissions")
         }
       }
 
-      return res.render("scoreSubmissions", { user: req.session?.player, id: req.session?.player?._id, eventId: req.params.id, matchData: unfinishedMatches });
+      return res.render("scoreSubmissions", {
+        user: req.session?.player, id: req.session?.player?._id, eventId: req.params.id, matchData: unfinishedMatches,
+        bracket: event.tournamentType === "single elim" || event.tournamentType === "double elim" || event.tournamentType === "round robin",
+        swiss: event.tournamentType === "swiss"
+      });
     } catch (e) {
       console.log(e);
       return res.render("error", {
