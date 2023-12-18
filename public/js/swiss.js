@@ -31,9 +31,10 @@
         console.log(responseMessage);
 
         let row;
-        for (let swissround in responseMessage.matches){
+        for (let swissround of Object.keys(responseMessage.matches)){
             let table = $(
-                `<table>
+                `
+                <table>
                     <tr>
                         <th>Team 1</th>
                         <th>Scores</th>
@@ -48,6 +49,7 @@
                     row = $(
                             `<tr>
                                 <td>
+                                    
                                     ${team1}
                                 </td>
                                 <td>
@@ -61,9 +63,13 @@
                         );
                     table.append(row);
                 }
+                div.append(`<label>
+                ${swissround.toString()}
+                </label>`);
+                div.append(table);
             }
 
-            div.append(table);
+            
         }
     })
 })(window.jQuery);
