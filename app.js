@@ -7,6 +7,7 @@ import {
   authenticatePlayer,
   checkPlayerIdAgainstRequestBody,
   checkLoggedOut,
+  addPlayerId,
 } from "./middleware/auth.js";
 
 const port = 3000;
@@ -80,18 +81,18 @@ adminRoutesNotGet.forEach((route) => {
 const playerRoutes = ["/logout", "/api/events/reserve/*"];
 playerRoutes.forEach((route) => app.use(route, authenticatePlayer));
 
-
-const samePlayerIdRoutes = ["/api/events/reserve/*"];
-samePlayerIdRoutes.forEach((route) =>
-app.use(route, checkPlayerIdAgainstRequestBody)
-);
-
-const samePlayerRoutesNotGet = ["/api/players/:playerId"];
-samePlayerRoutesNotGet.forEach((route) => {
-  app.post(route, checkPlayerIdAgainstRequestBody);
-  app.delete(route, checkPlayerIdAgainstRequestBody);
-  app.patch(route, checkPlayerIdAgainstRequestBody);
+const playerRoutesNotGet  = ["/api/players/:playerId"];
+playerRoutesNotGet.forEach((route) => {
+  app.post(route, authenticatePlayer);
+  app.patch(route, authenticatePlayer);
+  app.delete(route, authenticatePlayer);
 });
+
+
+const addPlayerIdRoutes = ["/api/events/reserve/*"];
+addPlayerIdRoutes.forEach((route) =>
+app.use(route, addPlayerId)
+);
 
 const loggedOutRoutes = ["/login", "/register"];
 loggedOutRoutes.forEach((route) => {
