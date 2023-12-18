@@ -69,17 +69,17 @@ router
         throw { status: 400, error: "Invalid tournament type." };
 
       typecheck.isFiniteNumber(req.body.eventCap, "Event Cap");
-      
+
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
     } catch (e) {
-      console.log(e);
       if (!e.status) {
         console.log(`[Error on POST events/]: ${e}`);
         return res
           .status(500)
           .json({ status: 500, error: "An Internal Server Error Occurred" });
       }
+      console.log(e);
       return res.status(e.status).json(e);
     }
   });
