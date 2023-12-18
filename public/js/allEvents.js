@@ -1,4 +1,4 @@
-(function($) {
+(function ($) {
     let allEvents = $('#allEvents');
     let count = 0;
     let requestAllEvents = {
@@ -6,7 +6,6 @@
         url: 'api/events'
     };
     $.ajax(requestAllEvents).then(function (responseMessage) {
-        console.log(responseMessage);
         let today = Date.now();
         today = Math.floor(today / 1000);
         let element;

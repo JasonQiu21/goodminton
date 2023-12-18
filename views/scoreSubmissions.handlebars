@@ -22,12 +22,15 @@
         <input type="submit" value="Submit">
     </form>
 
+    {{#if bracket}}
     <form action="/events/{{eventId}}/scoreSubmissions" method="POST" class="generateBracketForm" id="generateBracketForm">
         <input type="hidden" id="id2" name="id2" value="{{eventId}}">
         <input type="hidden" id="elimBracket" name="elimBracket" value="elimBracket">
         <input type="submit" value="Generate Bracket">
     </form>
+    {{/if}}
 
+    {{#if swiss}}
     <form action="/events/{{eventId}}/scoreSubmissions" method="POST" class="generateSwissRoundForm" id="generateSwissRoundForm">
         <input type="hidden" id="id3" name="id3" value="{{eventId}}">
         <input type="hidden" id="swissRound" name="swissRound" value="swissRound">
@@ -40,6 +43,7 @@
         <input type = "hidden" id="topCut" name="topCut" value="topCut">
         <input type="submit" value="Generate Top Cut">
     </form>
+    {{/if}}
 
     <p id="error">{{error}}</p>
 
