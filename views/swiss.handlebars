@@ -1,10 +1,12 @@
 <section id="swiss">
     <h1>Swiss</h1>
-    {{#if loggedIn}}
-        {{#if inTimeslot}}
-            <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
-        {{else}}
-            <button class="join-button" data-id="{{timeStamp}}">Join</button>
+    {{#if event.matches}}
+        {{#if loggedIn}}
+            {{#if inTimeslot}}
+                <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
+            {{else}}
+                <button class="join-button" data-id="{{timeStamp}}">Join</button>
+            {{/if}}
         {{/if}}
     {{/if}}
     <div id="swiss-div">
