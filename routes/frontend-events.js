@@ -72,6 +72,7 @@ router.route("/:id").get(async (req, res) => {
 
       return res.render("roundrobin", {
         title: event.name,
+        event: event,
         user: req.session?.player,
         id: req.session?.player?._id,
         isAdmin: req.session?.player?.role === "admin",
@@ -79,6 +80,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
+        displayJoinButton: Object.keys(event.matches) === 0
       });
     }
     else if (event?.tournamentType === "swiss") {
@@ -97,6 +99,7 @@ router.route("/:id").get(async (req, res) => {
 
       return res.render("swiss", {
         title: event.name,
+        event: event,
         user: req.session?.player,
         id: req.session?.player?._id,
         isAdmin: req.session?.player?.role === "admin",
@@ -104,14 +107,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
-      });
-    }
-    else if (event?.tournamentType === "swiss") {
-      return res.render("swiss", {
-        user: req.session?.player,
-        id: req.session?.player?._id,
-        isAdmin: req.session?.player?.role === "admin",
-        eventId: req.params.id,
+        displayJoinButton: Object.keys(event.matches) === 0
       });
     }
 
@@ -191,7 +187,6 @@ router.route("/:id").get(async (req, res) => {
         }
       }
 
-
       return res.render("bracket", {
         event: event,
         title: event.name,
@@ -202,6 +197,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
+        displayJoinButton: Object.keys(event.matches) === 0
       });
     }
     if (event.isDoubleElim) {
@@ -236,6 +232,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
+        displayJoinButton: Object.keys(event.matches) === 0,
       });
     }
   } catch (e) {

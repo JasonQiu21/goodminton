@@ -1,6 +1,6 @@
 <section id="swiss">
     <h1>Swiss</h1>
-    {{#if event.matches}}
+    {{#if displayJoinButton}}
         {{#if loggedIn}}
             {{#if inTimeslot}}
                 <button class="leave-button" data-id="{{timeStamp}}">Leave</button>

@@ -40,7 +40,7 @@
 <section class = "tournament" id="tournament">
     <h1>{{title}}</h1>
     {{#if loggedIn}}
-        {{#if event.winnersBracket}}
+        {{#if displayJoinButton}}
             {{#if inTimeslot}}
                 <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
             {{else}}
