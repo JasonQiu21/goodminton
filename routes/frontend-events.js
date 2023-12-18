@@ -97,8 +97,12 @@ router.route("/:id").get(async (req, res) => {
     }
 
     var playerReservations = [];
-    if (req.session?.player) {
-      playerReservations = await getReservations(req.session?.player?._id);
+    try{
+      if (req.session?.player) {
+        playerReservations = await getReservations(req.session?.player?._id);
+      }
+    } catch (e) {
+      if(e?.status !== 404) throw e;
     }
     let inEvent = playerReservations.some(
       (event) => event._id === req.params.id

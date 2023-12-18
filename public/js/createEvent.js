@@ -27,7 +27,7 @@ const validateFormSubmission = () => {
   if (!validDate) return "Invalid event date";
   eventDateInput = new Date(eventDateInput).getTime() / 1000;
   if (
-    !["doublestournament", "singlestournament", "practice"].includes(
+    !["doubles tournament", "singles tournament", "practice"].includes(
       eventTypeInput.toLowerCase()
     )
   )
