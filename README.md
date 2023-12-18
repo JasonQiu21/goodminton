@@ -55,7 +55,24 @@ To get a local copy up and running follow these steps.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Register an account here: http://localhost:3000/register
+<br />
+Or sign-in with some of the sample accounts:
+<br />
+Admin username: `jqiu21@stevens.edu`
+<br />
+Admin password: `password1`
+<br />
+(admin accounts can create events)
+<br />
+
+Normal username:  `phill@stevens.edu`
+<br />
+Normal password:  `password12`
+<br />
+
+All features can be accessed through the navigation bar at the top.
+<br />
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
@@ -66,6 +83,6 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

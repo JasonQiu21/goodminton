@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as typecheck from "../typecheck.js";
 import { getEvent } from "../data/events.js";
 import { getReservations } from "../data/players.js";
+import { time } from "console";
 
 const router = Router();
 
@@ -37,13 +38,54 @@ router.route("/").get(async (req, res) => {
 router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id);
-
+    const isLoggedIn = req.session?.player ? true : false;
     if (event?.tournamentType === "round robin") {
+
+      // get timeSlot
+      const timeStamp = event.reservations[0].time;
+      // check if user is in timeSlot
+      let inTimeslot = false;
+
+      if (isLoggedIn) {
+        event.reservations[0].players.forEach((player) => {
+          if (player._id.toString() === req.session?.player?._id) {
+            inTimeslot = true;
+          }
+        });
+      }
+
       return res.render("roundrobin", {
         title: event.name,
         user: req.session?.player,
         id: req.session?.player?._id,
         isAdmin: req.session?.player?.role === "admin",
+        loggedIn: isLoggedIn,
+        timeStamp: timeStamp,
+        inTimeslot: inTimeslot,
+      });
+    }
+    else if (event?.tournamentType === "swiss"){
+      // get timeSlot
+      const timeStamp = event.reservations[0].time;
+      // check if user is in timeSlot
+      let inTimeslot = false;
+
+      if (isLoggedIn) {
+        event.reservations[0].players.forEach((player) => {
+          if (player._id.toString() === req.session?.player?._id) {
+            inTimeslot = true;
+          }
+        });
+      }
+
+      return res.render("swiss", {
+        title: event.name,
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        isAdmin: req.session?.player?.role === "admin",
+        loggedIn: isLoggedIn,
+        timeStamp: timeStamp,
+        inTimeslot: inTimeslot,
       });
     }
     else if (event?.tournamentType === "swiss"){
@@ -55,7 +97,6 @@ router.route("/:id").get(async (req, res) => {
     }
 
     var playerReservations = [];
-    const isLoggedIn = req.session?.player;
     if (req.session?.player) {
       playerReservations = await getReservations(req.session?.player?._id);
     }
@@ -85,7 +126,7 @@ router.route("/:id").get(async (req, res) => {
         event.reservations[i].inTimeslot = false;
       }
       event.reservations[i].date = reservationTime.toDateString();
-      event.reservations[i].time = reservationTime.toTimeString();
+      event.reservations[i].timeStamped = reservationTime.toTimeString();
       event.reservations[i].isFull =
         event.reservations[i].players.length === event.reservations[i].max;
     }
@@ -97,6 +138,22 @@ router.route("/:id").get(async (req, res) => {
     event.isDoubleElim = event.tournamentType == "double elim";
     event.isAdmin = req.session?.player?.role === "admin";
     if (event.isPractice) return res.render("event", event);
+    
+    const timeStamp = event.reservations[0].time;
+    // check if user is in timeSlot
+    let inTimeslot = false;
+    if (isLoggedIn) {
+      event.reservations[0].players.forEach((player) => {
+        if (player._id.toString() === req.session?.player?._id) {
+          inTimeslot = true;
+        }
+      });
+    }
+
+    event.loggedIn = isLoggedIn;
+    event.timeStamp = timeStamp;
+    event.inTimeslot = inTimeslot;
+
     if (event.isSingleElim) {
       for (let round in event.matches) {
         for (let matchIndex of event.matches[round]) {
@@ -109,6 +166,8 @@ router.route("/:id").get(async (req, res) => {
           }
         }
       }
+      
+
       return res.render("bracket", event);
     }
     if (event.isDoubleElim) {

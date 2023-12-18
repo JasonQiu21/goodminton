@@ -37,8 +37,15 @@
 ]
 -->
 
-<h1>{{title}}</h1>
-<main class = "tournament" id="tournament">
+<section class = "tournament" id="tournament">
+    <h1>{{title}}</h1>
+    {{#if loggedIn}}
+        {{#if inTimeslot}}
+            <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
+        {{else}}
+            <button class="join-button" data-id="{{timeStamp}}">Join</button>
+        {{/if}}
+    {{/if}}
     {{#each matches}}
         <ul class="round round-{{@index}}">
             <li class="spacer">&nbsp;</li>
@@ -50,5 +57,7 @@
             <li class="spacer">&nbsp;</li>
         </ul>
     {{/each}}
-</main>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="/public/js/singleEvent.js"></script>
+</section>
 
