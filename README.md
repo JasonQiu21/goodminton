@@ -74,6 +74,20 @@ Normal password:  `password12`
 All features can be accessed through the navigation bar at the top.
 <br />
 
+Some sample features that users can do:
+<br/>
+You can reserve for events (practices/tournaments) if you are signed in
+<br/>
+View/create/edit prfiles
+<br/>
+
+Some sample features that admins can do:
+<br/>
+Create/start events (create brackets for tournament, we have round robin and swiss styles)
+<br/>
+Inputting scores for tournaments
+<br/>
+
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
