@@ -91,7 +91,7 @@ export const isValidEvent = (event, partial = false) => {
   */
 
   // Allow _id, but do not check for it
-  let keys = ["_id", "name", "eventType", "date"];
+  let keys = ["_id", "name", "eventType", "date", "tournamentType"];
   Object.keys(event).forEach((key) => {
     if (!keys.includes(key))
       throw { status: 400, error: `Extraneous key '${key}'` };
@@ -102,7 +102,7 @@ export const isValidEvent = (event, partial = false) => {
   if (!partial || event?.eventType) {
     event.eventType = isValidString(event.eventType, "Event Type", false);
 
-    const eventTypes = ["tournament", "leaguenight", "practice"];
+    const eventTypes = ["singles tournament", "doubles tournament", "practice"];
     if (!eventTypes.includes(event.eventType))
       throw { status: 400, error: "Invalid event type." };
   }
@@ -110,6 +110,11 @@ export const isValidEvent = (event, partial = false) => {
     event.date = isFiniteNumber(event.date, "Event Date");
     if (event.date < 0)
       throw { status: 400, error: "Event Date must be a nonnegative number" };
+  }
+
+  if(!partial || ((event.eventType === "singles tournament" || event.eventType === "doubles tournament") && event?.tournamentType)){
+    const tournamentTypes = ["single elim", "double elim", "round robin", "swiss"];
+    if(!tournamentTypes.includes(event.tournamentType.trim().toLowerCase())) throw {status: 400, error: "Invalid tournament type"};
   }
 
   return event;
