@@ -381,38 +381,17 @@ export const getMatch = async (event, matchId) => {
 };
 
 export const submitScores = async (eventId, matchId, scores, winner) => {
-<<<<<<< Updated upstream
-    const eventOID = typecheck.stringToOid(eventId);
-    matchId = parseInt(matchId);
-    matchId = typecheck.isValidNumber(matchId);
-    scores = typecheck.isNonEmptyArray(scores);
-    winner = parseInt(winner);
-    winner = typecheck.isValidNumber(winner);
-
-    if (winner < 1 || winner > 2) throw { status: 400, error: "Invalid winner." };
-    if (scores.length < 2) throw { status: 400, error: "Invalid scores." };
-    scores[0] = typecheck.isValidNumber(parseInt(scores[0]));
-    scores[1] = typecheck.isValidNumber(parseInt(scores[1]));
-    if (scores[0] < 0 || scores[1] < 0) throw { status: 400, error: "Invalid scores." };
-
-    let event = await getEvent(eventId);
-    if (!event.eventType.includes("tournament")) throw { status: 400, error: "Event is not a tournament." };
-
-    let verification = await submitScoresForMatch(event, matchId, scores, winner);
-    return event;
-}
-
-=======
   const eventOID = typecheck.stringToOid(eventId);
   matchId = parseInt(matchId);
   matchId = typecheck.isValidNumber(matchId);
   scores = typecheck.isNonEmptyArray(scores);
+  winner = parseInt(winner);
   winner = typecheck.isValidNumber(winner);
 
   if (winner < 1 || winner > 2) throw { status: 400, error: "Invalid winner." };
   if (scores.length < 2) throw { status: 400, error: "Invalid scores." };
-  scores[0] = typecheck.isValidNumber(scores[0]);
-  scores[1] = typecheck.isValidNumber(scores[1]);
+  scores[0] = typecheck.isValidNumber(parseInt(scores[0]));
+  scores[1] = typecheck.isValidNumber(parseInt(scores[1]));
   if (scores[0] < 0 || scores[1] < 0)
     throw { status: 400, error: "Invalid scores." };
 
@@ -424,7 +403,6 @@ export const submitScores = async (eventId, matchId, scores, winner) => {
   return event;
 };
 
->>>>>>> Stashed changes
 export const translateBracket = async (eventId) => {
   const eventOID = typecheck.stringToOid(eventId);
   const playerOID = typecheck.stringToOid(playerId);
