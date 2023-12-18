@@ -75,6 +75,7 @@ router.route("/:id").get(async (req, res) => {
         inEventTime = playerReservations.filter(
           (event) => event._id === req.params.id
         )[0].time;
+<<<<<<< Updated upstream
       }
       event.reservations[i].date = reservationTime.toDateString();
       event.reservations[i].time = reservationTime.toTimeString();
@@ -135,6 +136,48 @@ router.route("/:id").get(async (req, res) => {
       error: e.error,
     });
   }
+=======
+      }
+      if (!isLoggedIn) {
+        inEvent = true;
+      }
+      const eventDate = new Date(event.date * 1000);
+      event.date = eventDate.toDateString();
+      event.time = eventDate.toTimeString();
+      for (let i = 0; i < event.reservations.length; i++) {
+        const reservationTime = new Date(event.reservations[i].time * 1000);
+        event.reservations[i].timeStamp = event.reservations[i].time;
+        event.reservations[i].inEvent = inEvent;
+        if (event.reservations[i].time === inEventTime) {
+          // might need to multiply by 1000
+          event.reservations[i].inTimeslot = true;
+        } else {
+          event.reservations[i].inTimeslot = false;
+        }
+        event.reservations[i].date = reservationTime.toDateString();
+        event.reservations[i].time = reservationTime.toTimeString();
+        event.reservations[i].isFull = event.reservations[i].players.length === event.reservations[i].max;
+      }
+      event.title = event.name;
+      event.user = req.session?.player;
+      event.id = req.session?.player?._id;
+      event.isPractice = event.eventType == "practice";
+      event.isSingleElim = event.eventType == "Single Elimination Tournament";
+      if (event.isPractice) {
+        return res.render("event", event);
+      } else if (event.isSingleElim) {
+        return res.render("bracket", event);
+      }
+    }
+    } catch (e) {
+      return res.render("error", {
+        title: "Error",
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        error: e.error,
+      });
+    }
+>>>>>>> Stashed changes
 });
 
 export default router;
