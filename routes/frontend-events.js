@@ -99,6 +99,19 @@ router.route("/:id").get(async (req, res) => {
 					matchData: unfinishedMatches
 				});
 			} else if (event?.tournamentType === "swiss") {
+				let swissrounds = {};
+				let singleElim = {};
+				for (let match of Object.keys(event.matches)) {
+					if (match.includes('swissround')) swissrounds[match] = event.matches[match];
+					else if (match.includes('winners')) singleElim[match] = event.matches[match];
+				}
+				// event.matches = swissrounds;
+				// const onlySwiss = event;
+				const displayJoinButton = Object.keys(event.matches).length === 0;
+				event.matches = singleElim;
+				const onlyElim = event;
+				
+
 				return res.render("swiss", {
 					title: event.name,
 					event: event,
@@ -109,7 +122,7 @@ router.route("/:id").get(async (req, res) => {
 					timeStamp: timeStamp,
 					inTimeslot: inTimeslot,
 					eventId: req.params.id,
-					displayJoinButton: Object.keys(event.matches).length === 0,
+					displayJoinButton: displayJoinButton,
 					reservation: event.reservations[0],
 					matchData: unfinishedMatches
 				});

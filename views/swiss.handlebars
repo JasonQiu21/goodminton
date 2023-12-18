@@ -21,7 +21,21 @@
     <script src="/public/js/swiss.js"></script>
     <script src = "/public/js/singleEvent.js"></script>
 </section>
-
+<section class = "tournament" id="tournament">
+    {{#each event.matches}}
+        <ul class="round round-{{@index}}">
+            <li class="spacer">&nbsp;</li>
+            {{#each this}}
+                <li class="game game-top {{#if this.winner1}}winner{{/if}}">{{#each this.team1}}{{this.playerName}} {{/each}} <span>{{this.score.[0]}}</span></li>
+                <li class="game game-spacer">&nbsp;</li>
+                <li class="game game-bottom {{#if this.winner2}}winner{{/if}}">{{#each this.team2}}{{this.playerName}} {{/each}} <span>{{this.score.[1]}}</span></li>
+            {{/each}}
+            <li class="spacer">&nbsp;</li>
+        </ul>
+    {{/each}}
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="/public/js/singleEvent.js"></script>
+</section>
 
 {{#if isAdmin}}
     <section id="matchmanagement">
