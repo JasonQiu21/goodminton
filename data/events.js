@@ -337,7 +337,7 @@ export const generateSwissRound = async (eventId) => {
 	return event;
 };
 
-export const topCut = async (eventId, cut) => {
+export const topCut = async (eventId, cut = 4) => {
 	const eventOID = typecheck.stringToOid(eventId);
 	cut = parseInt(cut);
 	cut = typecheck.isValidNumber(cut);
