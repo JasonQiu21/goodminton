@@ -496,12 +496,12 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
     for (let round in matches) {
         for (let match of matches[round]) {
             if (match.id === matchId) {
+                if (match.winner !== 0 && !onGeneration) throw { status: 400, error: "Match is already recorded." };
+                if (match.byeround && !onGeneration) throw { status: 400, error: "You cannot record a score for a bye round." };
                 match.score = score;
                 match.winner = winner;
 
-                if (match.winner !== 0 && !onGeneration) throw { status: 400, error: "Match is already recorded." };
-                if (match.byeround && !onGeneration) throw { status: 400, error: "You cannot record a score for a bye round." };
-
+                
                 //update elos
                 if (match.team1 !== null && match.team2 !== null && !match.byeround) {
                     let elo1 = 0, elo2 = 0;

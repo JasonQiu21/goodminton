@@ -2,6 +2,7 @@ let loginForm = document.getElementById("loginForm");
 let registerForm = document.getElementById("registerForm");
 let error = document.getElementById("error");
 let profileForm = document.getElementById("profileForm");
+let scoreSubmissionForm = document.getElementById("scoreSubmissionForm");
 
 const isValidString = (input, name = "String input", allow_empty = false) => {
   if (!input) throw { status: 400, error: `${name} must be provided.` };
@@ -12,6 +13,16 @@ const isValidString = (input, name = "String input", allow_empty = false) => {
 
   return input.trim();
 };
+
+const isValidNumber = (num, name = "Number input") => {
+  if (typeof num !== "number")
+    throw { status: 400, error: `${name} is not a number.` };
+  if (!(!!num || num === 0))
+    throw { status: 400, error: `${name} is not a valid number.` };
+
+  return num;
+};
+
 const checkEmail = (str) => {
   str = isValidString(str);
   str = str.toLowerCase();
@@ -100,6 +111,47 @@ if (registerForm) {
       return;
     } else {
       registerForm.submit();
+    }
+  });
+}
+
+if (scoreSubmissionForm) {
+  scoreSubmissionForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("scoreSubmission");
+    let matchId, team1score, team2score, winner;
+    let errorList = [];
+
+    try {
+      matchId = isValidString(document.getElementById("id").value, "Match ID");
+    } catch (e) {
+      errorList.push("Match ID was formatted incorrectly.");
+    }
+
+    try {
+      team1score = isValidNumber(parseInt(document.getElementById("team1score").value), "Team 1 Score");
+    } catch (e) {
+      errorList.push("Team 1 Score was formatted incorrectly.");
+    }
+    try {
+      team2score = isValidNumber(parseInt(document.getElementById("team2score").value), "Team 2 Score");
+    } catch (e) {
+      errorList.push("Team 2 Score was formatted incorrectly.");
+    }
+
+    try {
+      winner = isValidNumber(parseInt(document.getElementById("winner").value), "Winner");
+    } catch (e) {
+      errorList.push("Winner was formatted incorrectly.");
+    }
+
+    if (errorList.length > 0) {
+      error.innerHTML = errorList.join("<br>");
+      return;
+    } else {
+      scoreSubmissionForm.scores = [team1score, team2score];
+      console.log("did you get here????");
+      scoreSubmissionForm.submit();
     }
   });
 }

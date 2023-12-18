@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as typecheck from "../typecheck.js";
-import { getEvent } from "../data/events.js";
+import { getEvent, submitScores } from "../data/events.js";
 import { getReservations } from "../data/players.js";
 import { time } from "console";
 
@@ -203,5 +203,62 @@ router.route("/:id").get(async (req, res) => {
     });
   }
 });
+
+router.route("/:id/scoreSubmissions")
+  .get(async (req, res) => {
+    try {
+      const event = await getEvent(req.params.id)
+      const isLoggedIn = req.session?.player;
+      if (!isLoggedIn) {
+        return res.render("error", {
+          user: req.session?.player,
+          id: req.session?.player?._id,
+          error: "You must be logged in to submit scores.",
+        });
+      }
+
+      //get the event matches
+      let unfinishedMatches = [];
+
+      for (let round in event.matches) {
+        for (let match1 of event.matches[round]) {
+          if (match1.winner === 0 && !match1.byeround && match1.team1 !== null && match1.team2 !== null) {
+            console.log(match1);
+            match1.team1 = (match1.team1.length > 1) ? match1.team1[0].playerName + " & " + match1.team1[1].playerName : match1.team1[0].playerName;
+            match1.team2 = (match1.team2.length > 1) ? match1.team2[0].playerName + " & " + match1.team2[1].playerName : match1.team2[0].playerName;
+            match1.in_round = round;
+            unfinishedMatches.push(match1);
+          }
+        }
+      }
+
+      return res.render("scoreSubmissions", { user: req.session?.player, id: req.session?.player?._id, eventId: req.params.id, matchData: unfinishedMatches });
+    } catch (e) {
+      console.log(e);
+      return res.render("error", {
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        error: e.error,
+      });
+    }
+  }).post(async (req, res) => {
+    try {
+      let id = req.body.id;
+      let matchId = req.body.matchId;
+      let team1score = req.body.team1score;
+      let team2score = req.body.team2score;
+      let scores = [team1score, team2score];
+      let winner = req.body.winner;
+      let match = await submitScores(id, matchId, scores, winner);
+      res.redirect("/events/" + id);
+    } catch (e) {
+      console.log(e);
+      return res.render("error", {
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        error: e.error,
+      });
+    }
+  });
 
 export default router;
