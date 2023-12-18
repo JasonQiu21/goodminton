@@ -413,7 +413,7 @@ export const generateElimTournament = async (event, seeded = false) => {
                     score: [0, 0],
                     winner: (players[i] === "bye") ? 2 : (players[i + 1] === "bye") ? 1 : 0,
                     byeround: false,
-                    winner_to: (teamlength === 2) ? Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2 : (roundnumber % 2 == 1) ? roundcounter + i : roundcounter,
+                    winner_to: (teamlength === 2 && roundnumber % 2 === 0) ? Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2))) * 2 - 2 : (roundnumber % 2 == 1) ? roundcounter + i : roundcounter,
                     loser_to: null
                 });
                 matchcounter++;
