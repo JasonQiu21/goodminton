@@ -65,10 +65,10 @@ router.route("/reservations/:playerid").get(async (req, res) => {
   try {
     let id = typecheck.isValidId(req.params.playerid);
     let events = [];
-    try{
+    try {
       events = await playerFunctions.getReservations(id);
     } catch (e) {
-      if(e?.status !== 404) throw e;
+      if (e?.status !== 404) throw e;
     }
     for (let i = 0; i < events.length; i++) {
       const eventTime = new Date(events[i].time * 1000);
@@ -88,7 +88,7 @@ router.route("/reservations/:playerid").get(async (req, res) => {
       title: "Error",
       id: req.session?.player?._id,
       error: e.error,
-      
+
     });
   }
 });

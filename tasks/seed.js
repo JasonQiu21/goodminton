@@ -174,7 +174,6 @@ const event2 = await eventsCol.insertOne({
         { _id: player6.insertedId, playerName: "Britney Yang" },
         { _id: player7.insertedId, playerName: "Jing Ngo" },
         { _id: player8.insertedId, playerName: "Aidan Haberman" },
-        { _id: player9.insertedId, playerName: "John Doe" },
       ],
       max: 20,
     },
