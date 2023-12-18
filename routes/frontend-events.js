@@ -66,6 +66,13 @@ router.route("/:id").get(async (req, res) => {
         inTimeslot: inTimeslot,
       });
     }
+    else if (event?.tournamentType === "swiss"){
+      return res.render("swiss", {
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        isAdmin: req.session?.player?.role === "admin"
+      });
+    }
 
     var playerReservations = [];
     const isLoggedIn = req.session?.player;
