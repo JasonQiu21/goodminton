@@ -80,7 +80,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
-        displayJoinButton: Object.keys(event.matches) === 0
+        displayJoinButton: Object.keys(event.matches).length === 0
       });
     }
     else if (event?.tournamentType === "swiss") {
@@ -107,7 +107,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
-        displayJoinButton: Object.keys(event.matches) === 0
+        displayJoinButton: Object.keys(event.matches).length === 0
       });
     }
 
@@ -187,6 +187,7 @@ router.route("/:id").get(async (req, res) => {
         }
       }
 
+      console.log(event.matches);
       return res.render("bracket", {
         event: event,
         title: event.name,
@@ -197,7 +198,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
-        displayJoinButton: Object.keys(event.matches) === 0
+        displayJoinButton: Object.keys(event.matches).length === 0
       });
     }
     if (event.isDoubleElim) {
@@ -221,7 +222,6 @@ router.route("/:id").get(async (req, res) => {
       }
       event.winnerBracket = winnerBracket;
       event.loserBracket = loserBracket;
-      console.log(event);
       return res.render("doubleElim", {
         event: event,
         title: event.name,
@@ -232,7 +232,7 @@ router.route("/:id").get(async (req, res) => {
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
         eventId: req.params.id,
-        displayJoinButton: Object.keys(event.matches) === 0,
+        displayJoinButton: Object.keys(event.matches).length === 0,
       });
     }
   } catch (e) {
@@ -260,7 +260,6 @@ router.route("/:id/scoreSubmissions")
       for (let round in event.matches) {
         for (let match1 of event.matches[round]) {
           if (match1.winner === 0 && !match1.byeround && match1.team1 !== null && match1.team2 !== null) {
-            console.log(match1);
             match1.team1 = (match1.team1.length > 1) ? match1.team1[0].playerName + " & " + match1.team1[1].playerName : match1.team1[0].playerName;
             match1.team2 = (match1.team2.length > 1) ? match1.team2[0].playerName + " & " + match1.team2[1].playerName : match1.team2[0].playerName;
             match1.in_round = round;
@@ -290,7 +289,6 @@ router.route("/:id/scoreSubmissions")
       if (req.body.elimBracket) {
         let id2 = req.body.id2;
         let bracket = await startTournament(id2);
-        console.log(bracket);
         return res.redirect("/events/" + id2);
       } else if (req.body.swissRound) {
         let id3 = req.body.id3;
