@@ -1,13 +1,11 @@
 <section>
-    <main>
-        <div class="grid-container">
-            {{#each reservations}}
-                <div>
-                    <h3>{{name}}</h3>
-                    <p>{{time}}</p>
-                    <a href="/events/{{_id}}">More Info</a>
-                </div>
-            {{/each}}
-        </div>
-    </main>
+    <div class="grid-container">
+        {{#each reservations}}
+            <div>
+                <h3>{{name}}</h3>
+                <p>{{time}}</p>
+                <a href="/events/{{_id}}">More Info</a>
+            </div>
+        {{/each}}
+    </div>
 </section>

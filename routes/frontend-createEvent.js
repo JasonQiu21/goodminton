@@ -7,6 +7,7 @@ router
     .get(async(req, res) => {
         try {
             res.render('createEvent', {
+                title: "Create Event",
                 user: req.session?.player,
                 id: req.session?.player?._id, 
                 isAdmin: req.session?.player?.role === "admin"});

@@ -48,6 +48,7 @@ const createNewPlayer = async (playerName, email, password, phone = null) => {
     email: email,
     password: passwordHash,
     phone: phone,
+    role: "user",
     singlesRating: 800,
     doublesRating: 800,
   };

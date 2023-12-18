@@ -7,7 +7,8 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mongodb": "^6.3.0",
-    "node": "^21.1.0"
+    "node": "^21.1.0",
+    "xss": "^1.0.14"
   },
   "name": "goodminton",
   "description": "CS 546 Final Project",

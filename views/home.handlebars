@@ -1,20 +1,18 @@
 <section>
-    <main>
-        <div class = "parentDiv">
-            <div class = "homeInfo">
-                <h1>Welcome to Goodminton</h1>
-                <p>Welcome to Goodminton your go-to destination for hassle-free badminton experiences! Easily book courts at top venues, participate in thrilling tournaments, and connect with a vibrant badminton community. Enjoy the convenience of anytime, anywhere access to elevate your game. Goodminton where convenience meets competition for the ultimate badminton bliss!</p>
-                {{#if user}}
-                    <p>Check to see what events there are</p>
-                    <a class = "homeButton" href = "/events"> Events</a>
-                {{else}}
-                    <p>Sign up today to start playing!</p>
-                    <a class = "homeButton" href = "/register">Sign Up</a> 
-                {{/if}}
-            </div>
-            <div class = "pictureInfo">
-                <img src = "/public/images/chicken.jpg" alt = "Picture of Bryan">
-            </div>
+    <div class = "parentDiv">
+        <div class = "homeInfo">
+            <h1>Welcome to Goodminton</h1>
+            <p>Welcome to Goodminton your go-to destination for hassle-free badminton experiences! Easily book courts at top venues, participate in thrilling tournaments, and connect with a vibrant badminton community. Enjoy the convenience of anytime, anywhere access to elevate your game. Goodminton where convenience meets competition for the ultimate badminton bliss!</p>
+            {{#if user}}
+                <p>Check to see what events there are</p>
+                <a class = "homeButton" href = "/events"> Events</a>
+            {{else}}
+                <p>Sign up today to start playing!</p>
+                <a class = "homeButton" href = "/register">Sign Up</a> 
+            {{/if}}
         </div>
-    </main>
+        <div class = "pictureInfo">
+            <img src = "/public/images/chicken.jpg" alt = "Picture of Bryan">
+        </div>
+    </div>
 </section>
