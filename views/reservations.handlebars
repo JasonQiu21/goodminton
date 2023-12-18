@@ -1,5 +1,11 @@
 <section>
+    {{#if reservations}}
+    
+    {{else}}
+        <p>No Reservations</p>
+    {{/if}}
     <div class="grid-container">
+
         {{#each reservations}}
             <div>
                 <h3>{{name}}</h3>
