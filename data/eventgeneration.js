@@ -41,6 +41,7 @@ export const createTeams = async (event, seeded = false) => {
         if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
         players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }] });
     } else {
+        if (players.length % 2 === 1) throw { status: 400, error: "Cannot generate a double elimination tournament with an odd number of players." };
         let playerCopy = players
         for (let i = 0; i < playerCopy.length - 1; i += 2) {
             players[i / 2] = [playerCopy[i][0], playerCopy[i + 1][0]];
@@ -363,7 +364,6 @@ export const generateElimTournament = async (event, seeded = false) => {
         let bonuscounter = 0;
 
         if (players.length < 4) throw { status: 400, error: "Not enough players to generate a double elimination tournament." };
-        if (players.length % 2 === 1) throw { status: 400, error: "Cannot generate a double elimination tournament with an odd number of players." };
 
         while (teamlength > 1) {
             let roundTitle = `winners - ${roundnumber}`;
@@ -374,8 +374,8 @@ export const generateElimTournament = async (event, seeded = false) => {
                 if (matchcounter % 2 === 1) roundcounter++;
                 round.push({
                     id: matchcounter,
-                    team1: (roundnumber === 1) ? players[i * 2] : null,
-                    team2: (roundnumber === 1) ? players[i * 2 + 1] : null,
+                    team1: (roundnumber === 1) ? players[i * 2] : "bye",
+                    team2: (roundnumber === 1) ? players[i * 2 + 1] : "bye",
                     score: [0, 0],
                     winner: (players[i * 2] === "bye") ? 2 : (players[i * 2 + 1] === "bye" && roundnumber === 1) ? 1 : 0,
                     byeround: false,
@@ -501,7 +501,7 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
                 match.score = score;
                 match.winner = winner;
 
-                
+
                 //update elos
                 if (match.team1 !== null && match.team2 !== null && !match.byeround) {
                     let elo1 = 0, elo2 = 0;

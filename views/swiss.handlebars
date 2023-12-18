@@ -14,4 +14,8 @@
     integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="/public/js/swiss.js"></script>
     <script src = "/public/js/singleEvent.js"></script>
+
+    {{#if isAdmin}}
+        <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
+    {{/if}}
 </section>

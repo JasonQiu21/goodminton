@@ -15,4 +15,7 @@
     <script src="/public/js/roundrobin.js"></script>
     <script src="/public/js/singleEvent.js"></script>
     
+    {{#if isAdmin}}
+        <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
+    {{/if}}
 </section>

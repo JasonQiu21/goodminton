@@ -47,7 +47,7 @@
         {{/if}}
     {{/if}}
     {{log this}}
-    {{#each winnerBracket}}
+    {{#each event.winnerBracket}}
         <ul class="round round-{{@index}}">
             <li class="spacer">&nbsp;</li>
             {{#each this}}
@@ -63,7 +63,7 @@
 </section>
 
 <section class = "tournament">
-    {{#each loserBracket}}
+    {{#each event.loserBracket}}
         <ul class="round round-{{@index}}">
             <li class="spacer">&nbsp;</li>
             {{#each this}}
@@ -74,4 +74,8 @@
             <li class="spacer">&nbsp;</li>
         </ul>
     {{/each}}
+
+    {{#if isAdmin}}
+        <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
+    {{/if}}
 </section>
