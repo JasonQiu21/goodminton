@@ -36,18 +36,18 @@
     ]
 ]
 -->
-
-<section class = "tournament" id="tournament">
-    <h1>{{title}}</h1>
-    {{#if displayJoinButton}}
-        {{#if loggedIn}}
-            {{#if inTimeslot}}
-                <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
-            {{else}}
-                <button class="join-button" data-id="{{timeStamp}}">Join</button>
-            {{/if}}
+<h1>{{title}}</h1>
+{{#if displayJoinButton}}
+    {{#if loggedIn}}
+        {{#if inTimeslot}}
+            <button class="leave-button" data-id="{{timeStamp}}">Leave</button>
+        {{else}}
+            <button class="join-button" data-id="{{timeStamp}}">Join</button>
         {{/if}}
     {{/if}}
+{{/if}}
+
+<section class = "tournament" id="tournament">
     {{#each event.matches}}
         <ul class="round round-{{@index}}">
             <li class="spacer">&nbsp;</li>
@@ -61,9 +61,9 @@
     {{/each}}
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="/public/js/singleEvent.js"></script>
-
-    {{#if isAdmin}}
-        <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
-    {{/if}}
 </section>
+
+{{#if isAdmin}}
+    <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
+{{/if}}
 

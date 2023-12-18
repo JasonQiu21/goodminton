@@ -37,8 +37,8 @@
 ]
 -->
 
-<section class = "tournament" id="tournament">
     <h1>{{title}}</h1>
+
     {{#if loggedIn}}
         {{#if displayJoinButton}}
             {{#if inTimeslot}}
@@ -48,6 +48,10 @@
             {{/if}}
         {{/if}}
     {{/if}}
+
+
+
+<section class = "tournament" id="tournament">
     {{log this}}
     {{#each event.winnerBracket}}
         <ul class="round round-{{@index}}">
@@ -76,8 +80,8 @@
             <li class="spacer">&nbsp;</li>
         </ul>
     {{/each}}
-
-    {{#if isAdmin}}
-        <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
-    {{/if}}
 </section>
+
+{{#if isAdmin}}
+    <a href="/events/{{eventId}}/scoreSubmissions">Manage Event</a>
+{{/if}}
