@@ -1,5 +1,5 @@
-<h1>{{event.name}}</h1>
-<main id="event">
+<section id="event">
+    <h1>{{event.name}}</h1>
     <a>Date: {{event.date}}</a>
     <br>
     {{#each event.reservations}}
@@ -12,4 +12,4 @@
             {{/each}}
         </ol>
     {{/each}}
-</main>
+</section>

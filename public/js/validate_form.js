@@ -2,7 +2,11 @@ let loginForm = document.getElementById("loginForm");
 let registerForm = document.getElementById("registerForm");
 let error = document.getElementById("error");
 let profileForm = document.getElementById("profileForm");
+
 let scoreSubmissionForm = document.getElementById("scoreSubmissionForm");
+let generateBracketForm = document.getElementById("generateBracketForm");
+let generateSwissRoundForm = document.getElementById("generateSwissRoundForm");
+let generateTopCutForm = document.getElementById("generateTopCutForm");
 
 const isValidString = (input, name = "String input", allow_empty = false) => {
   if (!input) throw { status: 400, error: `${name} must be provided.` };
@@ -150,8 +154,70 @@ if (scoreSubmissionForm) {
       return;
     } else {
       scoreSubmissionForm.scores = [team1score, team2score];
-      console.log("did you get here????");
       scoreSubmissionForm.submit();
+    }
+  });
+}
+
+if (generateBracketForm) {
+  generateBracketForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("generateBracket");
+    let errorList = [];
+    let id
+    try {
+      id = isValidString(document.getElementById("id2").value, "Event ID");
+    } catch (e) {
+      errorList.push("Event ID was formatted incorrectly.");
+    }
+    if (errorList.length > 0) {
+      error.innerHTML = errorList.join("<br>");
+      return;
+    } else {
+      generateBracketForm.id = id;
+      generateBracketForm.submit();
+    }
+  });
+}
+
+if (generateSwissRoundForm) {
+  generateSwissRoundForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("generateSwissRound");
+    let errorList = [];
+    let id
+    try {
+      id = isValidString(document.getElementById("id3").value, "Event ID");
+    } catch (e) {
+      errorList.push("Event ID was formatted incorrectly.");
+    }
+    if (errorList.length > 0) {
+      error.innerHTML = errorList.join("<br>");
+      return;
+    } else {
+      generateSwissRoundForm.id = id;
+      generateSwissRoundForm.submit();
+    }
+  });
+}
+
+if (generateTopCutForm) {
+  generateTopCutForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("generateTopCut");
+    let errorList = [];
+    let id
+    try {
+      id = isValidString(document.getElementById("id4").value, "Event ID");
+    } catch (e) {
+      errorList.push("Event ID was formatted incorrectly.");
+    }
+    if (errorList.length > 0) {
+      error.innerHTML = errorList.join("<br>");
+      return;
+    } else {
+      generateTopCutForm.id = id;
+      generateTopCutForm.submit();
     }
   });
 }

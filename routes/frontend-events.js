@@ -1,8 +1,23 @@
 import { Router } from "express";
 import * as typecheck from "../typecheck.js";
-import { getEvent, submitScores } from "../data/events.js";
 import { getReservations } from "../data/players.js";
 import { time } from "console";
+
+import {
+  createEvent,
+  getAllEvents,
+  getEvent,
+  updateEvent,
+  deleteEvent,
+  createReservation,
+  deleteReservation,
+  startTournament,
+  generateSwissRound,
+  topCut,
+  getMatch,
+  getStandings,
+  submitScores,
+} from "../data/events.js";
 
 const router = Router();
 
@@ -39,6 +54,7 @@ router.route("/:id").get(async (req, res) => {
   try {
     const event = await getEvent(req.params.id);
     const isLoggedIn = req.session?.player ? true : false;
+
     if (event?.tournamentType === "round robin") {
 
       // get timeSlot
@@ -62,9 +78,10 @@ router.route("/:id").get(async (req, res) => {
         loggedIn: isLoggedIn,
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
+        eventId: req.params.id,
       });
     }
-    else if (event?.tournamentType === "swiss"){
+    else if (event?.tournamentType === "swiss") {
       // get timeSlot
       const timeStamp = event.reservations[0].time;
       // check if user is in timeSlot
@@ -86,23 +103,25 @@ router.route("/:id").get(async (req, res) => {
         loggedIn: isLoggedIn,
         timeStamp: timeStamp,
         inTimeslot: inTimeslot,
+        eventId: req.params.id,
       });
     }
-    else if (event?.tournamentType === "swiss"){
+    else if (event?.tournamentType === "swiss") {
       return res.render("swiss", {
         user: req.session?.player,
         id: req.session?.player?._id,
-        isAdmin: req.session?.player?.role === "admin"
+        isAdmin: req.session?.player?.role === "admin",
+        eventId: req.params.id,
       });
     }
 
     var playerReservations = [];
-    try{
+    try {
       if (req.session?.player) {
         playerReservations = await getReservations(req.session?.player?._id);
       }
     } catch (e) {
-      if(e?.status !== 404) throw e;
+      if (e?.status !== 404) throw e;
     }
     let inEvent = playerReservations.some(
       (event) => event._id === req.params.id
@@ -141,8 +160,9 @@ router.route("/:id").get(async (req, res) => {
     event.isSingleElim = event.tournamentType == "single elim";
     event.isDoubleElim = event.tournamentType == "double elim";
     event.isAdmin = req.session?.player?.role === "admin";
+
     if (event.isPractice) return res.render("event", event);
-    
+
     const timeStamp = event.reservations[0].time;
     // check if user is in timeSlot
     let inTimeslot = false;
@@ -170,9 +190,19 @@ router.route("/:id").get(async (req, res) => {
           }
         }
       }
-      
 
-      return res.render("bracket", event);
+
+      return res.render("bracket", {
+        event: event,
+        title: event.name,
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        isAdmin: req.session?.player?.role === "admin",
+        loggedIn: isLoggedIn,
+        timeStamp: timeStamp,
+        inTimeslot: inTimeslot,
+        eventId: req.params.id,
+      });
     }
     if (event.isDoubleElim) {
       let winnerBracket = {};
@@ -196,7 +226,17 @@ router.route("/:id").get(async (req, res) => {
       event.winnerBracket = winnerBracket;
       event.loserBracket = loserBracket;
       console.log(event);
-      return res.render("doubleElim", event);
+      return res.render("doubleElim", {
+        event: event,
+        title: event.name,
+        user: req.session?.player,
+        id: req.session?.player?._id,
+        isAdmin: req.session?.player?.role === "admin",
+        loggedIn: isLoggedIn,
+        timeStamp: timeStamp,
+        inTimeslot: inTimeslot,
+        eventId: req.params.id,
+      });
     }
   } catch (e) {
     return res.render("error", {
@@ -214,11 +254,7 @@ router.route("/:id/scoreSubmissions")
       const event = await getEvent(req.params.id)
       const isLoggedIn = req.session?.player;
       if (!isLoggedIn) {
-        return res.render("error", {
-          user: req.session?.player,
-          id: req.session?.player?._id,
-          error: "You must be logged in to submit scores.",
-        });
+        return res.redirect("/login");
       }
 
       //get the event matches
@@ -253,8 +289,25 @@ router.route("/:id/scoreSubmissions")
       let team2score = req.body.team2score;
       let scores = [team1score, team2score];
       let winner = req.body.winner;
-      let match = await submitScores(id, matchId, scores, winner);
-      res.redirect("/events/" + id);
+
+      if (req.body.elimBracket) {
+        let id2 = req.body.id2;
+        let bracket = await startTournament(id2);
+        console.log(bracket);
+        return res.redirect("/events/" + id2);
+      } else if (req.body.swissRound) {
+        let id3 = req.body.id3;
+        let bracket = await generateSwissRound(id3);
+        return res.redirect("/events/" + id3);
+      } else if (req.body.topCut) {
+        let id4 = req.body.id4;
+        let bracket = await topCut(id4);
+        return res.redirect("/events/" + id4);
+      } else {
+        let match = await submitScores(id, matchId, scores, winner);
+        return res.redirect("/events/" + id);
+      }
+
     } catch (e) {
       console.log(e);
       return res.render("error", {
