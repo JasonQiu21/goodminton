@@ -278,10 +278,12 @@ const getAllMatches = async (id) => {
         if ((match.team1 !== null || match.team2 !== null) && !match.byeround) {
           if (match.team1 !== null && (match.team1[0]._id.equals(id) || (match.team1.length > 1 && match.team1[1]._id.equals(id))) && match.winner !== 0) {
             match.eventId = event._id.toString(); //so that you can reference back to the match
+            match.in_round = round;
             playerMatches.push(match);
           }
           if (match.team2 !== null && (match.team2[0]._id.equals(id) || (match.team2.length > 1 && match.team2[1]._id.equals(id))) && match.winner !== 0) {
             match.eventId = event._id.toString(); //so that you can reference back to the match
+            match.in_round = round;
             playerMatches.push(match);
           }
         }
