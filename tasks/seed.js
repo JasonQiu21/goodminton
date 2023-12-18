@@ -161,7 +161,6 @@ const event2 = await eventsCol.insertOne({
   date: 1703530800, //December 8th, 2023 at 2PM
   eventType: "singles tournament",
   tournamentType: "double elim",
-  matches: {},
   matches: {
     "winners - 1": [
       {
