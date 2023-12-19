@@ -36,6 +36,7 @@ export const createTeams = async (event, seeded = false) => {
     let players = event.reservations[0].players;
 
     for (let i = 0; i < players.length; i++) players[i] = [await getPlayer(players[i]._id.toString())];
+    if(players.length < 2) throw {status: 400, error: "Not enough players to generate a tournament."};
 
     if (event.eventType == "singles tournament") {
         if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
