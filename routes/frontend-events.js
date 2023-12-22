@@ -30,12 +30,11 @@ router.route("/").get(async (req, res) => {
 			isAdmin: req.session?.player?.role === "admin",
 		});
 	} catch (e) {
-		return res.render("error", {
-			title: "Error",
+		return res.status(400).render("error", {
 			user: req.session?.player,
 			id: req.session?.player?._id,
-			error: e.error,
 			isAdmin: req.session?.player?.role === "admin",
+			error: (e.status) ? e.error : "An uncaught error has occured. Please contact the developers!"
 		});
 	}
 });
@@ -244,11 +243,11 @@ router.route("/:id").get(async (req, res) => {
 
 		}
 	} catch (e) {
-		return res.render("error", {
-			title: "Error",
+		return res.status(400).render("error", {
 			user: req.session?.player,
 			id: req.session?.player?._id,
-			error: e.error,
+			isAdmin: req.session?.player?.role === "admin",
+			error: (e.status) ? e.error : "An uncaught error has occured. Please contact the developers!"
 		});
 	}
 });

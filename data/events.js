@@ -66,7 +66,7 @@ export const createEvent = async (
 		throw { status: 500, error: "An error occurred while creating event" };
 	}
 	if (!acknowledged || !insertedId)
-		throw { status: 500, error: "Error while creating event" };
+		throw { status: 500, error: "Error while creating event!" };
 	return await getEvent(insertedId.toString());
 };
 
@@ -80,8 +80,7 @@ export const getAllEvents = async () => {
 			.toArray();
 		return res;
 	} catch (e) {
-		console.log(e);
-		throw { status: 500, error: "Error getting data" };
+		throw { status: 500, error: "Error getting data!" };
 	}
 };
 
@@ -102,7 +101,6 @@ export const getEvent = async (eventId) => {
 			}
 		}
 	} catch (e) {
-		console.log(e);
 		throw { status: 500, error: `Error while getting event ${eventId}` };
 	}
 	try {

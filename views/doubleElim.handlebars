@@ -114,14 +114,12 @@
             <option value="2">Team 2 (Right Team)</option>
         </select>
 
-        <input type="hidden" id="id" name="id" value="{{eventId}}">
         <input type="submit" value="Submit">
     </form>
     {{/if}}
 
     {{#if displayJoinButton}}
     <form action="/api/events/{{eventId}}" method="POST" class="generateBracketForm" id="generateBracketForm">
-        <input type="hidden" id="id2" name="id2" value="{{eventId}}">
         <input type="hidden" id="elimBracket" name="elimBracket" value="elimBracket">
         <label for="seeded">Seeded?</label>
         <input type="checkbox" id="seeded" name="seeded" value="seeded">
