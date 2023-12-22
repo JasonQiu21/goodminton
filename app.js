@@ -61,7 +61,7 @@ app.use("/", (req, res, next) => {
 });
 
 
-const adminRoutes = ["/createEvent", "/api/events/:id/scoreSubmissions", "/events/:id/scoreSubmissions", "/api/events/:id/matches/:matchId"];
+const adminRoutes = ["/createEvent"];
 adminRoutes.forEach((route) => app.use(route, authenticateAdmin));
 
 const adminRoutesNotGet = ["/api/events/", "/api/events/:id"];

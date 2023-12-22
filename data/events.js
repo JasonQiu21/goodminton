@@ -403,7 +403,9 @@ export const submitScores = async (eventId, matchId, scores, winner) => {
 	scores[0] = typecheck.isValidNumber(parseInt(scores[0]));
 	scores[1] = typecheck.isValidNumber(parseInt(scores[1]));
 	if (scores[0] < 0 || scores[1] < 0)
-		throw { status: 400, error: "Invalid scores." };
+		throw { status: 400, error: "Scores must be positive integers." };
+	if (scores[0] > 999 || scores[1] > 999)
+		throw { status: 400, error: "Scores must be integers less than 1000." };
 
 	let event = await getEvent(eventId);
 	if (!event.eventType.includes("tournament"))

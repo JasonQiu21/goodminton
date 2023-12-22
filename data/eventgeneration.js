@@ -277,6 +277,9 @@ export const swissTopCut = async (event, topCut = 4) => {
         }
     }
 
+    if (topCut < 2) throw { status: 400, error: "You cannot top cut less than 2 teams." };
+    if (topCut > teams.length) throw { status: 400, error: `You cannot top cut more than ${teams.length} teams.` }
+
     teams = teams.sort((a, b) => {
         if (getTeamWins(event, a) === getTeamWins(event, b)) return getTeamScore(event, b) - getTeamScore(event, a);
         else return getTeamWins(event, b) - getTeamWins(event, a)

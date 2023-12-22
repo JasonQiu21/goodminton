@@ -239,7 +239,7 @@ router.route("/:id").get(async (req, res) => {
 			event.isAdmin = req.session?.player?.role === "admin";
 			event.isPractice = true;
 
-			return res.render("event", event);
+			return res.render("practice", event);
 
 
 		}
