@@ -316,9 +316,9 @@ export const startTournament = async (eventId, seeded) => {
 		event.tournamentType === "single elim" ||
 		event.tournamentType === "double elim"
 	)
-		event.matches = await generateElimTournament(event, (seeded) ? seeded : true);
+		event.matches = await generateElimTournament(event, seeded);
 	else if (event.tournamentType === "round robin")
-		event.matches = await generateRoundRobinTournament(event, (seeded) ? seeded : true);
+		event.matches = await generateRoundRobinTournament(event, seeded);
 	else throw { status: 400, error: "Invalid tournament type." };
 
 	return event;

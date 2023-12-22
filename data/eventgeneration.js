@@ -12,31 +12,27 @@ function seeding(numPlayers) {
     NOTE: THIS FUNCTION WAS NOT WRITTEN BY US. IT WAS TAKEN FROM https://stackoverflow.com/questions/8355264/tournament-bracket-placement-algorithm
     (Just to credit who took this from online so that no one else gets blamed for this - Bryan was in charge of this)
     */
-    var rounds = Math.log(numPlayers) / Math.log(2) - 1;
-    var pls = [1, 2];
-
-    for (var i = 0; i < rounds; i++) {
-        pls = nextLayer(pls);
+    function nextLayer(pls) {
+        var out = [];
+        var length = pls.length * 2 + 1;
+        pls.forEach(function (d) {
+            out.push(d);
+            out.push(length - d);
+        });
+        return out;
     }
 
+    var rounds = Math.log(numPlayers) / Math.log(2) - 1;
+    var pls = [1, 2];
+    for (var i = 0; i < rounds; i++) pls = nextLayer(pls);
     return pls;
-}
-
-function nextLayer(pls) {
-    var out = [];
-    var length = pls.length * 2 + 1;
-    pls.forEach(function (d) {
-        out.push(d);
-        out.push(length - d);
-    });
-    return out;
 }
 
 export const createTeams = async (event, seeded = false) => {
     let players = event.reservations[0].players;
 
     for (let i = 0; i < players.length; i++) players[i] = [await getPlayer(players[i]._id.toString())];
-    if(players.length < 2) throw {status: 400, error: "Not enough players to generate a tournament."};
+    if (players.length < 2) throw { status: 400, error: "Not enough players to generate a tournament." };
 
     if (event.eventType == "singles tournament") {
         if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
@@ -51,20 +47,16 @@ export const createTeams = async (event, seeded = false) => {
         players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }, { _id: new ObjectId(player[1]._id), playerName: player[1].playerName }] });
     }
 
-    if (seeded) {
-        //now we sort!
-        let seededList = seeding(Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)))); //generates the proper seeding order
-        while (players.length < seededList.length) players.push("bye"); //add byes to the end of the list
+    //this does the seeding process. at this point, seeded players will have already been sorted.
+    let seededList = seeding(Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)))); //generates the proper seeding order
+    while (players.length < seededList.length) players.push("bye"); //add byes to the end of the list
 
-        let playersCopy = []
-        for (let i = 0; i < players.length; i++) playersCopy.push(players[i]);
+    let playersCopy = []
+    for (let i = 0; i < players.length; i++) playersCopy.push(players[i]);
 
-        for (let i = 0; i < players.length; i++) {
-            players[i] = playersCopy[seededList[i] - 1];
-        }
-        //seeded players are sorted by their rating, so we have to sort them by their seed
+    for (let i = 0; i < players.length; i++) {
+        players[i] = playersCopy[seededList[i] - 1];
     }
-
 
     //change the order of reservation so that the teams can be recreated normally at any time (even if the tournament is seeded)
     if (event.tournamentType == "single elim" || event.tournamentType == "double elim") {
