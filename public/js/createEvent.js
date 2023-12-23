@@ -97,10 +97,13 @@ $("form").on("submit", function (event) {
         tournamentType: tournamentTypeInput,
         eventCap: eventCapInput,
       }),
+      success: function (result) {
+        output.innerText = "Created!";
+      },
+      error: function (error) {
+        output.innerText = error.responseJSON.error;
+      }
     };
-    $.ajax(createEvent).then(function (responseMessage) {
-      console.log(responseMessage);
-      output.innerText = "Created!";
-    });
+    $.ajax(createEvent)
   }
 });

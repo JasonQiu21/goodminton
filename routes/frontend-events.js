@@ -37,7 +37,7 @@ router.route("/").get(async (req, res) => {
 			error: (e.status) ? e.error : "An uncaught error has occured. Please contact the developers!"
 		});
 	}
-});
+})
 
 /* getReservations(playerId)
 [

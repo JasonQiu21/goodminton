@@ -75,9 +75,7 @@ router
 
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
-    } catch (e) {
-      return res.status(e.status ? e.status : 500).render('error', e.status ? e : { status: 500, error: "An Internal Server Error Occured." });
-    }
+    } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
   });
 
 router
