@@ -12,7 +12,6 @@
     let element;
     responseMessage.map((event) => {
       if (event.date >= today) {
-        console.log("future");
         element = $(
           `<a href='/events/${event._id}'>${event.name}</a>
                     <br>`

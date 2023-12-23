@@ -54,6 +54,9 @@ router
 
       typecheck.isValidString(req.body.eventName, "Event Name");
       typecheck.isValidUnix(req.body.eventDate);
+
+      if (req.body.eventDate < Date.now()) throw { status: 400, error: "Cannot create event in the past." }
+
       const eventTypes = ["doubles tournament", "singles tournament", "practice"];
       const tournamentTypes = [
         "none",
@@ -73,14 +76,7 @@ router
       const createdEvent = await createEvent(...params);
       return res.json(createdEvent);
     } catch (e) {
-      if (!e.status) {
-        console.log(`[Error on POST events/]: ${e}`);
-        return res
-          .status(500)
-          .json({ status: 500, error: "An Internal Server Error Occurred" });
-      }
-      console.log(e);
-      return res.status(e.status).json(e);
+      return res.status(e.status ? e.status : 500).render('error', e.status ? e : { status: 500, error: "An Internal Server Error Occured." });
     }
   });
 
@@ -90,15 +86,7 @@ router
     try {
       let event = await getEvent(req.params.id);
       return res.json(event);
-    } catch (e) {
-      if (!e.status) {
-        console.log(`[Error on GET events/:id]: ${e}`);
-        return res
-          .status(500)
-          .json({ status: 500, error: "An Internal Server Error Occurred" });
-      }
-      return res.status(e.status).json(e);
-    }
+    } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
   })
   .post(async (req, res) => {
     try {
@@ -111,14 +99,7 @@ router
       else await submitScores(id, req.body.matchId, [req.body.team1score, req.body.team2score], req.body.winner);
 
       return res.redirect(`/events/${id}`)
-    } catch (e) {
-      console.log(e);
-      return res.render("error", {
-        user: req.session?.player,
-        id: req.session?.player?._id,
-        error: e.error,
-      });
-    }
+    } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
   })
   .patch(async (req, res) => {
     try {
@@ -177,18 +158,5 @@ router.route("/:id/standings").get(async (req, res) => {
     return res.json(standings);
   } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
 });
-
-router
-  .route("/:id/matches/:matchId")
-  .get(async (req, res) => {
-    try {
-      if (!req.params.id) throw { status: 400, error: "No event ID provided." };
-      if (!req.params.matchId)
-        throw { status: 400, error: "No match ID provided." };
-      let event = await getEvent(req.params.id);
-      let match = await getMatch(event, req.params.matchId);
-      return res.json(match);
-    } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
-  })
 
 export default router;
