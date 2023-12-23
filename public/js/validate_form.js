@@ -127,7 +127,7 @@ if (scoreSubmissionForm) {
     let errorList = [];
 
     try {
-      matchId = isValidString(document.getElementById("id").value, "Match ID");
+      matchId = isValidString(document.getElementById("matchId").value, "Match ID");
     } catch (e) {
       errorList.push("Match ID was formatted incorrectly.");
     }
@@ -150,9 +150,11 @@ if (scoreSubmissionForm) {
     }
 
     if (errorList.length > 0) {
+      error.hidden = false;
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
+      error.hidden = true;
       scoreSubmissionForm.submit();
     }
   });
@@ -164,9 +166,11 @@ if (generateBracketForm) {
     console.log("generateBracket");
     let errorList = [];
     if (errorList.length > 0) {
+      error.hidden = false;
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
+      error.hidden = true;
       generateBracketForm.submit();
     }
   });
@@ -194,9 +198,11 @@ if (generateTopCutForm) {
     let errorList = [];
 
     if (errorList.length > 0) {
+      error.hidden = false;
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
+      error.hidden = true;
       generateTopCutForm.submit();
     }
   });
