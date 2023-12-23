@@ -30,12 +30,11 @@ router.route("/").get(async (req, res) => {
 			isAdmin: req.session?.player?.role === "admin",
 		});
 	} catch (e) {
-		return res.render("error", {
-			title: "Error",
+		return res.status(400).render("error", {
 			user: req.session?.player,
 			id: req.session?.player?._id,
-			error: e.error,
 			isAdmin: req.session?.player?.role === "admin",
+			error: (e.status) ? e.error : "An uncaught error has occured. Please contact the developers!"
 		});
 	}
 });
@@ -109,8 +108,7 @@ router.route("/:id").get(async (req, res) => {
 				// const onlySwiss = event;
 				const displayJoinButton = Object.keys(event.matches).length === 0;
 				event.matches = singleElim;
-				const onlyElim = event;
-				
+
 
 				return res.render("swiss", {
 					title: event.name,
@@ -139,7 +137,7 @@ router.route("/:id").get(async (req, res) => {
 					}
 				}
 
-				return res.render("bracket", {
+				return res.render("singleElim", {
 					event: event,
 					title: event.name,
 					user: req.session?.player,
@@ -240,55 +238,18 @@ router.route("/:id").get(async (req, res) => {
 			event.isAdmin = req.session?.player?.role === "admin";
 			event.isPractice = true;
 
-			return res.render("event", event);
+			return res.render("practice", event);
 
 
 		}
 	} catch (e) {
-		return res.render("error", {
-			title: "Error",
+		return res.status(400).render("error", {
 			user: req.session?.player,
 			id: req.session?.player?._id,
-			error: e.error,
+			isAdmin: req.session?.player?.role === "admin",
+			error: (e.status) ? e.error : "An uncaught error has occured. Please contact the developers!"
 		});
 	}
 });
-
-router.route("/:id/scoreSubmissions")
-	.post(async (req, res) => {
-		try {
-			let id = req.body.id;
-			let matchId = req.body.matchId;
-			let team1score = req.body.team1score;
-			let team2score = req.body.team2score;
-			let scores = [team1score, team2score];
-			let winner = req.body.winner;
-
-			if (req.body.elimBracket) {
-				let id2 = req.body.id2;
-				let bracket = await startTournament(id2);
-				return res.redirect("/events/" + id2);
-			} else if (req.body.swissRound) {
-				let id3 = req.body.id3;
-				let bracket = await generateSwissRound(id3);
-				return res.redirect("/events/" + id3);
-			} else if (req.body.topCut) {
-				let id4 = req.body.id4;
-				let bracket = await topCut(id4);
-				return res.redirect("/events/" + id4);
-			} else {
-				let match = await submitScores(id, matchId, scores, winner);
-				return res.redirect("/events/" + id);
-			}
-
-		} catch (e) {
-			console.log(e);
-			return res.render("error", {
-				user: req.session?.player,
-				id: req.session?.player?._id,
-				error: e.error,
-			});
-		}
-	});
 
 export default router;

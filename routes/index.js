@@ -20,7 +20,7 @@ const constructorMethod = (app) => {
   app.use("/api/players", playerRoutes);
 
   app.use("*", (req, res) => {
-    res.status(404).render("error", { error: "Not Found", user: req.session?.user, id: req.session?.id});
+    res.status(404).render("error", { error: "Page Not Found!", user: req.session?.user, id: req.session?.id });
   });
 };
 

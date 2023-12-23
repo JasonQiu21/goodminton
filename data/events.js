@@ -66,7 +66,7 @@ export const createEvent = async (
 		throw { status: 500, error: "An error occurred while creating event" };
 	}
 	if (!acknowledged || !insertedId)
-		throw { status: 500, error: "Error while creating event" };
+		throw { status: 500, error: "Error while creating event!" };
 	return await getEvent(insertedId.toString());
 };
 
@@ -80,8 +80,7 @@ export const getAllEvents = async () => {
 			.toArray();
 		return res;
 	} catch (e) {
-		console.log(e);
-		throw { status: 500, error: "Error getting data" };
+		throw { status: 500, error: "Error getting data!" };
 	}
 };
 
@@ -102,7 +101,6 @@ export const getEvent = async (eventId) => {
 			}
 		}
 	} catch (e) {
-		console.log(e);
 		throw { status: 500, error: `Error while getting event ${eventId}` };
 	}
 	try {
@@ -316,9 +314,9 @@ export const startTournament = async (eventId, seeded) => {
 		event.tournamentType === "single elim" ||
 		event.tournamentType === "double elim"
 	)
-		event.matches = await generateElimTournament(event, (seeded) ? seeded : true);
+		event.matches = await generateElimTournament(event, seeded);
 	else if (event.tournamentType === "round robin")
-		event.matches = await generateRoundRobinTournament(event, (seeded) ? seeded : true);
+		event.matches = await generateRoundRobinTournament(event, seeded);
 	else throw { status: 400, error: "Invalid tournament type." };
 
 	return event;
@@ -402,14 +400,20 @@ export const submitScores = async (eventId, matchId, scores, winner) => {
 	if (scores.length < 2) throw { status: 400, error: "Invalid scores." };
 	scores[0] = typecheck.isValidNumber(parseInt(scores[0]));
 	scores[1] = typecheck.isValidNumber(parseInt(scores[1]));
+
 	if (scores[0] < 0 || scores[1] < 0)
-		throw { status: 400, error: "Invalid scores." };
+		throw { status: 400, error: "Scores must be positive integers." };
+	if (scores[0] > 999 || scores[1] > 999)
+		throw { status: 400, error: "Scores must be integers less than 1000." };
+
+	if (scores[0] < scores[1] && winner === 1) throw { status: 400, error: "Team 1 cannot win with a score less than team 2." };
+	if (scores[1] < scores[0] && winner === 2) throw { status: 400, error: "Team 2 cannot win with a score less than team 1." };
 
 	let event = await getEvent(eventId);
 	if (!event.eventType.includes("tournament"))
 		throw { status: 400, error: "Event is not a tournament." };
 
-	let verification = await submitScoresForMatch(event, matchId, scores, winner);
+	await submitScoresForMatch(event, matchId, scores, winner);
 	return event;
 };
 

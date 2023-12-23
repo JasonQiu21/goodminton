@@ -127,7 +127,7 @@ if (scoreSubmissionForm) {
     let errorList = [];
 
     try {
-      matchId = isValidString(document.getElementById("id").value, "Match ID");
+      matchId = isValidString(document.getElementById("matchId").value, "Match ID");
     } catch (e) {
       errorList.push("Match ID was formatted incorrectly.");
     }
@@ -150,10 +150,11 @@ if (scoreSubmissionForm) {
     }
 
     if (errorList.length > 0) {
+      error.hidden = false;
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
-      scoreSubmissionForm.scores = [team1score, team2score];
+      error.hidden = true;
       scoreSubmissionForm.submit();
     }
   });
@@ -164,17 +165,12 @@ if (generateBracketForm) {
     e.preventDefault();
     console.log("generateBracket");
     let errorList = [];
-    let id
-    try {
-      id = isValidString(document.getElementById("id2").value, "Event ID");
-    } catch (e) {
-      errorList.push("Event ID was formatted incorrectly.");
-    }
     if (errorList.length > 0) {
+      error.hidden = false;
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
-      generateBracketForm.id = id;
+      error.hidden = true;
       generateBracketForm.submit();
     }
   });
@@ -185,17 +181,11 @@ if (generateSwissRoundForm) {
     e.preventDefault();
     console.log("generateSwissRound");
     let errorList = [];
-    let id
-    try {
-      id = isValidString(document.getElementById("id3").value, "Event ID");
-    } catch (e) {
-      errorList.push("Event ID was formatted incorrectly.");
-    }
+
     if (errorList.length > 0) {
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
-      generateSwissRoundForm.id = id;
       generateSwissRoundForm.submit();
     }
   });
@@ -206,17 +196,13 @@ if (generateTopCutForm) {
     e.preventDefault();
     console.log("generateTopCut");
     let errorList = [];
-    let id
-    try {
-      id = isValidString(document.getElementById("id4").value, "Event ID");
-    } catch (e) {
-      errorList.push("Event ID was formatted incorrectly.");
-    }
+
     if (errorList.length > 0) {
+      error.hidden = false;
       error.innerHTML = errorList.join("<br>");
       return;
     } else {
-      generateTopCutForm.id = id;
+      error.hidden = true;
       generateTopCutForm.submit();
     }
   });

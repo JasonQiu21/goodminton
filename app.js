@@ -1,32 +1,26 @@
+
 import express from "express";
-const app = express();
 import configRoutes from "./routes/index.js";
 import session from "express-session";
-import {
-  authenticateAdmin,
-  authenticatePlayer,
-  checkPlayerIdAgainstRequestBody,
-  checkLoggedOut,
-  addPlayerId,
-} from "./middleware/auth.js";
-
-const port = 3000;
-const debug = true;
 import exphbs from "express-handlebars";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import path from "path";
 
-/*
-TODO:
-- Build out routes
-*/
+
+import {
+  authenticateAdmin, authenticatePlayer, checkPlayerIdAgainstRequestBody, checkLoggedOut, addPlayerId,
+} from "./middleware/auth.js";
+
+const port = 3000;
+const debug = true;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const staticDir = express.static(__dirname + "/public");
-app.use("/public", staticDir);
 
-// app.use("/public", express.static("public"));
+const app = express();
+
+app.use("/public", staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -55,19 +49,19 @@ app.use(
   })
 );
 
-if (debug) {
-  app.use("/", (req, res, next) => {
-    console.log(
-      `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.player
-        ? "User is authenticated as"
-        : "User not authenticated"
-      } ${req.session.player ? req.session.player.role : ""})`
-    );
-    return next();
-  });
-}
 
-const adminRoutes = ["/createEvent", "/api/events/:id/scoreSubmissions", "/events/:id/scoreSubmissions", "/api/events/:id/matches/:matchId"];
+app.use("/", (req, res, next) => {
+  console.log(
+    `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.player
+      ? "User authenticated as"
+      : "User not authenticated"
+    } ${req.session.player ? req.session.player.role : ""})`
+  );
+  return next();
+});
+
+
+const adminRoutes = ["/createEvent"];
 adminRoutes.forEach((route) => app.use(route, authenticateAdmin));
 
 const adminRoutesNotGet = ["/api/events/", "/api/events/:id"];

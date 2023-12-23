@@ -12,31 +12,27 @@ function seeding(numPlayers) {
     NOTE: THIS FUNCTION WAS NOT WRITTEN BY US. IT WAS TAKEN FROM https://stackoverflow.com/questions/8355264/tournament-bracket-placement-algorithm
     (Just to credit who took this from online so that no one else gets blamed for this - Bryan was in charge of this)
     */
-    var rounds = Math.log(numPlayers) / Math.log(2) - 1;
-    var pls = [1, 2];
-
-    for (var i = 0; i < rounds; i++) {
-        pls = nextLayer(pls);
+    function nextLayer(pls) {
+        var out = [];
+        var length = pls.length * 2 + 1;
+        pls.forEach(function (d) {
+            out.push(d);
+            out.push(length - d);
+        });
+        return out;
     }
 
+    var rounds = Math.log(numPlayers) / Math.log(2) - 1;
+    var pls = [1, 2];
+    for (var i = 0; i < rounds; i++) pls = nextLayer(pls);
     return pls;
-}
-
-function nextLayer(pls) {
-    var out = [];
-    var length = pls.length * 2 + 1;
-    pls.forEach(function (d) {
-        out.push(d);
-        out.push(length - d);
-    });
-    return out;
 }
 
 export const createTeams = async (event, seeded = false) => {
     let players = event.reservations[0].players;
 
     for (let i = 0; i < players.length; i++) players[i] = [await getPlayer(players[i]._id.toString())];
-    if(players.length < 2) throw {status: 400, error: "Not enough players to generate a tournament."};
+    if (players.length < 2) throw { status: 400, error: "Not enough players to generate a tournament." };
 
     if (event.eventType == "singles tournament") {
         if (seeded) players = players.sort((a, b) => b[0].singlesRating - a[0].singlesRating);
@@ -51,8 +47,11 @@ export const createTeams = async (event, seeded = false) => {
         players = players.map(player => { return [{ _id: new ObjectId(player[0]._id), playerName: player[0].playerName }, { _id: new ObjectId(player[1]._id), playerName: player[1].playerName }] });
     }
 
-    if (seeded) {
-        //now we sort!
+    //this does the seeding process. at this point, seeded players will have already been sorted.
+
+
+    //change the order of reservation so that the teams can be recreated normally at any time (even if the tournament is seeded)
+    if (event.tournamentType == "single elim" || event.tournamentType == "double elim") {
         let seededList = seeding(Math.pow(2, Math.ceil(Math.log(players.length) / Math.log(2)))); //generates the proper seeding order
         while (players.length < seededList.length) players.push("bye"); //add byes to the end of the list
 
@@ -62,12 +61,7 @@ export const createTeams = async (event, seeded = false) => {
         for (let i = 0; i < players.length; i++) {
             players[i] = playersCopy[seededList[i] - 1];
         }
-        //seeded players are sorted by their rating, so we have to sort them by their seed
-    }
 
-
-    //change the order of reservation so that the teams can be recreated normally at any time (even if the tournament is seeded)
-    if (event.tournamentType == "single elim" || event.tournamentType == "double elim") {
         let reservation = [];
         for (let i = 0; i < players.length; i++) {
             if (players[i] !== "bye") {
@@ -123,11 +117,11 @@ export const getTeamScore = (event, team) => {
     let score = 0;
     for (let round in event.matches) {
         for (let match of event.matches[round]) {
-            if (match.team1 !== null && match.team2 !== null) {
-                if (match.team1[0].id === team[0].id || match.team1[0].id === team[1].id) {
-                    score += match.score[0];
-                } else if (match.team2[0].id === team[0].id || match.team2[0].id === team[1].id) {
-                    score += match.score[1];
+            if (match.team1 !== null && match.team2 !== null && !match.byeround) {
+                if (match.team1[0]._id.equals(team[0]._id) || (team.length > 1 && match.team1[1]._id.equals(team[1]._id))) {
+                    score += match.score[0] - match.score[1];
+                } else if (match.team2[0]._id.equals(team[0]._id) || (team.length > 1 && match.team2[1]._id.equals(team[1]._id))) {
+                    score += match.score[1] - match.score[0];
                 }
             }
         }
@@ -162,6 +156,7 @@ export const getTournamentStandings = async (event) => {
             team: teams[i],
             wins: getTeamWins(event, teams[i]),
             losses: getTeamLosses(event, teams[i]),
+            score: getTeamScore(event, teams[i])
         });
     }
 
@@ -225,13 +220,10 @@ export const createSwissRound = async (event, seeded = false) => {
     let matches = event.matches;
 
     let roundnumber = Object.keys(event.matches).length + 1;
-    let matchnumber = 1 + Math.ceil(Object.keys(event.matches).length * teams.length / 2);
+    let matchnumber = 1 + Math.ceil(Object.keys(event.matches).length * ((Object.keys(event.matches).length > 0) ? event.matches["swissround - 1"].length : teams.length / 2));
     let round = [];
 
-    teams = teams.sort((a, b) => {
-        if (getTeamWins(event, a) === getTeamWins(event, b)) return getTeamScore(event, b) - getTeamScore(event, a);
-        else return getTeamWins(event, b) - getTeamWins(event, a)
-    });
+    teams = teams.sort((a, b) => (getTeamScore(event, a) === getTeamScore(event, b)) ? getTeamWins(event, b) - getTeamWins(event, a) : getTeamScore(event, b) - getTeamScore(event, a))
 
     if (teams.length % 2 === 1) teams.push("bye");
 
@@ -277,6 +269,9 @@ export const createSwissRound = async (event, seeded = false) => {
 export const swissTopCut = async (event, topCut = 4) => {
     let teams = await createTeams(event);
 
+    if (topCut < 2) throw { status: 400, error: "You cannot top cut less than 2 teams." };
+    if (topCut > teams.length) throw { status: 400, error: `You cannot top cut more than ${teams.length} teams.` }
+
     for (let round in event.matches) {
         for (let match of event.matches[round]) {
             if (match.team1 !== null && match.team2 !== null) {
@@ -285,10 +280,7 @@ export const swissTopCut = async (event, topCut = 4) => {
         }
     }
 
-    teams = teams.sort((a, b) => {
-        if (getTeamWins(event, a) === getTeamWins(event, b)) return getTeamScore(event, b) - getTeamScore(event, a);
-        else return getTeamWins(event, b) - getTeamWins(event, a)
-    });
+    teams = teams.sort((a, b) => (getTeamScore(event, a) === getTeamScore(event, b)) ? getTeamWins(event, b) - getTeamWins(event, a) : getTeamScore(event, b) - getTeamScore(event, a))
 
     let fakeReservation = [];
     for (let i = 0; i < topCut; i++) {
@@ -552,7 +544,7 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
                 }
 
                 //now we have to update the next match
-                if (match.winner_to !== null) {
+                if (match.winner_to) {
                     for (let round2 in matches) {
                         for (let match2 of matches[round2]) {
                             if (match2.id === match.winner_to) {
@@ -570,7 +562,7 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
                     }
                 }
 
-                if (match.loser_to !== null) {
+                if (match.loser_to) {
                     for (let round2 in matches) {
                         for (let match2 of matches[round2]) {
                             if (match2.id === match.loser_to) {
@@ -591,7 +583,6 @@ export const submitScoresForMatch = async (event, matchId, score, winner, onGene
         }
     }
 
-    event.matches = matches;
     const eventsCol = await events();
 
     const returnedUpdate = await eventsCol.updateOne({ _id: typecheck.stringToOid(event._id) }, { $set: { matches: matches } });

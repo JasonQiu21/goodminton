@@ -53,10 +53,11 @@ router.route("/:playerid").get(async (req, res) => {
       matches: matchData
     });
   } catch (e) {
-    return res.render("error", {
+    return res.status(400).render("error", {
       user: req.session?.player,
       id: req.session?.player?._id,
-      isAdmin: req.session?.player?.role === "admin"
+      isAdmin: req.session?.player?.role === "admin",
+      error: (e.status) ? e.error : "An uncaught error has occured. Please contact the developers!"
     });
   }
 });
@@ -87,8 +88,7 @@ router.route("/reservations/:playerid").get(async (req, res) => {
       user: req.session?.player,
       title: "Error",
       id: req.session?.player?._id,
-      error: e.error,
-
+      error: (e.status) ? e.error : "An uncaught error has occured. Please contact the developers!",
     });
   }
 });
