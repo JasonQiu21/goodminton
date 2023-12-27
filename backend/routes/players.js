@@ -53,7 +53,7 @@ router
     try {
       const body = helperFunctions.isValidPlayer(req.body, true);
       const id = req.params.playerId;
-      if (req.session?.player._id !== id) return res.redirect("/forbidden");
+      if (req.session?.player._id !== id) return res.status(403).json({ status: 403, error: "Forbidden." });
       Object.keys(body).forEach(key => {
         if (typeof body[key] === "string")
           body[key] = xss(body[key])
@@ -70,7 +70,7 @@ router
   .delete(async (req, res) => {
     try {
       let id = helperFunctions.isValidId(req.params.playerId);
-      if (req.session?.player._id !== id) return res.redirect("/forbidden");
+      if (req.session?.player._id !== id) return res.status(403).json({ status: 403, error: "Forbidden." });
       let player = await playerFunctions.removePlayer(id);
       return res.json(player);
     } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }

@@ -2,17 +2,15 @@
 import express from "express";
 import configRoutes from "./routes/index.js";
 import session from "express-session";
-import exphbs from "express-handlebars";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import path from "path";
+import { authenticateAdmin, authenticatePlayer } from "./middleware/auth.js";
+import MongoStore from 'connect-mongo'
+import dotenv from 'dotenv'
+import cors from 'cors';
 
+dotenv.config()
 
-import {
-  authenticateAdmin, authenticatePlayer, checkPlayerIdAgainstRequestBody, checkLoggedOut, addPlayerId,
-} from "./middleware/auth.js";
-
-const port = 3000;
 const debug = true;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,31 +22,21 @@ app.use("/public", staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.engine(
-  "handlebars",
-  exphbs.engine({
-    defaultLayout: "main",
-    helpers: {
-      inc: function (value, options) {
-        return parseInt(value) + 1;
-      },
-    },
-  })
-);
-
-app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "views"));
-
 app.use(
   session({
     name: "AuthState",
-    secret: "Goodminton",
-    saveUninitialized: false,
+    secret: "Goodminton is good!",
+    saveUninitialized: true,
     resave: false,
-    cookie: { maxAge: 604800000 }, // 1 week
+    store: MongoStore.create({
+      mongoUrl: 'mongodb://localhost:27017/goodminton',
+      ttl: 7 * 24 * 60 * 60, //7 days
+      autoRemove: 'native'
+    })
   })
 );
 
+app.use(cors())
 
 app.use("/", (req, res, next) => {
   console.log(
@@ -81,19 +69,8 @@ playerRoutesNotGet.forEach((route) => {
   app.delete(route, authenticatePlayer);
 });
 
-
-const addPlayerIdRoutes = ["/api/events/reserve/*"];
-addPlayerIdRoutes.forEach((route) =>
-  app.use(route, addPlayerId)
-);
-
-const loggedOutRoutes = ["/login", "/register"];
-loggedOutRoutes.forEach((route) => {
-  app.use(route, checkLoggedOut);
-});
-
 configRoutes(app);
 
-app.listen(port, () => {
-  console.log(`Goodminton server running on http://localhost:${port}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Goodminton server running on http://localhost:${process.env.PORT}`);
 });

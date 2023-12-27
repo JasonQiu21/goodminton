@@ -24,31 +24,16 @@ router
     try {
       const events = await getAllEvents();
       return res.json(events);
-    } catch (e) {
-      if (!e.status) {
-        console.log(`[Error on GET events/]: ${e}`);
-        return res
-          .status(500)
-          .json({ status: 500, error: "An Internal Server Error Occurred" });
-      }
-      return res.status(e.status).json(e);
-    }
+    } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
   })
   .post(async (req, res) => {
     try {
-      const expectedKeys = [
-        "eventName",
-        "eventDate",
-        "eventType",
-        "tournamentType",
-        "eventCap"
-      ];
+      const expectedKeys = ["eventName", "eventDate", "eventType", "tournamentType", "eventCap"];
+
       const params = [];
       expectedKeys.forEach((key) => {
-        if (!Object.keys(req.body).includes(key))
-          throw { status: 400, error: `Field '${key}' missing` };
-        if (typeof req.body[key] === "string")
-          req.body[key] = xss(req.body[key]);
+        if (!Object.keys(req.body).includes(key)) throw { status: 400, error: `Field '${key}' missing` };
+        if (typeof req.body[key] === "string") req.body[key] = xss(req.body[key]);
         params.push(req.body[key]);
       });
 
@@ -58,13 +43,8 @@ router
       if (req.body.eventDate < Date.now()) throw { status: 400, error: "Cannot create event in the past." }
 
       const eventTypes = ["doubles tournament", "singles tournament", "practice"];
-      const tournamentTypes = [
-        "none",
-        "single elim",
-        "double elim",
-        "round robin",
-        "swiss",
-      ];
+      const tournamentTypes = ["none", "single elim", "double elim", "round robin", "swiss"];
+
       typecheck.isValidString(req.body.eventType, "Event Type").toLowerCase();
       if (!eventTypes.includes(req.body.eventType))
         throw { status: 400, error: "Invalid event type." };
@@ -89,14 +69,14 @@ router
   .post(async (req, res) => {
     try {
       let id = req.params.id;
-      let seeded = req.body.seeded ? req.body.seeded : false;
+      let seeded = req.body.seeded ? req.body.seeded : false
 
       if (req.body.elimBracket) await startTournament(id, seeded);
       else if (req.body.swissRound) await generateSwissRound(id);
       else if (req.body.topCut) await topCut(id, req.body.topcutvalue);
-      else await submitScores(id, req.body.matchId, [req.body.team1score, req.body.team2score], req.body.winner);
+      else throw { status: 400, error: "Invalid option." }
+      return res.json({ status: 200, message: "Operation executed successfully." })
 
-      return res.redirect(`/events/${id}`)
     } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
   })
   .patch(async (req, res) => {
@@ -156,5 +136,20 @@ router.route("/:id/standings").get(async (req, res) => {
     return res.json(standings);
   } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
 });
+
+router.route(":id/matches/:matchId").get(async (req, res) => {
+  try {
+    let event = await getEvent(req.params.id);
+    let match = await getMatch(event, req.params.matchId)
+    return res.json(match);
+  } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
+})
+  .post(async (req, res) => {
+    try {
+      await submitScores(req.params.id, req.body.matchId, [req.body.team1score, req.body.team2score], req.body.winner);
+      let event = await getEvent(req.params.id);
+      return res.json({ status: 200, message: "Match updated successfully." })
+    } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
+  })
 
 export default router;

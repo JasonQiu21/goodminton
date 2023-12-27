@@ -1,15 +1,7 @@
 import * as typecheck from "../typecheck.js";
 import { events, players } from "../config/mongoCollections.js";
 import * as playerFunctions from "./players.js";
-import {
-	generateElimTournament,
-	submitScoresForMatch,
-	swissTopCut,
-	createSwissRound,
-	generateRoundRobinTournament,
-	getTournamentStandings,
-	getMatchFromTournament,
-} from "./eventgeneration.js";
+import { generateElimTournament, submitScoresForMatch, swissTopCut, createSwissRound, generateRoundRobinTournament, getTournamentStandings, getMatchFromTournament } from "./eventgeneration.js";
 
 const eventTypes = ["singles tournament", "doubles tournament", "practice"];
 
@@ -38,18 +30,13 @@ export const createEvent = async (
 			tournamentType.toLowerCase() !== "double elim" &&
 			tournamentType.toLowerCase() !== "round robin" &&
 			tournamentType.toLowerCase() !== "swiss"
-		)
-			throw { status: 400, error: "Invalid tournament type." };
+		) throw { status: 400, error: "Invalid tournament type." };
 	}
 	//in this case, reservations need to be made
 	let reservations = [];
-	if (eventType === "practice") {
-		for (let i = 0; i < 4; i++) {
-			reservations.push({ time: eventDate + 1800 * i, players: [], max: eventCap })
-		}
-	} else {
-		reservations.push({ time: eventDate, players: [], max: eventCap });
-	}
+	if (eventType === "practice") for (let i = 0; i < 4; i++) reservations.push({ time: eventDate + 1800 * i, players: [], max: eventCap })
+	else reservations.push({ time: eventDate, players: [], max: eventCap });
+
 	try {
 		var { acknowledged, insertedId } = await eventsCol.insertOne({
 			name: eventName,
@@ -65,8 +52,9 @@ export const createEvent = async (
 		console.log(e);
 		throw { status: 500, error: "An error occurred while creating event" };
 	}
-	if (!acknowledged || !insertedId)
-		throw { status: 500, error: "Error while creating event!" };
+
+	if (!acknowledged || !insertedId) throw { status: 500, error: "Error while creating event!" };
+
 	return await getEvent(insertedId.toString());
 };
 
@@ -74,14 +62,10 @@ export const getAllEvents = async () => {
 	const eventsCol = await events();
 	let res;
 	try {
-		res = await eventsCol
-			.find({})
-			.project({ _id: 1, name: 1, date: 1 })
-			.toArray();
+		res = await eventsCol.find({}).project({ _id: 1, name: 1, date: 1 }).toArray();
 		return res;
-	} catch (e) {
-		throw { status: 500, error: "Error getting data!" };
-	}
+	} catch (e) { throw { status: 500, error: "Error getting data!" }; }
+
 };
 
 export const getEvent = async (eventId) => {
