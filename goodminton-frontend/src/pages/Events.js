@@ -8,15 +8,17 @@ export default class Events extends React.Component {
         events: []
     }
 
-    componentDidMount() {
-        axios.get(`http://${process.env.REACT_APP_BACKENDAPI}/events`)
+
+    constructor(props) {
+        super(props)
+        axios.get(`http://${process.env.REACT_APP_BACKENDAPI}/events`, { withCredentials: true })
             .then(response => {
                 const events = response.data
                 this.setState({ events })
             }).catch(error => {
                 return <Navigate to={{
                     pathname: "/error",
-                    state: { referrer: "/events", error: error.response.data.error }
+                    state: { referrer: "/events", error: error.request.response.error }
                 }} />
             })
     }
@@ -27,7 +29,6 @@ export default class Events extends React.Component {
                 <h1>Events</h1>
                 <div className="allEvents" id="allEvents">
                     {this.state.events.map((event, i) => {
-                        console.log(event)
                         return <Link key={i} to={`/events/${event._id.toString()}`}>{event.name}</Link>
                     })}
                 </div>

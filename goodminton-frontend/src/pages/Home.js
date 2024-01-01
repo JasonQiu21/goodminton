@@ -21,7 +21,7 @@ const Home = ({ auth }) => {
 
                 </div>
                 <div className="pictureInfo">
-                    <img src="chicken.jpg" alt="chicken" />
+                    <img src="/chicken.jpg" alt="chicken" />
                 </div>
             </div>
         </section>
