@@ -1,13 +1,11 @@
 import { authenticatedPlayer, authenticatedAdmin } from '../data/auth.js'
 
 export const authenticatePlayer = async (req, res, next) => {
-    if (!req.session?.player) return res.status(403).json({ status: 403, error: "Forbidden." });
     try { await authenticatedPlayer(req.session.player._id.toString(), req.session.sessionId); } catch (e) { return res.status(403).json(e) }
     return next();
 };
 
 export const authenticateAdmin = async (req, res, next) => {
-    if (req.session?.player?.role !== "admin") return res.json({ status: 403, error: "Forbidden." });
     try { await authenticatedAdmin(req.session.player._id.toString(), req.session.sessionId); } catch (e) { return res.status(403).json(e) }
     return next();
 }

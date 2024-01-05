@@ -27,7 +27,7 @@ export default function App() {
   const defaultError = { referrer: "/", error: "This is an error." }
 
   function login(user) {
-    setCookie("sessionID", user, { path: "/" });
+    setCookie("sessionID", user.sessionID, { path: "/" });
   }
 
   function logout() {
@@ -35,7 +35,9 @@ export default function App() {
   }
 
   useEffect(() => {
-    axios.get(`http://${process.env.REACT_APP_BACKENDAPI}/session`, { withCredentials: true }).then(response => {
+    console.log(`${process.env.REACT_APP_BACKENDAPI}/session`);
+    axios.get(`${process.env.REACT_APP_BACKENDAPI}/session`, { withCredentials: true }).then(response => {
+      console.log(response.data)
       setUser(response.data.player);
       setLoading(false);
     })

@@ -11,15 +11,15 @@ const SingleEvent = ({ auth }) => {
     const [event, setEvent] = useState(null)
 
 
-    useEffect((id) => {
-        axios.get(`http://${process.env.REACT_APP_BACKENDAPI}/events/${id}`)
+    useEffect(() => {
+        axios.get(`${process.env.REACT_APP_BACKENDAPI}/events/${id}`)
             .then(response => {
                 const event = response.data;
                 setEvent(event);
             }).catch(error => {
                 setError(error.response.data);
             })
-    }, [])
+    }, [id])
 
     if (error) {
         const err = {

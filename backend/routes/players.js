@@ -46,6 +46,7 @@ router
     try {
       var id = helperFunctions.isValidId(req.params.playerId);
       var player = await playerFunctions.getPlayer(id);
+      player["matchhistory"] = await playerFunctions.getAllMatches(id);
       return res.json(player);
     } catch (e) { return res.status(e.status ? e.status : 500).json(e.status ? e : { status: 500, error: "An Internal Server Error Occured." }); }
   })

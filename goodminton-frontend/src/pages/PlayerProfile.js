@@ -31,7 +31,7 @@ const PlayerProfile = ({ auth }) => {
             error.hidden = true;
 
             let axiospatch = (callback) => {
-                axios.patch(`http://${process.env.REACT_APP_BACKENDAPI}/players/${id}`, {
+                axios.patch(`${process.env.REACT_APP_BACKENDAPI}/players/${id}`, {
                     playerName: newName,
                 }, { withCredentials: true }).then(response => {
                     callback(true, "Player updated successfully.")
@@ -56,7 +56,7 @@ const PlayerProfile = ({ auth }) => {
     }
 
     useEffect(() => {
-        axios.get(`http://${process.env.REACT_APP_BACKENDAPI}/players/${id}`, { withCredentials: true })
+        axios.get(`${process.env.REACT_APP_BACKENDAPI}/players/${id}`, { withCredentials: true })
             .then(response => {
                 const player = response.data;
                 setPlayer(player);

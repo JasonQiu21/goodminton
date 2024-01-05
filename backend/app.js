@@ -1,13 +1,13 @@
 
 import express from "express";
 import configRoutes from "./routes/index.js";
-import session from "express-session";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import {authenticatedPlayer} from './data/auth.js';
 import { authenticateAdmin, authenticatePlayer } from "./middleware/auth.js";
-import MongoStore from 'connect-mongo'
 import dotenv from 'dotenv'
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 dotenv.config()
 
@@ -21,30 +21,24 @@ const app = express();
 app.use("/public", staticDir);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-app.use(
-  session({
-    name: "AuthState",
-    secret: "Goodminton is good!",
-    saveUninitialized: true,
-    resave: false,
-    store: MongoStore.create({
-      mongoUrl: 'mongodb://localhost:27017/goodminton',
-      ttl: 7 * 24 * 60 * 60, //7 days
-      autoRemove: 'native'
-    })
-  })
-);
+app.use(cors());
 
-app.use(cors())
+app.use("/", async (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTENDURL);
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
-app.use("/", (req, res, next) => {
-  console.log(
-    `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl} (${req.session.player
-      ? "User authenticated as"
-      : "User not authenticated"
-    } ${req.session.player ? req.session.player.role : ""})`
-  );
+  let logstr = `[${new Date().toUTCString()}]: ${req.method} ${req.originalUrl}`
+  try {
+    let loggedInPlayer = await authenticatedPlayer(req.cookies.sessionID);
+    logstr += ` (Authenticated as | ${loggedInPlayer.playerName} | ${loggedInPlayer.role})`
+  } catch(e) {
+    logstr += ` (Not Authenticated)`
+  }
+
+  console.log(logstr);
+
   return next();
 });
 

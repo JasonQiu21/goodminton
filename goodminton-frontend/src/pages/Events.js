@@ -11,7 +11,7 @@ export default class Events extends React.Component {
 
     constructor(props) {
         super(props)
-        axios.get(`http://${process.env.REACT_APP_BACKENDAPI}/events`, { withCredentials: true })
+        axios.get(`${process.env.REACT_APP_BACKENDAPI}/events`, { withCredentials: true })
             .then(response => {
                 const events = response.data
                 this.setState({ events })

@@ -9,6 +9,8 @@ const getCollectionFn = (collection) => {
       _col = await db.collection(collection);
     }
 
+    if(_col === "sessions") await _col.createIndex({createdAt: 1}, {expireAfterSeconds: 60 * 60})
+
     return _col;
   };
 };

@@ -45,7 +45,7 @@ const Login = ({ auth, onLogin }) => {
 
             //now we try to login
             let axiospost = (callback) => {
-                axios.post(`http://${process.env.REACT_APP_BACKENDAPI}/login`, {
+                axios.post(`${process.env.REACT_APP_BACKENDAPI}/login`, {
                     email: email,
                     password: password
                 }).then(response => {

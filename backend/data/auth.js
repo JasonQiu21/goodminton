@@ -1,20 +1,14 @@
-import crypto from 'crypto';
 import { sessions } from "../config/mongoCollections.js";
 import { getPlayer } from "./players.js"
+import {ObjectId} from 'mongodb'
 
-export const generateSessionId = () => { return crypto.randomBytes(16).toString('base64'); }
-
-export const authenticatedPlayer = async (playerId, sessionId) => {
+export const authenticatedPlayer = async (sessionId) => {
     let sessionCol = await sessions();
 
-    const session = await sessionCol.findOne({ "session.sessionId": sessionId });
+    const session = await sessionCol.findOne({ "_id": new ObjectId(sessionId) });
     if (session === null) throw { status: 403, error: "Forbidden." }
 
-    if (session.playerId !== playerId) throw { status: 403, error: "Forbidden." }
-
-    const player = await getPlayer(playerId);
-
-    return player;
+    return session.player;
 }
 
 export const authenticatedAdmin = async (playerId, sessionId) => {

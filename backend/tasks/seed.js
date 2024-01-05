@@ -1,6 +1,6 @@
 import { dbConnection, closeConnection } from "../config/mongoConnection.js";
 
-import { events, players } from "../config/mongoCollections.js";
+import { events, players, sessions } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 
 import bcrypt from "bcrypt";
@@ -11,6 +11,7 @@ await db.dropDatabase();
 
 const eventsCol = await events();
 const playersCol = await players();
+const sessionsCol = await sessions();
 
 //NOTE: For BCrypt Hash, cost factor/salt rounds is set to 10.
 
