@@ -1,12 +1,12 @@
 import { authenticatedPlayer, authenticatedAdmin } from '../data/auth.js'
 
 export const authenticatePlayer = async (req, res, next) => {
-    try { await authenticatedPlayer(req.session.player._id.toString(), req.session.sessionId); } catch (e) { return res.status(403).json(e) }
+    try { await authenticatedPlayer(req.cookies.sessionID); } catch (e) { return res.status(403).json(e) }
     return next();
 };
 
 export const authenticateAdmin = async (req, res, next) => {
-    try { await authenticatedAdmin(req.session.player._id.toString(), req.session.sessionId); } catch (e) { return res.status(403).json(e) }
+    try { await authenticatedAdmin(req.cookies.sessionID); } catch (e) { return res.status(403).json(e) }
     return next();
 }
 
@@ -15,7 +15,9 @@ export const authenticateAdmin = async (req, res, next) => {
 // Or edit their profile but not others.
 // Admin should be able to register anyone 
 export const checkPlayerIdAgainstRequestBody = async (req, res, next) => {
-    try { await authenticatedPlayer(req.session.player._id.toString(), req.session.sessionId); } catch (e) { return res.status(403).json(e) }
-    if (req.session?.player?.role !== "admin" && req.body.playerId !== req.session?.player?._id) return res.status(403).json({ status: 403, error: "Forbidden." });
+    try {
+        const player = await authenticatedPlayer(req.cookies.sessionID);
+        if (player._id.toString() !== req.params.id && player.role !== "admin") return res.status(403).json({ status: 403, error: "Forbidden." });
+    } catch (e) { return res.status(403).json(e) }
     return next();
 }

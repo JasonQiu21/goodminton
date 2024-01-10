@@ -123,6 +123,13 @@ const player9 = await playersCol.insertOne({
   doublesRating: 2000,
 });
 
+/*
+const testsession = await sessionsCol.insertOne({
+  createdAt: new Date(),
+  player: player9,
+});
+*/
+
 const event1 = await eventsCol.insertOne({
   name: "12/26/2023 Practice",
   date: 1703628000, //November 24th, 2023 at 4PM

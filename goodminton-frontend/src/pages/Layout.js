@@ -8,7 +8,7 @@ const Layout = ({ auth }) => {
                 <nav>
                     <ul className="navbar">
                         <li className="navlogo"><Link to="/">Goodminton</Link></li>
-                        {auth && <li class="navitem"><a href={"/players/" + auth._id.toString()}>Profile</a></li>}
+                        {auth && <li className="navitem"><a href={"/players/" + auth._id.toString()}>Profile</a></li>}
                         <li className="navitem"><a href="/events">Events</a></li>
                         {auth && <li className="navitem"><a href="/players/reservations/{{id}}">Reservations</a></li>}
                         <li className="navitem"><a href="/leaderboard">Leaderboard</a></li>

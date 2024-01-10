@@ -1,6 +1,6 @@
 import { sessions } from "../config/mongoCollections.js";
 import { getPlayer } from "./players.js"
-import {ObjectId} from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 export const authenticatedPlayer = async (sessionId) => {
     let sessionCol = await sessions();
@@ -11,8 +11,8 @@ export const authenticatedPlayer = async (sessionId) => {
     return session.player;
 }
 
-export const authenticatedAdmin = async (playerId, sessionId) => {
-    const player = await authenticatedPlayer(playerId, sessionId);
+export const authenticatedAdmin = async (sessionId) => {
+    const player = await authenticatedPlayer(sessionId);
     if (player.role !== "admin") throw { status: 403, error: "Forbidden." }
     return player;
 }
