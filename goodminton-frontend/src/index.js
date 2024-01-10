@@ -11,6 +11,7 @@ import Home from './pages/Home.js'
 import Events from './pages/Events.js'
 import SingleEvent from './pages/SingleEvent.js'
 import PlayerProfile from './pages/PlayerProfile.js'
+import Reservations from './pages/Reservations.js';
 import Login from './pages/Login.js'
 import Logout from './pages/Logout.js';
 import Error from './pages/Error.js'
@@ -56,6 +57,7 @@ export default function App() {
             <Route path="/events" element={<Events auth={user} />} />
             <Route path="/events/:id" element={<SingleEvent auth={user} />} />
             <Route path="/players/:id" element={<PlayerProfile auth={user} />} />
+            <Route path="/reservations" element={<Reservations auth={user} />} />
             <Route path="/login" element={<Login auth={user} onLogin={login} />} />
             <Route path="/logout" element={<Logout auth={user} onLogout={logout} />} />
             <Route path="/error" element={<Error error={defaultError} />} />

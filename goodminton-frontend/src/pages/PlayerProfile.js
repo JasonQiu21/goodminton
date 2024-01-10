@@ -96,7 +96,7 @@ const PlayerProfile = ({ auth }) => {
       .catch((error) => {
         setError(error.response.data);
       });
-  }, []);
+  }, [id]);
 
   if (error) {
     const err = {
@@ -118,18 +118,12 @@ const PlayerProfile = ({ auth }) => {
                 <div className="formItem">
                   <label className="formTitle" htmlFor="playerName">Player Name</label>
                   <input className="formInput" type="text" id="playerName" name="playerName" placeholder={player.playerName} />
-                  <button className="profileChangeButton" id="playerNameChangeButton" onClick={handleDataChange}>
-                    Change
-                  </button>
                 </div>
                 <div className="formItem">
                   <label className="formTitle" htmlFor="email">
                     Email
                   </label>
                   <input className="formInput" type="text" id="email" name="email" placeholder={player.email} />
-                  <button className="profileChangeButton" id="emailChangeButton" onClick={handleDataChange}>
-                    Change
-                  </button>
                 </div>
                 <div className="formItem">
                   <label className="formTitle" htmlFor="password">
@@ -142,19 +136,14 @@ const PlayerProfile = ({ auth }) => {
                     Confirm Password
                   </label>
                   <input className="formInput" type="password" id="confirmPassword" name="confirmPassword" placeholder="********" />
-                  <button className="profileChangeButton" id="passwordChangeButton" onClick={handleDataChange}>
-                    Change
-                  </button>
                 </div>
                 <div className="formItem">
                   <label className="formTitle" htmlFor="phone">
                     Phone Number
                   </label>
                   <input className="formInput" type="text" id="phone" name="phone" placeholder={player.phone} />
-                  <button className="profileChangeButton" id="phoneChangeButton" onClick={handleDataChange}>
-                    Change
-                  </button>
                 </div>
+                <button className="profileChangeButton" id="emailChangeButton" onClick={handleDataChange}>Update Player Data</button>
                 <p id="error" className="error" hidden>
                   This is an error.
                 </p>
