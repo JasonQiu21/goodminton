@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
+    <link rel="stylesheet" href="/public/css/style.css">
+    <script type="module" src="../../public/js/validate_form.js"></script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul class="navbar">
+                <li class="navlogo"><a href="/">Goodminton</a></li>
+                {{#if id}}
+                <li class="navitem"><a href="/players/{{id}}">Profile</a></li>
+                {{/if}}
+                <li class="navitem"><a href="/events">Events</a></li>
+                {{#if id}}
+                <li class="navitem"><a href="/players/reservations/{{id}}">Reservations</a></li>
+                {{/if}}
+                <li class="navitem"><a href="/leaderboard">Leaderboard</a></li>
+                {{#if isAdmin}}
+                <li class="navitem"><a href="/createEvent">Create Event</a></li>
+                {{/if}}
+                {{#if user}}
+                <li class="navitem"><a href="/logout">Sign Out</a></li>
+                {{else}}
+                <li class="navitem"><a href="/login">Sign In</a></li>
+                {{/if}}
+            </ul>
+            <br>
+        </nav>
+    </header>
+
+    <main>
+        {{{ body }}}
+    </main>
+
+</body>
+
+</html>

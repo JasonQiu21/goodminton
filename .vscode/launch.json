@@ -5,13 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "npm start",
-            "name": "Debug Backend",
-            "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}/backend"
-        },
-        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
