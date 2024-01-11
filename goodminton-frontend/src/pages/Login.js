@@ -2,12 +2,10 @@ import React from 'react'
 import axios from 'axios';
 
 import { checkEmail, isValidString } from './client_typecheck.js'
-import { useNavigate } from 'react-router-dom';
 
 import Error from './Error.js'
 
 const Login = ({ auth, onLogin }) => {
-    const navigate = useNavigate();
 
     //if player is already authenticated, redirect
     if (auth) {
@@ -18,7 +16,7 @@ const Login = ({ auth, onLogin }) => {
     }
 
     const handleSubmit = (event) => {
-        let email, password, playerId;
+        let email, password;
         let errorList = [];
         event.preventDefault();
 
@@ -40,8 +38,6 @@ const Login = ({ auth, onLogin }) => {
             return;
         } else {
             error.hidden = true;
-
-            let sessionToken;
 
             //now we try to login
             let axiospost = (callback) => {

@@ -9,7 +9,7 @@ const Home = ({ auth }) => {
                     <p>Welcome to Goodminton your go-to destination for hassle-free badminton experiences! Easily book courts at top venues, participate in thrilling tournaments, and connect with a vibrant badminton community. Enjoy the convenience of anytime, anywhere access to elevate your game. Goodminton where convenience meets competition for the ultimate badminton bliss!</p>
                     {auth ?
                         <React.Fragment>
-                            <p>Check to see what events there are</p>
+                            <p>Check to see what events there are!</p>
                             <a className="homeButton" href="/events"> Events</a>
                         </React.Fragment>
                         :

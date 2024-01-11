@@ -12,6 +12,7 @@ import Events from './pages/Events.js'
 import SingleEvent from './pages/SingleEvent.js'
 import PlayerProfile from './pages/PlayerProfile.js'
 import Reservations from './pages/Reservations.js';
+import Register from './pages/Register.js';
 import Login from './pages/Login.js'
 import Logout from './pages/Logout.js';
 import Error from './pages/Error.js'
@@ -21,7 +22,9 @@ import "./style.css"
 
 export default function App() {
 
-  const [cookies, setCookie, removeCookie] = useCookies(["user"])
+  //(it lints cookie since it's not used LOL)
+  //eslint-disable-next-line 
+  const [cookie, setCookie, removeCookie] = useCookies(["user"])
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,9 +39,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    console.log(`${process.env.REACT_APP_BACKENDAPI}/session`);
     axios.get(`${process.env.REACT_APP_BACKENDAPI}/session`, { withCredentials: true }).then(response => {
-      console.log(response.data)
       setUser(response.data.player);
       setLoading(false);
     })
@@ -46,18 +47,17 @@ export default function App() {
 
   if (loading) return <p>Loading...</p>
 
-  console.log(user);
-
   return (
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout auth={user} />} >
-            <Route index element={<Home />} />
+            <Route index element={<Home auth={user} />} />
             <Route path="/events" element={<Events auth={user} />} />
             <Route path="/events/:id" element={<SingleEvent auth={user} />} />
             <Route path="/players/:id" element={<PlayerProfile auth={user} />} />
             <Route path="/reservations" element={<Reservations auth={user} />} />
+            <Route path="/register" element={<Register auth={user} />} />
             <Route path="/login" element={<Login auth={user} onLogin={login} />} />
             <Route path="/logout" element={<Logout auth={user} onLogout={logout} />} />
             <Route path="/error" element={<Error error={defaultError} />} />

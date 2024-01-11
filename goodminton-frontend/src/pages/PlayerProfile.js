@@ -188,30 +188,34 @@ const PlayerProfile = ({ auth }) => {
           <div className="matchHistory">
             <h1>Match History</h1>
             <table>
-              <tr>
-                <th>Event</th>
-                <th>Round</th>
-                <th>Match Time</th>
-                <th>Team 1</th>
-                <th>Team 1 Score</th>
-                <th>Team 2</th>
-                <th>Team 2 Score</th>
-              </tr>
-              {player.matchhistory.map((match, i) => {
-                return (
-                  <tr key="{i}" className="winner-{{this.didWin}}">
-                    <td>{match.eventName}</td>
-                    <td>{match.in_round}</td>
-                    <td>{match.eventTime}</td>
-                    <td>{match.team1}</td>
-                    <td>{match.team1Score}</td>
-                    <td>{match.team2}</td>
-                    <td>{match.team2Score}</td>
-                  </tr>
-                );
-              })}
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Round</th>
+                  <th>Match Time</th>
+                  <th>Team 1</th>
+                  <th>Team 1 Score</th>
+                  <th>Team 2</th>
+                  <th>Team 2 Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {player.matchhistory.map((match, i) => {
+                  return (
+                    <tr key="{i}" className="winner-{{this.didWin}}">
+                      <td>{match.eventName}</td>
+                      <td>{match.in_round}</td>
+                      <td>{match.eventTime}</td>
+                      <td>{match.team1}</td>
+                      <td>{match.team1Score}</td>
+                      <td>{match.team2}</td>
+                      <td>{match.team2Score}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </table>
-            <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+            <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossOrigin="anonymous"></script>
             <script src="../public/js/profile_update.js"></script>
           </div>
         </div>

@@ -1,8 +1,6 @@
 import Error from './Error.js';
 
 const Logout = ({ auth, onLogout }) => {
-    let success = false;
-
     if (!auth) {
         const err = {
             referrer: `/logout`, error: "You can't logout; you were never logged in!"
@@ -16,7 +14,6 @@ const Logout = ({ auth, onLogout }) => {
 
         logout(() => {
             console.log("You logged out...");
-            success = true;
             window.location.href = '/'
         })
     }

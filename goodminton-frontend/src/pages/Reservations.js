@@ -21,7 +21,7 @@ const Reservations = ({ auth }) => {
             .catch((error) => {
                 setError(error.response.data);
             });
-    }, []);
+    }, [auth._id]);
 
     if (error) {
         const err = {
@@ -32,7 +32,6 @@ const Reservations = ({ auth }) => {
     }
 
     if (reservations) {
-        console.log(reservations);
         if (reservations.length === 0) return (<p>No Reservations!</p>)
         return (
             <section>
