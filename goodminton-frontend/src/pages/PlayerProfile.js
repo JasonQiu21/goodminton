@@ -107,7 +107,7 @@ const PlayerProfile = ({ auth }) => {
   }
 
   if (player) {
-    let isOwner = auth;
+    let isOwner = auth._id.toString() === id;
 
     return (
       <section>

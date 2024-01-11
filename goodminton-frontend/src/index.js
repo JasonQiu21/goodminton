@@ -15,6 +15,7 @@ import Reservations from './pages/Reservations.js';
 import Register from './pages/Register.js';
 import Login from './pages/Login.js'
 import Logout from './pages/Logout.js';
+import Leaderboard from './pages/Leaderboard.js';
 import Error from './pages/Error.js'
 
 import "./style.css"
@@ -57,6 +58,8 @@ export default function App() {
             <Route path="/events/:id" element={<SingleEvent auth={user} />} />
             <Route path="/players/:id" element={<PlayerProfile auth={user} />} />
             <Route path="/reservations" element={<Reservations auth={user} />} />
+            <Route path="/leaderboard" element={<Leaderboard auth={user} />} />
+
             <Route path="/register" element={<Register auth={user} />} />
             <Route path="/login" element={<Login auth={user} onLogin={login} />} />
             <Route path="/logout" element={<Logout auth={user} onLogout={logout} />} />
